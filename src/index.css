@@ -1,0 +1,86 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Outfit:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "./custom-colors.css";
+
+@theme {
+  --font-sans: "Josefin Sans", system-ui, -apple-system, sans-serif;
+  --font-devanagari: "Noto Sans Devanagari", sans-serif;
+}
+
+:root {
+  color: #242424;
+  background: #ffffff;
+  font-family:
+    "Josefin Sans",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+.hindi-text {
+  font-family: "Noto Sans Devanagari", sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100svh;
+  overflow-x: hidden;
+  background: #fdeeda;
+}
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+input,
+textarea,
+select {
+  font: inherit;
+}
+::selection {
+  background: #dff5fc;
+  color: #017733;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+::-webkit-scrollbar-track {
+  background: #fdeeda;
+}
+::-webkit-scrollbar-thumb {
+  background: #8a8a8a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #017733;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+[data-sonner-toaster],
+[data-sonner-toast],
+[data-sonner-toast] *,
+[data-sonner-toast] [data-content] {
+  font-family: var(--font-sans) !important;
+}

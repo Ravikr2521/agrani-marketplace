@@ -1,0 +1,3 @@
+import { AlertCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+export default function ErrorState({message='Unable to load data. Please try again.', onRetry}) { return <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-red-100 bg-red-50/60 p-8 text-center"><AlertCircle className="mb-3 h-8 w-8 text-red-600"/><h3 className="font-semibold text-red-900">Something went wrong</h3><p className="mt-1 max-w-md text-sm text-red-700">{message}</p>{onRetry&&<Button variant="outline" className="mt-5 border-red-200" onClick={onRetry}>Retry</Button>}</div> }

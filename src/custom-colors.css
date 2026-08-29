@@ -1,0 +1,108 @@
+/* Custom color utilities for Agrani Marketplace brand palette */
+
+@import "tailwindcss";
+
+/* Define custom colors using Tailwind CSS v4 syntax */
+@theme {
+  /* Brand colors */
+  --color-primary: #017733;
+  --color-primary-dark: #015e2a;
+  --color-primary-light: #e6f4ea;
+
+  --color-secondary: #049f49;
+  --color-secondary-dark: #03863e;
+  --color-secondary-light: #e8f8ef;
+
+  --color-accent: #f99c18;
+  --color-accent-dark: #e08a16;
+  --color-accent-light: #fef5e6;
+
+  --color-cream: #fdeeda;
+  --color-light-blue: #dff5fc;
+
+  /* Text colors */
+  --color-body-dark: #242424;
+  --color-body-light: #1a1a1a;
+  --color-muted: #8a8a8a;
+
+  /* UI colors */
+  --color-border: #e5e5e5;
+  --color-background: #ffffff;
+
+  /* Semantic colors */
+  --color-success: var(--color-secondary);
+  --color-warning: var(--color-accent);
+  --color-error: #dc2626;
+  --color-info: var(--color-light-blue);
+}
+
+/* Custom utility classes */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.bg-cream {
+  background-color: var(--color-cream);
+}
+
+.bg-light-blue {
+  background-color: var(--color-light-blue);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-body-dark {
+  color: var(--color-body-dark);
+}
+
+.text-body-light {
+  color: var(--color-body-light);
+}
+
+.text-muted {
+  color: var(--color-muted);
+}
+
+.border-border {
+  border-color: var(--color-border);
+}
+
+.bg-background {
+  background-color: var(--color-background);
+}
+
+/* Button states */
+.hover\:bg-primary:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.hover\:bg-secondary:hover {
+  background-color: var(--color-secondary-dark);
+}
+
+.hover\:bg-accent:hover {
+  background-color: var(--color-accent-dark);
+}
+
+/* Focus rings */
+.focus-visible\:ring-primary\/30:focus-visible {
+  --tw-ring-color: rgb(1 119 51 / 0.3);
+}

@@ -1,0 +1,2 @@
+import { PackageOpen } from 'lucide-react'
+export default function EmptyState({title='Nothing here yet',description='Try another option.',action}) { return <div className="flex min-h-72 flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-white p-8 text-center"><div className="mb-4 rounded-2xl bg-light-blue p-4 text-primary"><PackageOpen/></div><h3 className="text-lg font-semibold">{title}</h3><p className="mt-1 max-w-sm text-sm text-muted">{description}</p>{action && <div className="mt-5">{action}</div>}</div> }
