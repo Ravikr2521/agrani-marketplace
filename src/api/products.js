@@ -73,3 +73,28 @@ export function toggleProduct(id, is_active) {
     }),
   });
 }
+
+export function getSellerOrders(seller_mobile) {
+  const params = new URLSearchParams({
+    seller_mobile: seller_mobile || "",
+  });
+
+  return apiFetch(`/marketplace/api/orders/?${params.toString()}`, {
+    headers: {
+      Authorization: TOKEN,
+    },
+  });
+}
+
+export function updateOrderStatus(orderId, status) {
+  return apiFetch(`/marketplace/api/orders/${orderId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: TOKEN,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      status,
+    }),
+  });
+}

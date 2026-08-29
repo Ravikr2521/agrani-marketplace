@@ -1,4 +1,4 @@
-import { LayoutDashboard } from "lucide-react";
+import { ClipboardList, LayoutDashboard } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import SearchInput from "../components/common/SearchInput";
@@ -9,10 +9,12 @@ import ErrorState from "@/components/common/ErrorState";
 import { useProducts } from "@/hooks/useProducts";
 import ProductGrid from "@/components/products/ProductGrid";
 import SellerCard from "../components/SellerDashboard/SelllerCard";
+import SellerOrdersSheet from "@/components/orders/SellerOrdersSheet";
 
 const Seller = () => {
   const [input, setInput] = useState("");
   const [page, setPage] = useState(1);
+  const [ordersOpen, setOrdersOpen] = useState(false);
   const search = useDebouncedValue(input, 400);
 
   const { products, count, next, previous, loading, error, retry } =
@@ -31,6 +33,8 @@ const Seller = () => {
     });
   }, [products]);
 
+  const SellerMobile = 6666666013;
+
   return (
     <div>
       <main className="pb-20 md:px-8 ">
@@ -47,7 +51,12 @@ const Seller = () => {
             </div>
           </div>
           <div className="flex gap-2 ">
-            <Button size="sm" variant="outline">
+            <Button
+              variant="outline"
+              onClick={() => setOrdersOpen(true)}
+              size="sm"
+            >
+              <ClipboardList className="mr-2 h-4 w-4" />
               Orders
             </Button>
             <Button className="bg-orange-500" size="sm">
@@ -107,6 +116,11 @@ const Seller = () => {
           </section>
         </section>
       </main>
+      <SellerOrdersSheet
+        open={ordersOpen}
+        onOpenChange={setOrdersOpen}
+        sellerMobile={SellerMobile}
+      />
     </div>
   );
 };
