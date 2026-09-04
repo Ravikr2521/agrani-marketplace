@@ -1,28 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
+  MapPin,
   Minus,
   Plus,
   ShoppingCart,
-  UserRound,
-  MapPin,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/hooks/useWishlist";
 import { formatINR } from "@/lib/utils";
 import { toast } from "sonner";
-import { getProductView } from "../../api/products";
+import { useProductApi } from "../../api/products";
+import WishlistButton from "./WishlistButton";
 
 function getMediaUrl(media) {
   return (
@@ -35,8 +36,14 @@ export default function ProductDetailsSheet({
   onOpenChange,
   product,
   variantId,
+  disableAddToCart = false,
 }) {
   const [selectedVariantId, setSelectedVariantId] = useState(variantId);
+  const { isWishlisted, wishlistLoading, toggleWishlist } = useWishlist(
+    product?.variants,
+  );
+
+  const { getProductView } = useProductApi();
 
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -64,6 +71,8 @@ export default function ProductDetailsSheet({
       console.error("Failed to track product view:", error);
     });
   }, [open]);
+
+  const buyerMobile = localStorage.getItem("farmers_marketplace_buyer_phone");
 
   const variants = useMemo(
     () =>
@@ -189,6 +198,15 @@ export default function ProductDetailsSheet({
       current === images.length - 1 ? 0 : current + 1,
     );
   };
+
+  const deliveryCoverage = useMemo(() => {
+    const include = product?.delivery_location_detail?.coverage?.include;
+
+    return {
+      allStates: include?.all_states === true,
+      states: include?.states || [],
+    };
+  }, [product]);
 
   if (!product) return null;
 
@@ -370,6 +388,17 @@ export default function ProductDetailsSheet({
                 </div>
 
                 <div className="mt-3 flex gap-2.5">
+                  {!disableAddToCart && (
+                    <WishlistButton
+                      variant={selectedVariant}
+                      isWishlisted={isWishlisted(selectedVariant)}
+                      loading={wishlistLoading === selectedVariant?.id}
+                      disabled={!buyerMobile}
+                      onToggle={() => toggleWishlist(selectedVariant)}
+                      className="h-12 w-12"
+                    />
+                  )}
+
                   <div className="flex h-12 shrink-0 items-center overflow-hidden rounded-xl border border-border bg-white">
                     <button
                       type="button"
@@ -419,41 +448,49 @@ export default function ProductDetailsSheet({
               </>
             )}
 
-            {product?.delivery_location_detail?.coverage?.include?.states
-              ?.length > 0 && (
-              <div className="mt-5 rounded-2xl border border-border bg-white p-4">
+            {(deliveryCoverage.allStates ||
+              deliveryCoverage.states.length > 0) && (
+              <div className="mt-6 rounded-2xl border border-border bg-white p-4">
                 <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-red-500 mt-[0.5px]" />
+                  <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-red-100 text-red-600">
+                    <MapPin className="h-4 w-4" />
+                  </div>
 
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-body-dark">
+                  <div className="min-w-0 flex-1 mt-1">
+                    <h3 className="text-sm font-bold text-body-dark">
                       Delivery available in
-                    </p>
+                    </h3>
 
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {product.delivery_location_detail.coverage.include.states.map(
-                        (location) => (
+                    {deliveryCoverage.allStates ? (
+                      <div className="mt-3 inline-flex items-center rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                        <span className="text-xs font-semibold text-orange-600">
+                          All over India
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {deliveryCoverage.states.map((location) => (
                           <div
                             key={location.state_name}
-                            className="rounded-lg border border-orange-200/80 bg-orange-50/90 px-3 py-2"
+                            className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2"
                           >
-                            <p className="text-xs font-semibold text-body-light">
+                            <div className="text-xs font-semibold text-body-light">
                               {location.state_name}
-                            </p>
+                            </div>
 
                             {location.all_districts ? (
-                              <p className="mt-0.5 text-[11px] text-primary">
+                              <div className="mt-0.5 text-[11px] text-gray-600">
                                 All districts
-                              </p>
-                            ) : location.districts?.length ? (
-                              <p className="mt-0.5 text-[11px] text-muted">
+                              </div>
+                            ) : location.districts?.length > 0 ? (
+                              <div className="mt-0.5 text-[11px]  text-gray-600">
                                 {location.districts.join(", ")}
-                              </p>
+                              </div>
                             ) : null}
                           </div>
-                        ),
-                      )}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

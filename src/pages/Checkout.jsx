@@ -1,23 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  CheckCircle2,
-  LockKeyhole,
-  Minus,
-  Plus,
-  ShoppingBag,
-} from "lucide-react";
+import { useOrderApi } from "@/api/orders";
+import CheckoutSteps from "@/components/checkout/CheckoutSteps";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import CheckoutSteps from "@/components/checkout/CheckoutSteps";
+import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
 import { useOrder } from "@/context/OrderContext";
-import { createOrder } from "@/api/orders";
 import { formatINR } from "@/lib/utils";
+import { ArrowLeft, LockKeyhole, ShoppingBag } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 function validPhone(v) {
@@ -29,6 +22,7 @@ function validPin(v) {
 export default function Checkout() {
   const { items, getCartTotal, increaseQuantity, decreaseQuantity, clearCart } =
     useCart();
+  const { createOrder } = useOrderApi();
   const { saveOrder } = useOrder();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);

@@ -3,18 +3,22 @@ const API_BASE_URL = (
 ).replace(/\/$/, "");
 
 export async function apiFetch(path, options = {}) {
-  const isFormData = options.body instanceof FormData;
+  const { baseUrl, ...fetchOptions } = options;
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
+  const isFormData = fetchOptions.body instanceof FormData;
+
+  const resolvedBase = (baseUrl || API_BASE_URL).replace(/\/$/, "");
+
+  const response = await fetch(`${resolvedBase}${path}`, {
+    ...fetchOptions,
     headers: {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
-      ...(options.headers || {}),
+      ...(fetchOptions.headers || {}),
     },
     body: isFormData
-      ? options.body
-      : options.body
-        ? JSON.stringify(options.body)
+      ? fetchOptions.body
+      : fetchOptions.body
+        ? JSON.stringify(fetchOptions.body)
         : undefined,
   });
 

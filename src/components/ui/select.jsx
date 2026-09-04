@@ -29,7 +29,7 @@ export function SelectTrigger({ className, children, ...props }) {
           transition-colors
           focus:border-primary
           focus:ring-2
-          focus:ring-light-blue
+          focus:ring-orange-200
           disabled:cursor-not-allowed
           disabled:opacity-50
         `,
@@ -104,10 +104,10 @@ export function SelectItem({ value, children, className, ...props }) {
           outline-none
           transition-colors
 
-          focus:bg-light-blue
+          focus:bg-orange-200
           focus:text-primary
 
-          data-highlighted:bg-light-blue
+          data-highlighted:bg-orange-100
           data-highlighted:text-primary
 
           data-disabled:pointer-events-none

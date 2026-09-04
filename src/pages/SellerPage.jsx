@@ -1,16 +1,18 @@
+import { Flame, Package, Phone, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Flame, Package, Phone, UserRound } from "lucide-react";
 
-import { getProducts } from "@/api/products";
+import { useProductApi } from "@/api/products";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-import ProductGrid from "@/components/products/ProductGrid";
-import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ErrorState from "@/components/common/ErrorState";
+import LoadingSkeleton from "@/components/common/LoadingSkeleton";
+import ProductGrid from "@/components/products/ProductGrid";
+import ProductCard from "@/components/products/ProductCard";
 
 export default function SellerPage() {
+  const { getProducts } = useProductApi();
   const { seller_id } = useParams();
 
   const [products, setProducts] = useState([]);
@@ -52,10 +54,10 @@ export default function SellerPage() {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-300 px-4 sm:px-6 lg:px-4">
-        <div className="mb-5 h-5 w-36 animate-pulse rounded bg-cream" />
+      <main className="mx-auto max-w-330 px-4 sm:px-6 lg:px-4">
+        <div className="mb-5 h-5 w-36 animate-pulse rounded bg-gray-200/80" />
 
-        <div className="mb-8 h-32 animate-pulse rounded-2xl bg-cream" />
+        <div className="mb-8 h-32 animate-pulse rounded-2xl bg-gray-200/80" />
 
         <LoadingSkeleton count={4} />
       </main>
@@ -64,14 +66,14 @@ export default function SellerPage() {
 
   if (error) {
     return (
-      <main className="mx-auto max-w-300 px-4 sm:px-6 lg:px-4">
+      <main className="mx-auto max-w-330 px-4 sm:px-6 lg:px-4">
         <ErrorState message={error} onRetry={loadSellerProducts} />
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-300 px-3 xs:px-6 lg:px-4 pb-20">
+    <main className="mx-auto max-w-330  pb-20">
       {/* <Link
         to="/"
         className="inline-flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-primary"
@@ -140,7 +142,11 @@ export default function SellerPage() {
         </div>
 
         {products.length > 0 ? (
-          <ProductGrid products={products} />
+          <div className="grid min-w-0 grid-cols-2 gap-3 xs:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {products.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
         ) : (
           <div className="rounded-2xl border border-border bg-cream px-4 xs:px-5 py-8 xs:py-10 text-center">
             <div className="mx-auto grid h-10 w-10 xs:h-12 xs:w-12 place-items-center rounded-full bg-white">

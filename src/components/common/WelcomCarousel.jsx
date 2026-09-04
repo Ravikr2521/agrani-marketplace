@@ -13,18 +13,7 @@ const heroSlides = [
       "Browse verified farm stocks, choose your variant, and order without an account.",
     gradient: "from-[#f56a00] via-[#ff8b17] to-[#ffb35d]",
     icon: ShoppingBasket,
-    image:
-      "https://www.transparentpng.com/thumb/vegetables/all-fruits-and-vegetables-in-basket-background-transparent-veD4qx.png",
-  },
-  {
-    badge: "Verified agricultural sellers",
-    title: "Quality you can trust",
-    description:
-      "Discover fresh products from verified sellers and select the exact variant and pack size you need.",
-    gradient: "from-[#15803d] via-[#22a653] to-[#86efac]",
-    icon: Leaf,
-    image:
-      "https://static.wixstatic.com/media/7e88c5_1b5c8df9b2fd4515ae58c9e141239655~mv2.png",
+    image: "/images/vegetable.png",
   },
   {
     badge: "Simple & convenient delivery",
@@ -33,8 +22,16 @@ const heroSlides = [
       "Choose your preferred produce and pack size and get your order delivered with ease.",
     gradient: "from-[#0369a1] via-[#0284c7] to-[#38bdf8]",
     icon: Truck,
-    image:
-      "https://png.pngtree.com/png-clipart/20250131/original/pngtree-cartoon-vegetable-truck-fresh-produce-delivery-vehicle-png-image_20352838.png",
+    image: "/images/app-thumbnail.webp",
+  },
+  {
+    badge: "Verified agricultural sellers",
+    title: "Quality you can trust",
+    description:
+      "Discover fresh products from verified sellers and select the exact variant and pack size you need.",
+    gradient: "from-[#15803d] via-[#22a653] to-[#86efac]",
+    icon: Leaf,
+    image: "/images/fruits.png",
   },
 ];
 
@@ -74,7 +71,7 @@ const WelcomCarousel = () => {
                     bg-linear-to-r
                     ${slide.gradient}
                     sm:h-50
-                    lg:h-50
+                    lg:h-52
                   `}
                 >
                   <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-white/10" />
@@ -102,7 +99,7 @@ const WelcomCarousel = () => {
                         <span>{slide.badge}</span>
                       </div>
 
-                      <h1 className="mt-3 max-w-2xl text-xl font-bold leading-[1.1] tracking-tight text-white sm:text-3xl lg:text-[38px]">
+                      <h1 className="mt-3 max-w-2xl text-xl font-bold leading-[1.1] tracking-tight text-white sm:text-3xl lg:text-3xl">
                         {slide.title}
                       </h1>
 
@@ -116,7 +113,7 @@ const WelcomCarousel = () => {
                     <img
                       src={slide.image}
                       alt=""
-                      className="max-h-46 w-auto max-w-[95%] object-contain drop-shadow-2xl"
+                      className="max-h-full w-auto max-w-[95%] object-contain drop-shadow-2xl"
                     />
                   </div>
 

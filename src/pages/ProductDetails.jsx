@@ -1,7 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 import {
-  ArrowLeft,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
@@ -11,10 +8,12 @@ import {
   ShoppingCart,
   UserRound,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
-import { getProducts } from "@/api/products";
-import { Button } from "@/components/ui/button";
+import { useProductApi } from "@/api/products";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
@@ -27,9 +26,12 @@ import { formatINR } from "@/lib/utils";
 import { toast } from "sonner";
 
 import ProductGrid from "@/components/products/ProductGrid";
-import LoadingSkeleton from "@/components/common/LoadingSkeleton";
+import WishlistButton from "@/components/products/WishlistButton";
+import { useWishlist } from "@/hooks/useWishlist";
 
 export default function ProductDetails() {
+  const { getProducts } = useProductApi();
+
   const { id } = useParams();
 
   const [product, setProduct] = useState(null);
@@ -45,13 +47,17 @@ export default function ProductDetails() {
   const [selectedImage, setSelectedImage] = useState(0);
 
   const { addToCart } = useCart();
+  const { isWishlisted, wishlistLoading, toggleWishlist } = useWishlist(
+    product?.variants,
+  );
+  const buyerMobile = localStorage.getItem("farmers_marketplace_buyer_phone");
 
   const load = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const data = await getProducts({ perPage: 100 });
+      const data = await getProducts({ perPage: 100, buyerMobile });
 
       const found = (data.results || []).find(
         (p) => String(p.id) === String(id),
@@ -60,8 +66,6 @@ export default function ProductDetails() {
       if (!found) {
         throw new Error("Product not found.");
       }
-
-      console.log(found, "found");
 
       setProduct(found);
 
@@ -142,6 +146,15 @@ export default function ProductDetails() {
     return product?.delivery_location_detail?.coverage?.include?.states || [];
   }, [product]);
 
+  const deliveryCoverage = useMemo(() => {
+    const include = product?.delivery_location_detail?.coverage?.include;
+
+    return {
+      allStates: include?.all_states === true,
+      states: include?.states || [],
+    };
+  }, [product]);
+
   const add = () => {
     if (!variant) return;
 
@@ -203,16 +216,16 @@ export default function ProductDetails() {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-300 px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-330 px-4 py-6 sm:px-6 lg:px-0">
         <div className="grid gap-7 lg:grid-cols-[1.05fr_.95fr]">
-          <div className="aspect-square animate-pulse rounded-3xl bg-cream" />
+          <div className="md:h-[70vh] animate-pulse rounded-3xl bg-gray-200/80" />
 
           <div className="space-y-5">
-            <div className="h-6 w-24 animate-pulse rounded-lg bg-cream" />
-            <div className="h-12 w-3/4 animate-pulse rounded-lg bg-cream" />
-            <div className="h-20 animate-pulse rounded-xl bg-cream" />
-            <div className="h-14 animate-pulse rounded-xl bg-cream" />
-            <div className="h-12 animate-pulse rounded-xl bg-cream" />
+            <div className="h-6 w-24 animate-pulse rounded-lg bg-gray-200/80" />
+            <div className="h-12 w-3/4 animate-pulse rounded-lg bg-gray-200/80" />
+            <div className="h-20 animate-pulse rounded-xl bg-gray-200/80" />
+            <div className="h-14 animate-pulse rounded-xl bg-gray-200/80" />
+            <div className="h-12 animate-pulse rounded-xl bg-gray-200/80" />
           </div>
         </div>
       </main>
@@ -228,21 +241,13 @@ export default function ProductDetails() {
   }
 
   return (
-    <main className="mx-auto max-w-300 px-4 md:px-0 py-5">
-      {/* <Link
-        to="/"
-        className="inline-flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-primary"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to marketplace
-      </Link> */}
-
+    <main className="mx-auto max-w-330 px-4 md:px-0 py-5">
       <div className="mt-2 grid gap-7 lg:grid-cols-[1.05fr_.95fr] lg:items-start lg:gap-9">
         <section>
-          <Card className="overflow-hidden bg-transparent">
-            <div className="flex flex-col gap-3 p-3 sm:p-4 lg:flex-row">
+          <Card className="overflow-hidden bg-white shadow-xs">
+            <div className="flex flex-col gap-3 p-3 sm:p-4 ">
               {galleryImages.length > 1 && (
-                <div className="order-2 flex shrink-0 gap-2 overflow-x-auto pb-0.5 md:order-2 lg:order-1 lg:w-17 lg:flex-col lg:overflow-x-visible lg:overflow-y-auto">
+                <div className="order-2 flex shrink-0 gap-2  pb-0.5 md:order-2 lg:order-2 lg:w-17 lg:flex-row  ">
                   {galleryImages.map((image, index) => {
                     const active = index === selectedImage;
 
@@ -273,8 +278,8 @@ export default function ProductDetails() {
                 </div>
               )}
 
-              <div className="order-1 relative min-w-0 flex-1 overflow-hidden rounded-2xl bg-cream lg:order-2">
-                <div className="aspect-3/2 w-full overflow-hidden md:aspect-square">
+              <div className="order-1 relative min-w-0 flex-1 overflow-hidden rounded-2xl bg-gray-100 lg:order-1">
+                <div className="md:h-[62vh] w-full overflow-hidden ">
                   {currentImage ? (
                     <img
                       src={currentImage}
@@ -327,22 +332,22 @@ export default function ProductDetails() {
             )}
           </div>
 
-          <h1 className="mt-3 text-2xl font-bold tracking-tight text-body-dark sm:text-4xl">
+          <h1 className="mt-3 text-2xl font-bold tracking-tight text-body-dark sm:text-3xl">
             {product.name}
           </h1>
 
           <Link
             to={`/seller/${encodeURIComponent(
-              product?.seller_detail?.user_mobile || "",
+              product?.seller_detail?.user_id || "",
             )}`}
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
-              className="mt-2 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-primary"
+              className="mt-2 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-primary! "
               onClick={() => setSellerOpen(true)}
             >
-              <UserRound className="h-4 w-4" />
+              <UserRound className="h-4 w-4 mb-0.5" />
 
               <span>{product.seller_detail?.user_name || "Farmer"}</span>
 
@@ -352,12 +357,12 @@ export default function ProductDetails() {
             </button>
           </Link>
 
-          <p className="mt-4 text-sm leading-6 text-muted sm:text-[15px]">
+          <p className="mt-4 text-sm leading-6 text-muted sm:text-[15px] capitalize">
             {product.description ||
               "Fresh agricultural produce available from this verified marketplace seller."}
           </p>
 
-          <Separator className="my-4 bg-gray-100" />
+          <Separator className="my-4 bg-gray-200/80" />
 
           <div>
             <div className="mb-2 flex items-center justify-between">
@@ -394,7 +399,7 @@ export default function ProductDetails() {
               <div className="mt-5 rounded-2xl bg-white/90 md:p-4">
                 <div className="flex items-end justify-between gap-4">
                   <div>
-                    <div className="text-3xl font-bold tracking-tight text-body-dark">
+                    <div className="text-3xl font-bold tracking-wide text-body-dark ">
                       {formatINR(variant.price)}
                     </div>
 
@@ -420,10 +425,17 @@ export default function ProductDetails() {
               </div>
 
               <div className="mt-4 flex gap-2.5">
-                <div className="flex h-12 shrink-0 items-center overflow-hidden rounded-xl border border-border bg-white">
+                <WishlistButton
+                  variant={variant}
+                  isWishlisted={isWishlisted(variant)}
+                  loading={wishlistLoading === variant?.id}
+                  disabled={!buyerMobile}
+                  onToggle={() => toggleWishlist(variant)}
+                />
+                <div className="flex h-11 shrink-0 items-center overflow-hidden rounded-xl border border-border bg-white">
                   <button
                     type="button"
-                    className="grid h-12 w-11 place-items-center text-muted transition-colors hover:bg-cream hover:text-primary disabled:opacity-30"
+                    className="grid h-11 w-11 place-items-center text-muted transition-colors hover:bg-gray-200/70 hover:text-primary disabled:opacity-30"
                     disabled={qty <= 1}
                     onClick={() => setQty((q) => Math.max(1, q - 1))}
                     aria-label="Decrease quantity"
@@ -431,13 +443,13 @@ export default function ProductDetails() {
                     <Minus className="h-4 w-4" />
                   </button>
 
-                  <span className="grid h-12 min-w-9 place-items-center border-x border-border px-1 text-sm font-bold text-body-dark">
+                  <span className="grid h-11 min-w-9 place-items-center border-x border-border px-1 text-sm font-bold text-body-dark">
                     {qty}
                   </span>
 
                   <button
                     type="button"
-                    className="grid h-12 w-11 place-items-center text-muted transition-colors hover:bg-cream hover:text-primary disabled:opacity-30"
+                    className="grid h-11 w-11 place-items-center text-muted transition-colors hover:bg-gray-200/70 hover:text-primary disabled:opacity-30"
                     disabled={qty >= Number(variant.no_of_units)}
                     onClick={() =>
                       setQty((q) =>
@@ -451,8 +463,7 @@ export default function ProductDetails() {
                 </div>
 
                 <Button
-                  size="lg"
-                  className="h-12 flex-1 rounded-xl font-semibold shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                  className="h-11 flex-1 rounded-xl font-semibold shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                   disabled={Number(variant.no_of_units) < 1}
                   onClick={add}
                 >
@@ -463,40 +474,49 @@ export default function ProductDetails() {
             </>
           )}
 
-          {deliveryStates.length > 0 && (
+          {(deliveryCoverage.allStates ||
+            deliveryCoverage.states.length > 0) && (
             <div className="mt-6 rounded-2xl border border-border bg-white p-4">
-              <div className="flex items-start gap-3">
-                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-light-blue text-primary">
+              <div className="flex items-start gap-2">
+                <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-red-100 text-red-600">
                   <MapPin className="h-4 w-4" />
                 </div>
 
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 mt-1">
                   <h3 className="text-sm font-bold text-body-dark">
                     Delivery available in
                   </h3>
 
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {deliveryStates.map((location) => (
-                      <div
-                        key={location.state_name}
-                        className="rounded-lg border border-border bg-cream px-3 py-2"
-                      >
-                        <div className="text-xs font-semibold text-body-light">
-                          {location.state_name}
-                        </div>
+                  {deliveryCoverage.allStates ? (
+                    <div className="mt-3 inline-flex items-center rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                      <span className="text-xs font-semibold text-orange-600">
+                        All over India
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {deliveryCoverage.states.map((location) => (
+                        <div
+                          key={location.state_name}
+                          className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2"
+                        >
+                          <div className="text-xs font-semibold text-body-light">
+                            {location.state_name}
+                          </div>
 
-                        {location.all_districts ? (
-                          <div className="mt-0.5 text-[11px] text-primary">
-                            All districts
-                          </div>
-                        ) : location.districts?.length > 0 ? (
-                          <div className="mt-0.5 text-[11px] text-muted">
-                            {location.districts.join(", ")}
-                          </div>
-                        ) : null}
-                      </div>
-                    ))}
-                  </div>
+                          {location.all_districts ? (
+                            <div className="mt-0.5 text-[11px] text-gray-600">
+                              All districts
+                            </div>
+                          ) : location.districts?.length > 0 ? (
+                            <div className="mt-0.5 text-[11px]  text-gray-600">
+                              {location.districts.join(", ")}
+                            </div>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

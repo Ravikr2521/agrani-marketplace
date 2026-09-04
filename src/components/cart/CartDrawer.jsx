@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
+  Edit2,
+  ImageOff,
   LockKeyhole,
   Minus,
   Plus,
   ShoppingBag,
   Trash2,
 } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import {
   Sheet,
@@ -17,18 +19,20 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { MobileNumberContext } from "@/context/MobileNumberContext";
+import { getBuyerMobileNumber } from "@/utils/mobileNumber";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
+import { useOrderApi } from "@/api/orders";
 import { useCart } from "@/context/CartContext";
 import { useOrder } from "@/context/OrderContext";
-import { createOrder } from "@/api/orders";
 import { formatINR } from "@/lib/utils";
-import { toast } from "sonner";
 import confetti from "canvas-confetti";
+import { toast } from "sonner";
 
 function CheckoutSteps({ step }) {
   const steps = [
@@ -125,9 +129,13 @@ export default function CartDrawer({ open, onOpenChange }) {
   } = useCart();
 
   const { saveOrder } = useOrder();
+  const { createOrder } = useOrderApi();
+  const { requireMobileNumber } = useContext(MobileNumberContext);
+  const verifiedMobile = getBuyerMobileNumber();
 
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [isMobileLocked, setIsMobileLocked] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -154,13 +162,14 @@ export default function CartDrawer({ open, onOpenChange }) {
   }, [open]);
 
   useEffect(() => {
-    const savedPhone = localStorage.getItem("farmers_marketplace_buyer_phone");
+    const savedPhone = getBuyerMobileNumber();
 
     if (savedPhone) {
       setForm((current) => ({
         ...current,
         phone: savedPhone,
       }));
+      setIsMobileLocked(true);
     }
   }, []);
 
@@ -184,9 +193,10 @@ export default function CartDrawer({ open, onOpenChange }) {
     if (step === 3) {
       confetti({
         particleCount: 120,
-        spread: 80,
+        spread: 70,
         startVelocity: 40,
-        origin: { y: 0.6 },
+        angle: 130,
+        origin: { x: 0.98, y: 0.6 },
         zIndex: 9999,
       });
     }
@@ -231,8 +241,9 @@ export default function CartDrawer({ open, onOpenChange }) {
         })),
         delivery_address: form.address.trim(),
         delivery_pincode: form.pincode,
-        buyer_name: form.name.trim(),
-        buyer_phone: form.phone,
+        receiver_name: form.name.trim(),
+        receiver_phone: form.phone,
+        buyer_phone: verifiedMobile,
       };
 
       const response = await createOrder(payload);
@@ -286,7 +297,7 @@ export default function CartDrawer({ open, onOpenChange }) {
           bg-[#fffdf8]
           p-0
           shadow-[-20px_0_60px_rgba(0,0,0,0.12)]
-          sm:max-w-120
+          sm:max-w-110
         "
       >
         <SheetHeader
@@ -361,19 +372,14 @@ export default function CartDrawer({ open, onOpenChange }) {
           >
             <div
               className="
-                grid
-                h-20
-                w-20
-                place-items-center
-                rounded-[26px]
-                bg-light-blue
-                text-primary
+                h-40
+                w-40
               "
             >
-              <ShoppingBag className="h-8 w-8" />
+              <img src="/images/empty-cart.png" alt="Empty Cart" />
             </div>
 
-            <h3 className="mt-5 text-2xl font-bold tracking-tight text-body-dark">
+            <h3 className=" text-2xl font-semibold tracking-tight text-body-dark">
               Your cart is empty
             </h3>
 
@@ -457,7 +463,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                             border-border
                             bg-white
                             p-3
-                            shadow-sm
+                            shadow-xs
                           "
                         >
                           <div className="flex min-w-0 gap-3">
@@ -470,7 +476,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                 rounded-xl
                                 border
                                 border-border/70
-                                bg-cream
+                                bg-gray-100
                                 sm:h-20
                                 sm:w-20
                               "
@@ -482,8 +488,13 @@ export default function CartDrawer({ open, onOpenChange }) {
                                   className="h-full w-full object-cover"
                                 />
                               ) : (
-                                <div className="grid h-full w-full place-items-center text-muted">
-                                  <ShoppingBag className="h-5 w-5" />
+                                <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-gray-100 px-1 text-center text-primary">
+                                  <span className="grid h-7 w-7 place-items-center rounded-lg bg-white/80 shadow-xs sm:h-8 sm:w-8">
+                                    <ImageOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                  </span>
+                                  <span className="text-[8px] font-semibold leading-none sm:text-[9px]">
+                                    No image
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -681,7 +692,17 @@ export default function CartDrawer({ open, onOpenChange }) {
                       hover:-translate-y-0.5
                       hover:shadow-lg
                     "
-                    onClick={() => setStep(2)}
+                    onClick={() => {
+                      if (verifiedMobile) {
+                        setStep(2);
+                      } else {
+                        requireMobileNumber((mobile) => {
+                          setForm((current) => ({ ...current, phone: mobile }));
+                          setIsMobileLocked(true);
+                          setStep(2);
+                        });
+                      }
+                    }}
                   >
                     Continue to delivery
                     <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -735,26 +756,56 @@ export default function CartDrawer({ open, onOpenChange }) {
                         </div>
 
                         <div>
-                          <label className="mb-1.5 block text-sm font-semibold text-body-light">
-                            Mobile number{" "}
-                            <span className="text-red-500">*</span>
-                          </label>
+                          <div className="mb-1.5 flex items-center justify-between">
+                            <label className="block text-sm font-semibold text-body-light">
+                              Mobile number{" "}
+                              <span className="text-red-500">*</span>
+                            </label>
+
+                            {isMobileLocked ? (
+                              <button
+                                type="button"
+                                onClick={() => setIsMobileLocked(false)}
+                                className="flex items-center gap-1 text-xs text-primary hover:underline"
+                              >
+                                <Edit2 className="h-3 w-3" />
+                                Change
+                              </button>
+                            ) : (
+                              verifiedMobile &&
+                              form.phone !== verifiedMobile && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    updateForm("phone", verifiedMobile);
+                                    setIsMobileLocked(true);
+                                  }}
+                                  className="flex items-center gap-1 text-xs text-primary hover:underline"
+                                >
+                                  Verified Mobile
+                                </button>
+                              )
+                            )}
+                          </div>
 
                           <Input
                             inputMode="numeric"
                             maxLength={10}
                             value={form.phone}
-                            onChange={(event) =>
-                              updateForm(
-                                "phone",
-                                event.target.value
-                                  .replace(/\D/g, "")
-                                  .slice(0, 10),
-                              )
-                            }
+                            onChange={(event) => {
+                              if (!isMobileLocked) {
+                                updateForm(
+                                  "phone",
+                                  event.target.value
+                                    .replace(/\D/g, "")
+                                    .slice(0, 10),
+                                );
+                              }
+                            }}
                             placeholder="10-digit number"
                             autoComplete="tel"
                             className="h-11 rounded-xl"
+                            disabled={isMobileLocked}
                           />
 
                           {errors.phone && (
@@ -862,12 +913,15 @@ export default function CartDrawer({ open, onOpenChange }) {
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex flex-1 items-center justify-center overflow-y-auto px-4 py-8 sm:px-6">
                   <div className="flex w-full max-w-sm flex-col items-center text-center">
-                    <div className=" relative grid h-20 w-20 shrink-0 place-items-center rounded-full bg-light-blue text-primary ring-8 ring-emerald-50/70 ">
-                      <div className="absolute inset-2 rounded-full border border-light-blue" />
-                      <CheckCircle2 className="relative h-10 w-10 stroke-[2.2]" />
+                    <div className="h-30 w-30">
+                      <img
+                        src="/images/check.jpg"
+                        alt="Order Confirmed"
+                        className="mix-blend-multiply"
+                      />
                     </div>
 
-                    <h2 className="mt-6 text-2xl font-black tracking-tight text-body-dark">
+                    <h2 className=" text-xl font-black tracking-tight text-body-dark">
                       Order confirmed!
                     </h2>
 
@@ -876,7 +930,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                       preparing it shortly.
                     </p>
 
-                    <div className="mt-7 w-full overflow-hidden rounded-2xl border border-border bg-white text-left shadow-sm">
+                    <div className="mt-6 w-full overflow-hidden rounded-2xl border border-orange-100 bg-white text-left shadow-xs">
                       <div className="flex items-center justify-between gap-3 px-4 py-4">
                         <div className="flex min-w-0 items-center gap-3">
                           <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-light-blue text-primary">
@@ -888,7 +942,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                               Order summary
                             </p>
 
-                            <p className="mt-0.5 text-sm font-bold text-body-dark">
+                            <p className=" text-sm font-bold text-body-dark">
                               {confirmedSummary.count} item
                               {confirmedSummary.count !== 1 ? "s" : ""}
                             </p>

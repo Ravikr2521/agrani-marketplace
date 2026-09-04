@@ -1,24 +1,17 @@
-import { Link, useParams } from "react-router-dom";
+import { KeyRound, MapPin, PhoneCall, UserRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ArrowLeft,
-  MapPin,
-  UserRound,
-  KeyRound,
-  PhoneCall,
-} from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 
-import { getOrdersByPhone } from "@/api/orders";
-import { getProducts } from "@/api/products";
+import { useOrderApi } from "@/api/orders";
+import { useProductApi } from "@/api/products";
 
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import ErrorState from "@/components/common/ErrorState";
-
 import { formatDate, formatINR } from "@/lib/utils";
 
 const getMediaUrl = (media) => {
@@ -137,6 +130,8 @@ function OrderDetailsSkeleton() {
 }
 
 export default function OrderDetails() {
+  const { getOrdersByPhone } = useOrderApi();
+  const { getProducts } = useProductApi();
   const { id } = useParams();
 
   const [order, setOrder] = useState(null);

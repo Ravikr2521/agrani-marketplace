@@ -17,14 +17,15 @@ import { formatINR } from "@/lib/utils";
 import ProductCarousel from "../products/ProductCarousel";
 import ProductDetailsSheet from "../products/ProductDetailsSheet";
 
-import { requestProductEdit, toggleProduct } from "@/api/products";
-import { toast } from "sonner";
-import { MoreVertical, Pencil, Power } from "lucide-react";
+import { useProductApi } from "@/api/products";
+import { useAuth } from "@/context/AuthContext";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { MoreVertical, Pencil, Power } from "lucide-react";
+import { toast } from "sonner";
 
 const toTitleCase = (str = "") =>
   str.replace(
@@ -36,6 +37,9 @@ const getMediaUrl = (media) =>
   media?.productImgUrl || media?.image || media?.file || media?.url || "";
 
 const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
+  const { requestProductEdit, toggleProduct } = useProductApi();
+  const { SellerMobile } = useAuth();
+
   const [variantSheetOpen, setVariantSheetOpen] = useState(false);
   const [selectedVariantId, setSelectedVariantId] = useState(null);
 
@@ -47,6 +51,16 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
 
   const [isActive, setIsActive] = useState(product?.is_active === true);
   const [actionLoading, setActionLoading] = useState(false);
+
+  // Check if current user is the seller of this product
+  const isOwnProduct = useMemo(() => {
+    const productSellerMobile = product?.seller_detail?.mobile;
+    return (
+      productSellerMobile &&
+      SellerMobile &&
+      productSellerMobile === SellerMobile
+    );
+  }, [product?.seller_detail?.mobile, SellerMobile]);
 
   const availableVariants = useMemo(() => {
     return (product?.variants ?? []).filter(
@@ -383,12 +397,12 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3 p-4">
+              <div className="flex flex-col gap-3 p-4 -mt-2">
                 <div>
                   <div className="flex items-center justify-between gap-2">
                     <Link
                       to={`/products/${product.id}`}
-                      className="min-w-0 truncate text-left text-lg font-bold text-body-dark transition-colors hover:text-primary"
+                      className="min-w-0 truncate text-left text-[15px] font-bold text-body-dark/90 transition-colors hover:text-primary"
                     >
                       {product?.name}
                     </Link>
@@ -398,7 +412,7 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                     </span>
                   </div>
 
-                  <Link
+                  {/* <Link
                     to={`/seller/${encodeURIComponent(
                       product?.seller_detail?.user_id || "",
                     )}`}
@@ -408,37 +422,20 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                     <span className="font-semibold text-body-light">
                       {product?.seller_detail?.user_name || "Farmer"}
                     </span>
-                  </Link>
+                  </Link> */}
                 </div>
 
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-2">
                   <div className="min-w-0">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold leading-none tracking-tight text-body-dark">
+                      <span className="text-xl font-semibold leading-none tracking-tight text-body-dark">
                         {formatINR(variant.price)}
                       </span>
 
-                      <span className="whitespace-nowrap text-[13px] leading-none text-muted">
-                        {variant.pack_quantity} {variant.pack_unit} / pack
+                      <span className="whitespace-nowrap text-[12px] leading-none text-muted">
+                        {variant.pack_quantity} {variant.pack_unit}
                       </span>
                     </div>
-                  </div>
-
-                  <span className="shrink-0 whitespace-nowrap text-sm font-bold text-primary">
-                    {variant.no_of_units} available
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`h-2 w-2 rounded-full ${isActive ? "bg-emerald-500" : "bg-stone-400"}`}
-                    />
-                    <span
-                      className={`text-xs font-semibold ${isActive ? "text-primary" : "text-muted"}`}
-                    >
-                      {isActive ? "Active" : "Inactive"}
-                    </span>
                   </div>
 
                   <Popover>
@@ -446,7 +443,7 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                       <button
                         type="button"
                         aria-label="Product actions"
-                        className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-white text-muted shadow-xs transition hover:bg-stone-50 hover:text-body-dark active:scale-95"
+                        className="grid h-8 w-8 place-items-center rounded-lg border border-border bg-white text-muted shadow-xs transition hover:bg-stone-50 hover:text-body-dark active:scale-95"
                       >
                         <MoreVertical className="h-5 w-5" />
                       </button>
@@ -633,10 +630,9 @@ function ActionSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="overflow-hidden rounded-t-[30px] border-0 bg-white px-4 pb-6 pt-3 shadow-2xl sm:px-6"
+        className="overflow-hidden rounded-t-[30px] border-0 bg-white px-4 pb-6 pt-3 shadow-2xl sm:px-6 md:inset-x-0 md:inset-y-0 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:h-auto md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[28px] md:p-6 md:shadow-2xl md:ring-1 md:ring-black/5"
       >
-        <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-stone-200" />
-
+        <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-stone-200 md:hidden" />
         <SheetHeader className="space-y-0 text-left">
           <div className="flex items-center gap-3">
             <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-stone-100 ring-1 ring-black/5">

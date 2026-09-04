@@ -1,26 +1,31 @@
+import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Search, ChevronLeft, ChevronRight, X } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
-import ProductGrid from "@/components/products/ProductGrid";
-import ProductFilters from "@/components/products/ProductFilters";
-import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import ErrorState from "@/components/common/ErrorState";
-import { useProducts } from "@/hooks/useProducts";
+import LoadingSkeleton from "@/components/common/LoadingSkeleton";
+import ProductFilters from "@/components/products/ProductFilters";
+import ProductGrid from "@/components/products/ProductGrid";
 import useDebouncedValue from "@/hooks/useDebouncedValue";
+import { useProducts } from "@/hooks/useProducts";
 
-import WelcomCarousel from "../components/common/WelcomCarousel";
-import ProductPromoCarousel from "../components/common/ProductPromoCarousel";
 import MarketplaceHighlightCarousel from "../components/common/MarketplaceHighlightCarousel";
+import ProductPromoCarousel from "../components/common/ProductPromoCarousel";
+import WelcomCarousel from "../components/common/WelcomCarousel";
 import BestSellingProducts from "../components/products/BestSellingProducts";
 import ProductSection from "../components/products/ProductSection";
 
-import { getProducts, getProductRecommendations } from "@/api/products";
+import { useProductApi } from "@/api/products";
+import HomePageSkeleton from "@/components/common/HomePageSkeleton";
+import ProductCard from "@/components/products/ProductCard";
 import { useSearchParams } from "react-router-dom";
 import SearchInput from "../components/common/SearchInput";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const { getProducts, getProductRecommendations } = useProductApi();
+  const { AgraniToken } = useAuth();
+
   const [input, setInput] = useState("");
   const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,8 +43,7 @@ export default function Home() {
     {
       key: "VEGETABLE",
       title: "Fresh Vegetables",
-      description:
-        "Fresh vegetables sourced from verified agricultural sellers.",
+      description: "Fresh vegetables sourced from verified  sellers.",
     },
     {
       key: "PULSES",
@@ -58,6 +62,9 @@ export default function Home() {
     block: "all",
   });
 
+  const [isApplyingLocationFilter, setIsApplyingLocationFilter] =
+    useState(false);
+
   useEffect(() => {
     const category = searchParams.get("category");
 
@@ -74,15 +81,20 @@ export default function Home() {
   const { products, loading, error, retry } = useProducts({
     search: debouncedSearch,
     page,
-    stateCode: filters.stateName,
-    districtCode: filters.districtName,
-    blockCode: filters.blockName,
+    buyerMobile: localStorage.getItem("farmers_marketplace_buyer_phone"),
+    filters,
   });
 
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [recommendationsLoading, setRecommendationsLoading] = useState(true);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
   const [bestSellingLoading, setBestSellingLoading] = useState(true);
+
+  useEffect(() => {
+    if (!loading && isApplyingLocationFilter) {
+      setIsApplyingLocationFilter(false);
+    }
+  }, [loading, isApplyingLocationFilter]);
 
   useEffect(() => {
     setPage(1);
@@ -93,6 +105,15 @@ export default function Home() {
       try {
         setRecommendationsLoading(true);
         setBestSellingLoading(true);
+
+        const token = localStorage.getItem("agrani_auth_token") || AgraniToken;
+        if (!token) {
+          setRecommendedProducts([]);
+          setBestSellingProducts([]);
+          setRecommendationsLoading(false);
+          setBestSellingLoading(false);
+          return;
+        }
 
         const response = await getProductRecommendations(5);
 
@@ -117,6 +138,7 @@ export default function Home() {
         const productResponse = await getProducts({
           page: 1,
           perPage: 100,
+          buyerMobile: localStorage.getItem("farmers_marketplace_buyer_phone"),
         });
 
         const allProducts =
@@ -178,7 +200,7 @@ export default function Home() {
     };
 
     fetchSpecialProducts();
-  }, []);
+  }, [AgraniToken]);
 
   const categories = useMemo(
     () =>
@@ -315,6 +337,15 @@ export default function Home() {
   };
 
   const updateCategory = (nextFilters) => {
+    const isLocationFilterChange =
+      nextFilters.state !== filters.state ||
+      nextFilters.district !== filters.district ||
+      nextFilters.block !== filters.block;
+
+    if (isLocationFilterChange) {
+      setIsApplyingLocationFilter(true);
+    }
+
     setFilters(nextFilters);
     setPage(1);
 
@@ -329,14 +360,123 @@ export default function Home() {
     setSearchParams(params);
   };
 
+  const removeFilter = (key) => {
+    setFilters((current) => {
+      switch (key) {
+        case "state":
+          return {
+            ...current,
+            state: "all",
+            stateName: "",
+            district: "all",
+            districtName: "",
+            block: "all",
+            blockName: "",
+          };
+
+        case "district":
+          return {
+            ...current,
+            district: "all",
+            districtName: "",
+            block: "all",
+            blockName: "",
+          };
+
+        case "block":
+          return {
+            ...current,
+            block: "all",
+            blockName: "",
+          };
+
+        case "category":
+          return {
+            ...current,
+            category: "all",
+          };
+
+        case "availability":
+          return {
+            ...current,
+            availability: "all",
+          };
+
+        case "packUnit":
+          return {
+            ...current,
+            packUnit: "all",
+          };
+
+        case "price":
+          return {
+            ...current,
+            price: "all",
+          };
+
+        default:
+          return current;
+      }
+    });
+
+    setPage(1);
+  };
+
   return (
     <div>
-      <main className="mx-auto mb-20 min-w-0 max-w-350 px-3 py-2 sm:px-6 lg:px-8">
+      <main className="mx-auto mb-20 min-w-0 max-w-350 px-3 py-2 sm:px-6 lg:mb-0 lg:px-8 lg:py-6 lg:pt-5 pt-4">
         <WelcomCarousel />
 
-        <section className="py-6 sm:py-8">
-          <div className="flex w-full flex-col justify-between gap-4 md:flex-row md:mb-0">
-            <div className="flex items-center justify-between gap-3">
+        <section className="py-6 sm:py-8 lg:py-10">
+          <div className="flex w-full flex-col gap-5 md:flex-row md:items-start md:justify-between">
+            <div className="shrink-0">
+              <div className="flex items-center gap-2.5">
+                <span className="h-6 w-1 rounded-full bg-orange-500" />
+
+                <h1 className="text-[17px] font-semibold tracking-tight text-body-dark md:text-2xl">
+                  Products Near By
+                </h1>
+              </div>
+
+              <p className="pl-3.5 text-[13px] leading-6 text-muted sm:text-sm">
+                Fresh products from verified agricultural sellers.
+              </p>
+            </div>
+
+            <div className="hidden w-full max-w-xl flex-col gap-3 md:flex">
+              <SearchInput
+                value={input}
+                onChange={(value) => {
+                  setInput(value);
+                  setPage(1);
+                }}
+                suggestions={searchSuggestions}
+                placeholder="Search for"
+                className="w-full"
+              />
+
+              {activeFilters > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {activeFilterEntries.map(([key, value]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => removeFilter(key)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-light-blue bg-light-blue px-3 py-1.5 text-xs font-semibold text-primary transition-all duration-200 hover:opacity-80"
+                    >
+                      <span>{formatFilterName(key)}:</span>
+
+                      <span>{getFilterDisplayValue(key, value)}</span>
+
+                      <X className="h-3 w-3" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Search + Filter */}
+            <div className="flex w-full items-center gap-3 md:hidden">
               <SearchInput
                 value={input}
                 onChange={(value) => {
@@ -348,49 +488,71 @@ export default function Home() {
                 className="flex-1"
               />
 
-              <div className="md:hidden">
-                <ProductFilters
-                  categories={categories}
-                  packUnits={packUnits}
-                  value={filters}
-                  onChange={updateCategory}
-                />
-              </div>
-            </div>
-
-            <div className="mt-2 -mb-3">
-              <div className="flex items-center gap-2.5">
-                <span className="h-6 w-1 rounded-full bg-orange-500" />
-
-                <h1 className="text-[17px] font-semibold tracking-tight text-body-dark sm:text-3xl">
-                  Products Near By
-                </h1>
-              </div>
-
-              <p className="-mt-1 pl-3.5 text-[13px] leading-6 text-muted">
-                Fresh products from verified agricultural sellers.
-              </p>
+              <ProductFilters
+                categories={categories}
+                packUnits={packUnits}
+                value={filters}
+                onChange={updateCategory}
+              />
             </div>
           </div>
         </section>
 
-        <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_255px]">
-          <section className="min-w-0 pb-20">
-            {loading ? (
-              <LoadingSkeleton count={4} />
-            ) : error ? (
-              <ErrorState message={error} onRetry={retry} />
-            ) : filtered.length ? (
-              <div className="space-y-10">
+        <section className="min-w-0 pb-20 md:pb-7 md:-mt-3">
+          <div className="grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_250px] xl:gap-6">
+            <div className="min-w-0">
+              {loading ? (
+                <HomePageSkeleton count={8} />
+              ) : error ? (
+                <ErrorState message={error} onRetry={retry} />
+              ) : filtered.length ? (
                 <ProductGrid products={filtered} />
+              ) : (
+                <EmptyState
+                  title="No products found"
+                  description="Try changing your search or filters."
+                />
+              )}
+            </div>
 
-                <BestSellingProducts products={bestSellingProducts} />
+            <aside className="hidden lg:sticky lg:top-3 lg:block">
+              <ProductFilters
+                categories={categories}
+                packUnits={packUnits}
+                value={filters}
+                onChange={updateCategory}
+              />
+            </aside>
+          </div>
 
-                <ProductPromoCarousel />
+          {!loading && filtered.length > 0 && (
+            <div className="mt-12 space-y-8 lg:space-y-12">
+              <BestSellingProducts products={bestSellingProducts} />
 
-                {recommendationsLoading ? (
+              <ProductPromoCarousel />
+
+              {recommendationsLoading ? (
+                <section>
+                  <div className="mb-5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="h-6 w-1 rounded-full bg-orange-500" />
+
+                      <h2 className="text-xl font-semibold tracking-tight text-body-dark sm:text-2xl">
+                        Top Recommendations
+                      </h2>
+                    </div>
+
+                    <p className="pl-3.5 text-sm leading-6 text-muted">
+                      Products picked especially for you.
+                    </p>
+                  </div>
+
+                  <LoadingSkeleton count={4} />
+                </section>
+              ) : (
+                recommendedProducts.length > 0 && (
                   <section>
-                    <div className="mb-4">
+                    <div className="mb-5">
                       <div className="flex items-center gap-2.5">
                         <span className="h-6 w-1 rounded-full bg-orange-500" />
 
@@ -404,107 +566,42 @@ export default function Home() {
                       </p>
                     </div>
 
-                    <LoadingSkeleton count={4} />
+                    <div className="grid min-w-0 grid-cols-2 gap-3 xs:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                      {recommendedProducts.map((p) => (
+                        <ProductCard key={p.id} product={p} />
+                      ))}
+                    </div>
                   </section>
-                ) : (
-                  recommendedProducts.length > 0 && (
-                    <section>
-                      <div className="mb-4">
-                        <div className="flex items-center gap-2.5">
-                          <span className="h-6 w-1 rounded-full bg-orange-500" />
+                )
+              )}
 
-                          <h2 className="text-xl font-semibold tracking-tight text-body-dark sm:text-2xl">
-                            Top Recommendations
-                          </h2>
-                        </div>
+              <MarketplaceHighlightCarousel />
 
-                        <p className="pl-3.5 text-sm leading-6 text-muted">
-                          Products picked especially for you.
-                        </p>
-                      </div>
+              {categorizedProducts.map((section) => (
+                <section key={section.key}>
+                  <div className="mb-5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="h-6 w-1 rounded-full bg-orange-500" />
 
-                      <ProductGrid products={recommendedProducts} />
-                    </section>
-                  )
-                )}
-
-                <MarketplaceHighlightCarousel />
-
-                {categorizedProducts.map((section) => (
-                  <section key={section.key}>
-                    <div className="mb-4">
-                      <div className="flex items-center gap-2.5">
-                        <span className="h-6 w-1 rounded-full bg-orange-500" />
-
-                        <h2 className="text-xl font-semibold tracking-tight text-body-dark sm:text-2xl">
-                          {section.title}
-                        </h2>
-                      </div>
-
-                      <p className="pl-3.5 text-sm leading-6 text-muted">
-                        {section.description}
-                      </p>
+                      <h2 className="text-xl font-semibold tracking-tight text-body-dark sm:text-2xl">
+                        {section.title}
+                      </h2>
                     </div>
 
-                    <ProductSection
-                      products={section.products}
-                      layout="carousel"
-                    />
-                  </section>
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                title="No products found"
-                description="Try changing your search or filters."
-              />
-            )}
-          </section>
+                    <p className="pl-3.5 text-sm leading-6 text-muted">
+                      {section.description}
+                    </p>
+                  </div>
 
-          <aside className="hidden lg:sticky lg:top-24 lg:block">
-            {activeFilters > 0 && (
-              <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
-                {activeFilterEntries.map(([key, value]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() =>
-                      setFilters((current) => ({
-                        ...current,
-                        [key]: "all",
-                        ...(key === "state" && {
-                          state: "",
-                        }),
-                        ...(key === "district" && {
-                          district: "",
-                        }),
-                        ...(key === "block" && {
-                          block: "",
-                        }),
-                      }))
-                    }
-                    className="inline-flex items-center gap-1.5 rounded-full border border-light-blue bg-light-blue px-3 py-1.5 text-xs font-semibold text-primary transition-all duration-200 hover:bg-light-blue"
-                  >
-                    <span className="text-primary">
-                      {formatFilterName(key)}:
-                    </span>
-
-                    <span>{getFilterDisplayValue(key, value)}</span>
-
-                    <X className="h-3 w-3" />
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <ProductFilters
-              categories={categories}
-              packUnits={packUnits}
-              value={filters}
-              onChange={updateCategory}
-            />
-          </aside>
-        </div>
+                  <ProductSection
+                    products={section.products}
+                    layout="carousel"
+                  />
+                </section>
+              ))}
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );

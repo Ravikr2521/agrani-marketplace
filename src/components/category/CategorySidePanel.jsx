@@ -52,7 +52,7 @@ export default function CategorySidePanel({
   ];
 
   return (
-    <aside className="w-17 shrink-0 sm:w-32 lg:w-36">
+    <aside className="w-17 shrink-0 sm:w-30 lg:w-16">
       <div className="space-y-5">
         {items.map((item) => {
           const active =
@@ -80,8 +80,8 @@ export default function CategorySidePanel({
                   duration-200
                   sm:h-22
                   sm:w-22
-                  lg:h-24
-                  lg:w-24
+                  lg:h-20
+                  lg:w-20
                   ${
                     active
                       ? "border-primary  bg-light-blue ring-2 ring-primary/10"

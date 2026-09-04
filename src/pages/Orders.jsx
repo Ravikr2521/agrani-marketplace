@@ -1,29 +1,30 @@
-import { useEffect, useState } from "react";
 import {
+  ArrowRight,
+  CheckCircle2,
+  ClipboardList,
+  Clock,
+  Phone,
   RefreshCw,
   ShoppingBag,
-  Phone,
-  CheckCircle2,
-  Clock,
   Truck,
-  ArrowRight,
-  ClipboardList,
+  UserRound,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import { getOrdersByPhone } from "@/api/orders";
+import { useOrderApi } from "@/api/orders";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import OtpGate from "@/components/auth/OtpGate";
 import OrderDetailsSheet from "@/components/orders/OrderDetailsSheet";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 import { formatDate, formatINR } from "@/lib/utils";
 
 function OrderCardSkeleton() {
   return (
     <Card className="w-full overflow-hidden rounded-xl border-border bg-white p-0 shadow-xs">
-      <div className="p-4">
+      <div className="p-4 lg:p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
@@ -68,21 +69,22 @@ function OrderCard({ order, onViewDetails }) {
 
   const isDelivered = status === "delivered";
   const isShipped = status === "shipped";
+  const isCompleted = status === "completed";
 
   const getStatusIcon = () => {
-    if (isDelivered) {
-      return <CheckCircle2 className="h-3.5 w-3.5 text-secondary" />;
+    if (isDelivered || isCompleted) {
+      return <CheckCircle2 className="h-3 w-3 text-secondary" />;
     }
 
     if (isShipped) {
-      return <Truck className="h-3.5 w-3.5 text-accent" />;
+      return <Truck className="h-3 w-3 text-accent" />;
     }
 
-    return <Clock className="h-3.5 w-3.5 text-accent" />;
+    return <Clock className="h-3 w-3 text-accent" />;
   };
 
   const getStatusColor = () => {
-    if (isDelivered) {
+    if (isDelivered || isCompleted) {
       return "bg-secondary/10 text-secondary";
     }
 
@@ -94,17 +96,17 @@ function OrderCard({ order, onViewDetails }) {
   };
 
   return (
-    <Card className="group w-full overflow-hidden rounded-xl border-border bg-white p-0 shadow-xs transition-all duration-200 hover:shadow-sm">
-      <div className="p-4">
+    <Card className="group w-full overflow-hidden rounded-xl border-border bg-white p-0 shadow-xs transition-colors duration-200 lg:hover:border-primary/30">
+      <div className="p-4 lg:p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex min-w-0 items-center gap-2">
-              <span className="truncate text-sm font-bold tracking-tight text-body-dark">
+              <span className="truncate text-sm font-bold tracking-tight text-body-dark lg:text-[15px]">
                 #{order.id}
               </span>
 
               <Badge
-                className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${getStatusColor()}`}
+                className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold ${getStatusColor()}`}
               >
                 <span className="flex items-center gap-1">
                   {getStatusIcon()}
@@ -123,18 +125,28 @@ function OrderCard({ order, onViewDetails }) {
                 {order.items?.length === 1 ? "item" : "items"}
               </span>
             </div>
+
+            {order.buyer_name && (
+              <div className="mt-2 flex min-w-0 items-center gap-1.5">
+                <UserRound className="h-3 w-3 shrink-0 text-primary" />
+
+                <span className="truncate text-[11px] font-medium text-muted">
+                  {order.buyer_name}
+                </span>
+              </div>
+            )}
           </div>
 
           <ShoppingBag className="mt-0.5 h-4 w-4 shrink-0 text-muted" />
         </div>
 
-        <div className="flex justify-between items-end border-t border-muted/10 mt-4 pt-3">
+        <div className="flex justify-between items-center border-t border-border/60 mt-4 pt-3 lg:mt-3 lg:pt-4">
           <div className="">
             <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted">
               Order total
             </p>
 
-            <p className="mt-0.5 text-lg font-semibold tracking-tight text-body-dark">
+            <p className="mt-0.5 text-lg font-semibold tracking-tight text-body-dark lg:text-xl">
               {formatINR(total)}
             </p>
           </div>
@@ -144,10 +156,10 @@ function OrderCard({ order, onViewDetails }) {
               type="button"
               variant="outline"
               onClick={() => onViewDetails(order.id)}
-              className=" h-9 w-full  "
+              size="sm"
             >
               View details
-              <ArrowRight className="ml-1.5 h-3.5 w-3.5 transition-transform duration-200 group-hover/button:translate-x-1" />
+              <ArrowRight className=" h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
             </Button>
           </div>
         </div>
@@ -157,6 +169,7 @@ function OrderCard({ order, onViewDetails }) {
 }
 
 function OrdersContent({ phone, onReset }) {
+  const { getOrdersByPhone } = useOrderApi();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -214,8 +227,8 @@ function OrdersContent({ phone, onReset }) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-white px-3.5 py-2.5">
+    <div className="space-y-4 lg:space-y-5">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-white px-3.5 py-2.5 lg:px-4 lg:py-3">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-muted">
             Orders for
@@ -224,7 +237,7 @@ function OrdersContent({ phone, onReset }) {
           <div className="mt-0.5 flex min-w-0 items-center gap-1.5">
             <Phone className="h-3 w-3 shrink-0 text-primary" />
 
-            <span className="truncate text-sm font-semibold text-body-dark">
+            <span className="truncate text-sm font-semibold text-body-dark lg:text-[15px]">
               {phone}
             </span>
 
@@ -251,13 +264,13 @@ function OrdersContent({ phone, onReset }) {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <OrderCardSkeleton key={index} />
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-xl border border-border bg-cream p-4 text-center">
+        <div className="rounded-xl border border-border bg-cream p-4 text-center lg:p-6">
           <p className="text-sm font-medium text-body-dark">{error}</p>
 
           <Button
@@ -270,8 +283,8 @@ function OrdersContent({ phone, onReset }) {
           </Button>
         </div>
       ) : orders.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-cream/50 p-6 text-center">
-          <div className="grid h-14 w-14 place-items-center rounded-xl border border-border bg-white shadow-xs">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-cream/50 p-6 text-center lg:p-10">
+          <div className="grid h-14 w-14 place-items-center rounded-xl border border-border bg-white">
             <ShoppingBag className="h-6 w-6 text-muted" />
           </div>
 
@@ -284,7 +297,7 @@ function OrdersContent({ phone, onReset }) {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">
           {orders.map((order) => (
             <OrderCard
               key={order.id}
@@ -295,7 +308,7 @@ function OrdersContent({ phone, onReset }) {
         </div>
       )}
 
-      <div className="border-t border-border pt-3">
+      <div className="border-t border-border pt-3 md:hidden flex">
         <Button
           size="sm"
           variant="ghost"
@@ -335,8 +348,8 @@ export default function Orders() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-280 flex-col bg-[#fffdf8]">
-      <div className="sticky top-0 z-10 flex items-center gap-3 border border-stone-200 bg-white px-4 py-3 sm:px-5">
+    <main className="mx-auto flex min-h-screen max-w-280 md:px-8 md:max-w-350 flex-col md:bg-transparent bg-[#fffdf8] lg:pt-4">
+      <div className="sticky top-0 z-10 flex items-center gap-3 border border-stone-200 bg-white  px-4 py-3 sm:px-5 md:hidden">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-600/80 text-white shadow-sm">
           <ClipboardList className="h-4.5 w-4.5" />
         </div>
@@ -353,10 +366,38 @@ export default function Orders() {
           </p>
         </div>
       </div>
+      <div className=" hidden  md:flex justify-between lg:items-center">
+        <div className=" max-w-350 px-3 pb-2  lg:px-0">
+          <div className="flex items-center gap-2.5">
+            <span className="h-7 w-1 rounded-full bg-orange-500" />
 
-      <div className="flex-1 px-4 pb-20 pt-5 md:px-8">
+            <h1 className="text-xl font-bold tracking-tight text-body-dark/90 lg:text-2xl">
+              Order history
+            </h1>
+          </div>
+
+          <p className="mt-1 pl-3.5 text-sm text-muted">
+            {verifiedPhone
+              ? "View and manage your marketplace orders"
+              : "Verify your mobile number to access your order history"}
+          </p>
+        </div>
+
+        <div className=" border-border pt-3 ">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleReset}
+            className="h-8 text-xs font-semibold text-muted"
+          >
+            Switch account
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex-1 flex flex-col md:px-2 px-4 pb-20 pt-5 ">
         {!verifiedPhone ? (
-          <div className="flex min-h-[calc(100vh-170px)] items-center justify-center pb-6">
+          <div className="flex flex-1 items-center justify-center pb-6">
             <div className="w-full max-w-sm rounded-2xl border border-stone-200 bg-white p-5 sm:p-6">
               <OtpGate onVerified={handleVerified} />
             </div>

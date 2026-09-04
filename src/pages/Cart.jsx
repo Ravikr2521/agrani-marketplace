@@ -1,27 +1,30 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
+  Edit2,
+  ImageOff,
   LockKeyhole,
   Minus,
   Plus,
   ShoppingBag,
   Trash2,
 } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { getBuyerMobileNumber } from "@/utils/mobileNumber";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-
+import { Textarea } from "@/components/ui/textarea";
+import { useOrderApi } from "@/api/orders";
 import { useCart } from "@/context/CartContext";
+import { MobileNumberContext } from "@/context/MobileNumberContext";
 import { useOrder } from "@/context/OrderContext";
-import { createOrder } from "@/api/orders";
 import { formatINR } from "@/lib/utils";
-import { toast } from "sonner";
 import confetti from "canvas-confetti";
+import { toast } from "sonner";
 
 function CheckoutSteps({ step }) {
   const steps = [
@@ -114,11 +117,15 @@ export default function Cart() {
     removeFromCart,
     clearCart,
   } = useCart();
+  const { createOrder } = useOrderApi();
 
   const { saveOrder } = useOrder();
+  const { requireMobileNumber, getCurrentMobile } =
+    useContext(MobileNumberContext);
 
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [isMobileLocked, setIsMobileLocked] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -137,13 +144,14 @@ export default function Cart() {
   const count = getCartItemCount();
 
   useEffect(() => {
-    const savedPhone = localStorage.getItem("farmers_marketplace_buyer_phone");
+    const savedPhone = getBuyerMobileNumber();
 
     if (savedPhone) {
       setForm((current) => ({
         ...current,
         phone: savedPhone,
       }));
+      setIsMobileLocked(true);
     }
   }, []);
 
@@ -196,6 +204,21 @@ export default function Cart() {
   };
 
   const placeOrder = async () => {
+    const verifiedMobile = getBuyerMobileNumber();
+    if (!verifiedMobile) {
+      toast.error("Mobile number verification required", {
+        description: "Please verify your mobile number before placing order",
+      });
+      return;
+    }
+
+    if (form.phone !== verifiedMobile) {
+      toast.error("Mobile number mismatch", {
+        description: "Please use your verified mobile number",
+      });
+      return;
+    }
+
     if (!validate() || submitting || items.length === 0) {
       return;
     }
@@ -210,8 +233,9 @@ export default function Cart() {
         })),
         delivery_address: form.address.trim(),
         delivery_pincode: form.pincode,
-        buyer_name: form.name.trim(),
-        buyer_phone: form.phone,
+        receiver_name: form.name.trim(),
+        receiver_phone: form.phone,
+        buyer_phone: verifiedMobile,
       };
 
       const response = await createOrder(payload);
@@ -219,8 +243,6 @@ export default function Cart() {
       if (!response?.data) {
         throw new Error(response?.message || "Order was not created.");
       }
-
-      localStorage.setItem("farmers_marketplace_buyer_phone", form.phone);
 
       saveOrder(response.data);
 
@@ -313,21 +335,11 @@ export default function Cart() {
             text-center
           "
           >
-            <div
-              className="
-              grid
-              h-20
-              w-20
-              place-items-center
-              rounded-[26px]
-              bg-light-blue
-              text-primary
-            "
-            >
-              <ShoppingBag className="h-8 w-8" />
+            <div className="h-40 w-40">
+              <img src="/images/empty-cart.png" alt="Empty Cart" />
             </div>
 
-            <h3 className="mt-5 text-2xl font-bold tracking-tight text-body-dark">
+            <h3 className="text-2xl font-bold tracking-tight text-body-dark">
               Your cart is empty
             </h3>
 
@@ -396,7 +408,6 @@ export default function Cart() {
                 <div className="space-y-3">
                   {items.map((item) => {
                     const quantity = Number(item.quantity);
-                    console.log(item, "checkkk");
                     const availableUnits = Number(item.availableUnits);
 
                     const itemTotal = Number(item.price) * quantity;
@@ -437,8 +448,13 @@ export default function Cart() {
                                 className="h-full w-full object-cover"
                               />
                             ) : (
-                              <div className="grid h-full w-full place-items-center text-muted">
-                                <ShoppingBag className="h-5 w-5" />
+                              <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-linear-to-br from-primary/8 via-cream to-orange-100/70 px-1 text-center text-primary">
+                                <span className="grid h-7 w-7 place-items-center rounded-lg bg-white/80 shadow-xs sm:h-8 sm:w-8">
+                                  <ImageOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                </span>
+                                <span className="text-[8px] font-semibold leading-none sm:text-[9px]">
+                                  No image
+                                </span>
                               </div>
                             )}
                           </div>
@@ -635,7 +651,19 @@ export default function Cart() {
                     hover:-translate-y-0.5
                     hover:shadow-lg
                   "
-                  onClick={() => setStep(2)}
+                  onClick={() => {
+                    const verifiedMobile = getBuyerMobileNumber();
+
+                    if (verifiedMobile) {
+                      setStep(2);
+                    } else {
+                      requireMobileNumber((mobile) => {
+                        setForm((current) => ({ ...current, phone: mobile }));
+                        setIsMobileLocked(true);
+                        setStep(2);
+                      });
+                    }
+                  }}
                 >
                   Continue to delivery
                   <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -689,25 +717,48 @@ export default function Cart() {
                       </div>
 
                       <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-body-light">
-                          Mobile number <span className="text-red-500">*</span>
-                        </label>
+                        <div className="mb-1.5 flex items-center justify-between">
+                          <label className="block text-sm font-semibold text-body-light">
+                            Mobile number{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          {isMobileLocked && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                requireMobileNumber((mobile) => {
+                                  setForm((current) => ({
+                                    ...current,
+                                    phone: mobile,
+                                  }));
+                                });
+                              }}
+                              className="flex items-center gap-1 text-xs text-primary hover:underline"
+                            >
+                              <Edit2 className="h-3 w-3" />
+                              Change
+                            </button>
+                          )}
+                        </div>
 
                         <Input
                           inputMode="numeric"
                           maxLength={10}
                           value={form.phone}
-                          onChange={(event) =>
-                            updateForm(
-                              "phone",
-                              event.target.value
-                                .replace(/\D/g, "")
-                                .slice(0, 10),
-                            )
-                          }
+                          onChange={(event) => {
+                            if (!isMobileLocked) {
+                              updateForm(
+                                "phone",
+                                event.target.value
+                                  .replace(/\D/g, "")
+                                  .slice(0, 10),
+                              );
+                            }
+                          }}
                           placeholder="10-digit number"
                           autoComplete="tel"
                           className="h-11 rounded-xl"
+                          disabled={isMobileLocked}
                         />
 
                         {errors.phone && (
@@ -828,12 +879,15 @@ export default function Cart() {
             <div className="flex min-h-0 flex-1 flex-col">
               <div className="flex-1 overflow-y-auto px-4 py-8 sm:px-6">
                 <div className="mx-auto flex w-full max-w-sm flex-col items-center text-center">
-                  <div className=" relative grid h-20 w-20 shrink-0 place-items-center rounded-full bg-light-blue text-primary ring-8 ring-emerald-50/70 ">
-                    <div className="absolute inset-2 rounded-full border border-light-blue" />
-                    <CheckCircle2 className="relative h-10 w-10 stroke-[2.2]" />
+                  <div className="h-30 w-30 ">
+                    <img
+                      src="/images/check.jpg"
+                      alt="Order Confirmed"
+                      className="mix-blend-multiply"
+                    />
                   </div>
 
-                  <h2 className="mt-6 text-2xl font-black tracking-tight text-body-dark">
+                  <h2 className="mt-4 text-xl font-black tracking-tight text-body-dark">
                     Order confirmed!
                   </h2>
 
@@ -842,7 +896,7 @@ export default function Cart() {
                     preparing it shortly.
                   </p>
 
-                  <div className="mt-7 w-full overflow-hidden rounded-2xl border border-zinc-200 bg-white text-left shadow-xs">
+                  <div className="mt-7 w-full overflow-hidden rounded-2xl border border-orange-100 bg-white text-left shadow-xs">
                     <div className="flex items-center justify-between gap-3 px-4 py-4">
                       <div className="flex min-w-0 items-center gap-3">
                         <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-light-blue text-primary">
@@ -861,7 +915,7 @@ export default function Cart() {
                         </div>
                       </div>
 
-                      <span className="shrink-0 text-lg font-black tracking-tight text-body-dark">
+                      <span className="shrink-0 text-lg font-black tracking-wide text-body-dark">
                         {formatINR(confirmedSummary.total)}
                       </span>
                     </div>
@@ -892,14 +946,14 @@ export default function Cart() {
                   </div>
 
                   <div className="mt-4 flex w-full items-start gap-3 rounded-2xl bg-light-blue/70 px-4 py-3 text-left">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <CheckCircle2 className=" h-4 w-4 shrink-0 text-primary" />
 
                     <div>
                       <p className="text-xs font-bold text-primary">
                         What's next?
                       </p>
 
-                      <p className="mt-0.5 text-[11px] leading-5 text-primary/80">
+                      <p className="mt-1 text-[11px] text-primary/80">
                         Your order has been received and will be prepared for
                         delivery.
                       </p>

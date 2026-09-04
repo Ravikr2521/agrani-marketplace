@@ -93,7 +93,7 @@ export default function SearchInput({
             text-muted
             transition-all
             duration-150
-            hover:bg-cream
+            hover:bg-gray-50
             hover:text-body-light
             active:scale-90
           "

@@ -1,12 +1,6 @@
+import { Minus, Plus, ShoppingCart, User2Icon } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ChevronRight,
-  Minus,
-  Plus,
-  ShoppingCart,
-  User2Icon,
-} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -20,11 +14,13 @@ import {
 import { useCart } from "@/context/CartContext";
 import { formatINR } from "@/lib/utils";
 
-import ProductCarousel from "./ProductCarousel";
+import { useWishlist } from "@/hooks/useWishlist";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Separator } from "../ui/separator";
+import ProductCarousel from "./ProductCarousel";
 import ProductDetailsSheet from "./ProductDetailsSheet";
+import WishlistButton from "./WishlistButton";
 
 const toTitleCase = (str = "") =>
   str.replace(
@@ -36,6 +32,10 @@ const getMediaUrl = (media) =>
   media?.productImgUrl || media?.image || media?.file || media?.url || "";
 
 const ProductCard = memo(function ProductCard({ product }) {
+  const { isWishlisted, wishlistLoading, toggleWishlist } = useWishlist(
+    product?.variants,
+  );
+
   const [variantSheetOpen, setVariantSheetOpen] = useState(false);
   const [selectedVariantId, setSelectedVariantId] = useState(null);
   const [productDetailsOpen, setProductDetailsOpen] = useState(false);
@@ -271,8 +271,9 @@ const ProductCard = memo(function ProductCard({ product }) {
             }}
             className="min-w-0"
           >
+            {/* Mobile */}
             <Card className="overflow-hidden rounded-2xl border-border/70 bg-white shadow-xs transition-all duration-200 active:scale-[0.99] md:hidden">
-              <button
+              <div
                 type="button"
                 onClick={() => openProductDetails(variant)}
                 className="block w-full p-1.5 text-left"
@@ -282,6 +283,14 @@ const ProductCard = memo(function ProductCard({ product }) {
                     images={variantImages}
                     alt={`${product?.name || "Product"} ${variant?.name || ""}`}
                     autoPlay
+                  />
+                  <WishlistButton
+                    variant={variant}
+                    isWishlisted={isWishlisted(variant)}
+                    loading={wishlistLoading === variant.id}
+                    onToggle={toggleWishlist}
+                    size="icon-sm"
+                    className="absolute left-2 top-2 z-30"
                   />
 
                   <div className="absolute right-2 top-2 z-10 flex h-6 items-center rounded-full border border-orange-200/80 bg-white/95 px-2 shadow-sm backdrop-blur-sm">
@@ -294,7 +303,7 @@ const ProductCard = memo(function ProductCard({ product }) {
                     </span>
                   </div>
                 </div>
-              </button>
+              </div>
 
               <div className="p-3 pt-1 flex flex-col gap-3">
                 <button
@@ -343,103 +352,122 @@ const ProductCard = memo(function ProductCard({ product }) {
               </div>
             </Card>
 
-            <Card className="group hidden overflow-hidden border-border/80 bg-white shadow-xs transition-all duration-300 hover:shadow-sm md:block">
+            {/* desktop  */}
+            <Card className="group hidden overflow-hidden rounded-2xl shadow-xs border-border/70 bg-white transition-all duration-300   md:block">
               <Link to={`/products/${product.id}`} className="block p-2">
-                <div className="overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5">
+                <div className="relative overflow-hidden rounded-xl bg-cream shadow-sm ring-1 ring-black/5">
                   <ProductCarousel
                     images={variantImages}
                     alt={`${product?.name || "Product"} ${variant?.name || ""}`}
                     autoPlay
                   />
+
+                  <WishlistButton
+                    variant={variant}
+                    isWishlisted={isWishlisted(variant)}
+                    loading={wishlistLoading === variant.id}
+                    onToggle={toggleWishlist}
+                    size="icon-sm"
+                    className="absolute right-2 top-2 z-30"
+                  />
+
+                  <div className="absolute left-2 top-2 z-20 flex h-6 items-center rounded-full border border-orange-200/80 bg-white/95 px-2 shadow-sm backdrop-blur-sm">
+                    <span className="text-[10px] font-bold leading-none text-orange-700">
+                      {variant.pack_quantity}
+                    </span>
+
+                    <span className="ml-0.5 text-[8px] font-semibold uppercase leading-none text-orange-600">
+                      {variant.pack_unit}
+                    </span>
+                  </div>
                 </div>
               </Link>
 
-              <div className="flex flex-col gap-3 p-4">
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <Link
-                      to={`/products/${product.id}`}
-                      className="min-w-0 truncate text-left text-lg font-bold text-body-dark transition-colors hover:text-primary"
-                    >
-                      {product?.name}
-                    </Link>
+              <div className="flex flex-col px-4 pb-4 ">
+                <div className="min-w-0">
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="block truncate  text-[15px] font-bold tracking-tight text-body-dark/90 transition-colors duration-200 hover:text-primary"
+                  >
+                    {product?.name}
+                  </Link>
 
-                    <span className="shrink-0 text-xs font-semibold text-orange-500">
-                      {toTitleCase(variant.name || "Standard")}
-                    </span>
-                  </div>
+                  {/* {variant?.name && (
+                    <p className="mt-0.5 truncate text-xs font-medium text-muted">
+                      {toTitleCase(variant.name)}
+                    </p>
+                  )} */}
 
                   <Link
                     to={`/seller/${encodeURIComponent(
                       product?.seller_detail?.user_id || "",
                     )}`}
-                    className="mt-1 block w-fit max-w-full truncate text-[13px] text-muted transition-colors hover:text-primary"
+                    className="mt-1.5 inline-flex max-w-full items-center rounded-lg bg-green-50 px-2.5 py-1 text-[10px] font-medium text-primary ring-1 ring-inset ring-green-200/60 transition-colors hover:bg-green-100"
                   >
-                    Seller:{" "}
-                    <span className="font-semibold text-body-light">
+                    <span className="truncate flex items-center gap-1">
+                      <User2Icon className="h-2.5 w-2.5 mb-0.5" />{" "}
                       {product?.seller_detail?.user_name || "Farmer"}
                     </span>
                   </Link>
                 </div>
 
-                <div className="flex items-center justify-between gap-3 ">
+                <div className="my-3 h-px bg-border/60" />
+
+                <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold leading-none tracking-tight text-body-dark">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-xl font-semibold leading-none tracking-tight text-body-dark">
                         {formatINR(variant.price)}
                       </span>
-
-                      <span className="whitespace-nowrap text-[13px] leading-none text-muted">
-                        {variant.pack_quantity} {variant.pack_unit} / pack
-                      </span>
                     </div>
+
+                    <span className="mt-0.5 block text-[11px] font-medium text-muted">
+                      per {variant.pack_quantity} {variant.pack_unit}
+                    </span>
                   </div>
 
-                  <span className="shrink-0 whitespace-nowrap text-sm font-bold text-primary">
-                    {variant.no_of_units} available
-                  </span>
-                </div>
-
-                <div>
-                  {getCartQuantity(variant.id) === 0 ? (
-                    <Button
-                      type="button"
-                      disabled={Number(variant.no_of_units) <= 0}
-                      onClick={() => handleAdd(variant)}
-                      className="h-10 w-full gap-2 text-sm"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add to Cart
-                    </Button>
-                  ) : (
-                    <div className="flex h-10 w-full items-center justify-between overflow-hidden rounded-xl border border-border bg-white">
-                      <button
+                  <div className="shrink-0">
+                    {getCartQuantity(variant.id) === 0 ? (
+                      <Button
                         type="button"
-                        onClick={() => handleDecrease(variant)}
-                        className="grid h-full w-12 place-items-center text-muted hover:bg-cream hover:text-primary"
-                        aria-label="Decrease quantity"
+                        disabled={Number(variant.no_of_units) <= 0}
+                        onClick={() => handleAdd(variant)}
+                        className="flex gap-1 "
+                        size="sm"
                       >
-                        <Minus className="h-3.5 w-3.5" />
-                      </button>
+                        <Plus className=" h-4 w-4 mb-0.5" />
+                        Add to Cart
+                      </Button>
+                    ) : (
+                      <div className="flex h-10 items-center overflow-hidden rounded-xl border border-border bg-white shadow-xs">
+                        <button
+                          type="button"
+                          onClick={() => handleDecrease(variant)}
+                          className="grid h-full w-10 place-items-center text-muted transition-colors hover:bg-gray-100 hover:text-primary"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="h-3.5 w-3.5" />
+                        </button>
 
-                      <span className="text-sm font-bold text-body-dark">
-                        {getCartQuantity(variant.id)}
-                      </span>
+                        <span className="grid h-full min-w-9 place-items-center border-x border-border/60 text-sm font-bold text-body-dark">
+                          {getCartQuantity(variant.id)}
+                        </span>
 
-                      <button
-                        type="button"
-                        disabled={
-                          getCartQuantity(variant.id) >=
-                          Number(variant.no_of_units)
-                        }
-                        onClick={() => handleIncrease(variant)}
-                        className="grid h-full w-12 place-items-center text-muted hover:bg-cream hover:text-primary disabled:opacity-30"
-                        aria-label="Increase quantity"
-                      >
-                        <Plus className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  )}
+                        <button
+                          type="button"
+                          disabled={
+                            getCartQuantity(variant.id) >=
+                            Number(variant.no_of_units)
+                          }
+                          onClick={() => handleIncrease(variant)}
+                          className="grid h-full w-10 place-items-center text-muted transition-colors hover:bg-gray-100 hover:text-primary disabled:opacity-30"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </Card>
@@ -450,18 +478,18 @@ const ProductCard = memo(function ProductCard({ product }) {
       <Sheet open={variantSheetOpen} onOpenChange={setVariantSheetOpen}>
         <SheetContent
           side="bottom"
-          className="max-h-[88vh] overflow-hidden rounded-t-[28px] bg-white p-0"
+          className="max-h-[88vh] overflow-hidden rounded-t-[28px] bg-white p-0 md:inset-x-0 md:inset-y-0 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:h-auto md:max-h-[80vh] md:w-full md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[28px] md:shadow-2xl md:ring-1 md:ring-black/5"
         >
           <SheetHeader className="border-b border-border px-5 pb-4 pt-5 text-left">
             <SheetTitle className="text-xl font-semibold text-body-dark">
               Select variant
             </SheetTitle>
 
-            <p className=" text-sm text-muted">Choose your preferred pack</p>
+            <p className="text-sm text-muted">Choose your preferred pack</p>
           </SheetHeader>
 
-          <div className="overflow-y-auto px-5 pb-8 pt-4">
-            <div className="flex gap-3 overflow-x-auto pb-2">
+          <div className="overflow-y-auto px-5 pb-8 pt-4 md:max-h-[60vh] md:bg-[#f7f7f9b7]">
+            <div className="flex gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:pb-0">
               {availableVariants.map((variant) => {
                 const isSelected =
                   String(selectedVariant?.id) === String(variant.id);
@@ -473,9 +501,9 @@ const ProductCard = memo(function ProductCard({ product }) {
                     key={variant.id}
                     type="button"
                     onClick={() => setSelectedVariantId(variant.id)}
-                    className={`w-33 shrink-0 rounded-2xl border bg-white p-2.5 text-left transition-all ${
+                    className={`w-33 shrink-0 rounded-2xl border bg-white p-2.5 text-left transition-all md:w-full md:p-3 md:hover:shadow-md md:hover:-translate-y-0.5 ${
                       isSelected
-                        ? "border-primary ring-2 ring-primary/15"
+                        ? "border-primary ring-2 ring-primary/15 md:shadow-md"
                         : "border-border"
                     }`}
                   >
@@ -504,17 +532,17 @@ const ProductCard = memo(function ProductCard({ product }) {
                 );
               })}
             </div>
-            <Separator className="mt-2 mb-4 bg-gray-100" />
+            <Separator className="mt-3 mb-4 bg-gray-100 md:bg-gray-200 " />
 
             {selectedVariant && (
-              <div className=" flex items-end justify-between gap-4">
+              <div className="flex items-center justify-between gap-4 md:rounded-2xl md:border md:border-border/70 md:bg-white md:p-4">
                 <div>
                   <p className="text-2xl font-semibold tracking-tight text-body-dark">
                     {formatINR(selectedVariant.price)}
                   </p>
 
-                  <p className=" text-xs text-muted">
-                    / {selectedVariant.pack_quantity}{" "}
+                  <p className="text-xs text-muted">
+                    Per {selectedVariant.pack_quantity}{" "}
                     {selectedVariant.pack_unit}
                   </p>
                 </div>
@@ -524,17 +552,17 @@ const ProductCard = memo(function ProductCard({ product }) {
                     type="button"
                     disabled={Number(selectedVariant.no_of_units) <= 0}
                     onClick={handleSheetAdd}
-                    className="h-11 rounded-xl px-5 text-sm font-semibold"
+                    className="h-11 rounded-xl px-5 text-sm font-semibold md:h-11 md:px-6"
                   >
-                    <ShoppingCart className="mr-1 h-4 w-4" />
+                    <ShoppingCart className="mr-1 h-4 w-4 mb-0.5" />
                     Add
                   </Button>
                 ) : (
-                  <div className="flex h-11  items-center justify-between overflow-hidden rounded-xl border border-border bg-white">
+                  <div className="flex h-11 items-center justify-between overflow-hidden rounded-xl border border-border bg-white md:h-11">
                     <button
                       type="button"
                       onClick={() => handleDecrease(selectedVariant)}
-                      className="grid h-full w-12 place-items-center text-muted hover:bg-cream hover:text-primary disabled:opacity-30"
+                      className="grid h-full w-12 place-items-center text-muted hover:bg-gray-100/80 hover:text-primary disabled:opacity-30"
                       aria-label="Decrease quantity"
                     >
                       <Minus className="h-4 w-4" />
@@ -551,7 +579,7 @@ const ProductCard = memo(function ProductCard({ product }) {
                         Number(selectedVariant.no_of_units)
                       }
                       onClick={() => handleIncrease(selectedVariant)}
-                      className="grid h-full w-12 place-items-center text-muted hover:bg-cream hover:text-primary disabled:opacity-30"
+                      className="grid h-full w-12 place-items-center text-muted hover:bg-gray-100/80 hover:text-primary disabled:opacity-30"
                       aria-label="Increase quantity"
                     >
                       <Plus className="h-4 w-4" />

@@ -1,26 +1,20 @@
+import { MapPin, Phone, PhoneCall, ShoppingBag, UserRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  MapPin,
-  UserRound,
-  KeyRound,
-  PhoneCall,
-  ShoppingBag,
-} from "lucide-react";
 
+import { useOrderApi } from "@/api/orders";
+import { useProductApi } from "@/api/products";
+
+import ErrorState from "@/components/common/ErrorState";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-
-import { getOrdersByPhone } from "@/api/orders";
-import { getProducts } from "@/api/products";
-
-import ErrorState from "@/components/common/ErrorState";
 import { formatDate, formatINR } from "@/lib/utils";
 
 const getMediaUrl = (media) =>
@@ -40,7 +34,7 @@ const getItemImage = (item) => {
 
 function OrderDetailsLoading() {
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4 p-4 md:p-1">
       <div className="rounded-2xl border border-border bg-white p-4">
         <div className="flex items-center justify-between gap-3">
           <Skeleton className="h-5 w-36 rounded-md" />
@@ -86,9 +80,29 @@ function OrderDetailsLoading() {
 }
 
 export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
+  const { getProducts } = useProductApi();
+  const { getOrdersByPhone } = useOrderApi();
+
   const [order, setOrder] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+
+    const updateScreen = () => {
+      setIsDesktop(mediaQuery.matches);
+    };
+
+    updateScreen();
+
+    mediaQuery.addEventListener("change", updateScreen);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateScreen);
+    };
+  }, []);
 
   const loadOrder = async () => {
     if (!orderId) return;
@@ -176,19 +190,232 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
     );
   }, [order]);
 
+  const content = (
+    <div className="space-y-4 p-4 sm:p-5">
+      {loading ? (
+        <OrderDetailsLoading />
+      ) : error ? (
+        <ErrorState message={error} onRetry={loadOrder} />
+      ) : !order ? (
+        <div className="p-6 text-center text-sm text-muted">
+          Order not found.
+        </div>
+      ) : (
+        <>
+          <div className="rounded-2xl border border-border bg-white p-4 sm:p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs text-muted">Order placed</p>
+
+                <p className="mt-1 text-sm font-semibold text-body-dark">
+                  {formatDate(order.created_at)}
+                </p>
+
+                <p className="mt-1 text-sm font-semibold text-body-dark">
+                  #{order.id}
+                </p>
+              </div>
+
+              <Badge variant="warning" className="shrink-0">
+                {order.status || "Pending"}
+              </Badge>
+            </div>
+          </div>
+
+          <section className="rounded-2xl border border-border bg-white p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="font-bold text-body-dark">Ordered products</h2>
+
+              <span className="text-xs text-muted">
+                {order.items?.length || 0}{" "}
+                {order.items?.length === 1 ? "item" : "items"}
+              </span>
+            </div>
+
+            <div className="mt-4 divide-y divide-border">
+              {order.items?.map((item) => {
+                const image = getItemImage(item);
+
+                const itemTotal =
+                  Number(item.price_per_unit || item.variant?.price || 0) *
+                  Number(item.no_of_units || 0);
+
+                return (
+                  <div key={item.id} className="flex gap-3 py-4 first:pt-0">
+                    <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-cream">
+                      {image ? (
+                        <img
+                          src={image}
+                          alt={item.product?.name || "Product"}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="grid h-full w-full place-items-center text-xs text-muted">
+                          No image
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-body-dark">
+                        {item.product?.name || "Product"}
+                      </p>
+
+                      <p className="mt-0.5 text-xs text-muted capitalize">
+                        {item.variant?.name || "Standard"} ·{" "}
+                        {item.variant?.pack_quantity} {item.variant?.pack_unit}
+                      </p>
+
+                      <p className="mt-0.5 text-[11px] text-muted">
+                        Quantity: {item.no_of_units}
+                      </p>
+
+                      {item.seller?.user_name && (
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                          <span className="text-[11px] font-medium text-muted">
+                            Sold by :
+                          </span>
+
+                          <span className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-[10px] font-medium text-primary ring-1 ring-inset ring-green-200/60">
+                            <UserRound className="h-2.5 w-2.5 shrink-0" />
+                            <span className="truncate max-w-32">
+                              {item.seller.user_name}
+                            </span>
+                          </span>
+
+                          {item.seller?.user_mobile && (
+                            <a
+                              href={`tel:${item.seller.user_mobile}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 rounded-md bg-[#fff1df] px-2 py-1 text-[10px] font-medium text-orange-600 transition-colors hover:bg-orange-100"
+                            >
+                              <Phone className="h-2.5 w-2.5 shrink-0" />
+                              {item.seller.user_mobile}
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                      <p className="text-sm font-semibold text-body-dark">
+                        {formatINR(itemTotal)}
+                      </p>
+
+                      <Badge variant="success" className="text-[10px]">
+                        {item.status}
+                      </Badge>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <Separator className="my-2 bg-gray-100" />
+
+            <div className="flex items-center justify-between">
+              <span className="text-base font-bold text-body-dark">Total</span>
+
+              <span className="text-xl font-black text-body-dark">
+                {formatINR(total)}
+              </span>
+            </div>
+          </section>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-white p-4">
+              <div className="flex items-center gap-3">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-light-blue text-primary">
+                  <UserRound className="h-4 w-4" />
+                </div>
+
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-muted">Buyer</p>
+
+                  <p className="truncate text-sm font-bold capitalize text-body-dark">
+                    {order.buyer_name}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-center gap-3 border-t border-border pt-3">
+                <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-light-blue text-primary">
+                  <PhoneCall className="h-3.5 w-3.5" />
+                </div>
+
+                <p className="text-sm text-muted">{order.buyer_phone}</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-white p-4">
+              <div className="flex items-center gap-3">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-light-blue text-primary">
+                  <MapPin className="h-4 w-4" />
+                </div>
+
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-muted">
+                    Delivery address
+                  </p>
+
+                  <p className=" text-sm font-bold leading-5 text-body-dark">
+                    {order.delivery_address}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3 border-t border-border pt-3">
+                <p className="text-xs leading-5 text-muted">
+                  {order.delivery_state}, {order.delivery_district},{" "}
+                  {order.delivery_block}
+                  <br />
+                  <span className="font-semibold text-body-light">
+                    PIN {order.delivery_pincode}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  if (!open) {
+    return null;
+  }
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-h-[90vh] w-[calc(100%-48px)] max-w-3xl overflow-hidden rounded-3xl border-border bg-gray-100 p-0 shadow-2xl">
+          <div className="border-b border-border bg-white px-6 py-3 text-left">
+            <div className="flex items-center gap-2">
+              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-orange-100/80 text-orange-600">
+                <ShoppingBag className="h-4 w-4" />
+              </div>
+
+              <div className="min-w-0">
+                <DialogTitle className="truncate text-[18px] font-semibold text-body-dark">
+                  Order details
+                </DialogTitle>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-h-[calc(90vh-92px)] overflow-y-auto">
+            {content}
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="
-          max-h-[94vh]
-          overflow-hidden
-          rounded-t-[28px]
-          border-t
-          border-border
-          bg-[#fffdf8]
-          p-0
-        "
+        className="max-h-[94vh] overflow-hidden rounded-t-[28px] border-t border-border bg-[#fffdf8] p-0"
       >
         <SheetHeader className="border-b border-border bg-white px-4 py-4 text-left sm:px-6">
           <div className="flex items-center gap-3">
@@ -210,177 +437,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
           </div>
         </SheetHeader>
 
-        <div className="max-h-[calc(94vh-76px)] overflow-y-auto">
-          {loading ? (
-            <OrderDetailsLoading />
-          ) : error ? (
-            <div className="p-4 sm:p-6">
-              <ErrorState message={error} onRetry={loadOrder} />
-            </div>
-          ) : !order ? (
-            <div className="p-6 text-center text-sm text-muted">
-              Order not found.
-            </div>
-          ) : (
-            <div className="space-y-4 p-4 sm:p-6">
-              <div className="rounded-2xl border border-border bg-white p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-xs text-muted">Order placed</p>
-
-                    <p className="mt-1 text-sm font-semibold text-body-dark">
-                      {formatDate(order.created_at)}
-                    </p>
-
-                    <p className="mt-1  text-sm font-semibold text-body-dark">
-                      #{order.id}
-                    </p>
-                  </div>
-
-                  <Badge variant="warning" className="shrink-0">
-                    {order.status || "Pending"}
-                  </Badge>
-                </div>
-              </div>
-
-              <section className="rounded-2xl border border-border bg-white p-4 sm:p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="font-bold text-body-dark">Ordered products</h2>
-
-                  <span className="text-xs text-muted">
-                    {order.items?.length || 0}{" "}
-                    {order.items?.length === 1 ? "item" : "items"}
-                  </span>
-                </div>
-
-                <div className="mt-4 divide-y divide-border">
-                  {order.items?.map((item) => {
-                    const image = getItemImage(item);
-
-                    const itemTotal =
-                      Number(item.price_per_unit || item.variant?.price || 0) *
-                      Number(item.no_of_units || 0);
-
-                    return (
-                      <div key={item.id} className="flex gap-3 py-4 first:pt-0">
-                        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-cream">
-                          {image ? (
-                            <img
-                              src={image}
-                              alt={item.product?.name || "Product"}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="grid h-full w-full place-items-center text-xs text-muted">
-                              No image
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-body-dark">
-                            {item.product?.name || "Product"}
-                          </p>
-
-                          <p className="mt-0.5 text-xs text-muted">
-                            {item.variant?.name || "Standard"} ·{" "}
-                            {item.variant?.pack_quantity}{" "}
-                            {item.variant?.pack_unit}
-                          </p>
-
-                          <p className="mt-1 text-[11px] text-muted">
-                            Seller: {item.seller?.user_name || "Farmer"}
-                          </p>
-
-                          <p className="mt-0.5 text-[11px] text-muted">
-                            Quantity: {item.no_of_units}
-                          </p>
-                        </div>
-
-                        <div className="flex shrink-0 flex-col items-end gap-2">
-                          <p className="text-sm font-semibold text-body-dark">
-                            {formatINR(itemTotal)}
-                          </p>
-
-                          <Badge variant="success" className="text-[10px]">
-                            {item.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <Separator className="my-3 bg-gray-100" />
-
-                <div className="flex items-center justify-between">
-                  <span className="text-base font-bold text-body-dark">
-                    Total
-                  </span>
-
-                  <span className="text-xl font-black text-body-dark">
-                    {formatINR(total)}
-                  </span>
-                </div>
-              </section>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-border bg-white p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-light-blue text-primary">
-                      <UserRound className="h-4 w-4" />
-                    </div>
-
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium text-muted">Buyer</p>
-
-                      <p className="truncate text-sm font-bold text-body-dark capitalize">
-                        {order.buyer_name}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 flex items-center gap-3 border-t border-border pt-3">
-                    <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-light-blue text-primary">
-                      <PhoneCall className="h-3.5 w-3.5" />
-                    </div>
-
-                    <p className="text-sm text-muted">{order.buyer_phone}</p>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-border bg-white p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-light-blue text-primary">
-                      <MapPin className="h-4 w-4" />
-                    </div>
-
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium text-muted">
-                        Delivery address
-                      </p>
-
-                      <p className="mt-1 text-sm font-bold leading-5 text-body-dark">
-                        {order.delivery_address}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 border-t border-border pt-3">
-                    <p className="text-xs leading-5 text-muted">
-                      {order.delivery_state}, {order.delivery_district},{" "}
-                      {order.delivery_block}
-                      <br />
-                      <span className="font-semibold text-body-light">
-                        PIN {order.delivery_pincode}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        <div className="max-h-[calc(94vh-76px)] overflow-y-auto">{content}</div>
       </SheetContent>
     </Sheet>
   );

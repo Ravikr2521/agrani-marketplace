@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   ArrowRight,
   CheckCircle2,
@@ -7,15 +5,17 @@ import {
   PackageCheck,
   ShoppingBag,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { getProducts } from "@/api/products";
+import { useProductApi } from "@/api/products";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import { useOrder } from "@/context/OrderContext";
-import { formatINR, formatDate } from "@/lib/utils";
+import { formatDate, formatINR } from "@/lib/utils";
 
 const getMediaUrl = (media) => {
   return (
@@ -36,6 +36,7 @@ const getItemImage = (item) => {
 };
 
 export default function OrderSuccess() {
+  const { getProducts } = useProductApi();
   const { lastOrder } = useOrder();
 
   const [order, setOrder] = useState(lastOrder);

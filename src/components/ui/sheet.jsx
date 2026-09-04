@@ -86,7 +86,7 @@ export function SheetContent({ side = "right", className, children }) {
             text-muted
             transition-all
             duration-200
-            hover:bg-cream
+            hover:bg-gray-50
             hover:text-body-dark
             active:scale-90
             focus:outline-none

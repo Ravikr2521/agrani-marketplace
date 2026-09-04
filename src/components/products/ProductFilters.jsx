@@ -107,7 +107,11 @@ function FilterFields({ value, onChange, categories, packUnits, onClear }) {
       </div>
 
       {activeCount > 0 && (
-        <Button variant="ghost" className="w-full text-muted" onClick={onClear}>
+        <Button
+          variant="ghost"
+          className="w-full text-muted hover:bg-gray-100!"
+          onClick={onClear}
+        >
           <RotateCcw className="h-4 w-4" /> Clear {activeCount} filter
           {activeCount > 1 ? "s" : ""}
         </Button>

@@ -36,7 +36,7 @@ body {
   min-width: 320px;
   min-height: 100svh;
   overflow-x: hidden;
-  background: #fdeeda;
+  /* background: #fdeeda; */
 }
 button,
 a,

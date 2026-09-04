@@ -87,7 +87,7 @@ const ProductCarousel = memo(function ProductCarousel({
   if (!usableImages.length) {
     return (
       <div
-        className={`relative aspect-3/2 shrink-0 overflow-hidden bg-cream ${className}`}
+        className={`relative aspect-3/2 shrink-0 overflow-hidden bg-gray-100 ${className}`}
       >
         <ImageFallback />
       </div>
@@ -96,7 +96,7 @@ const ProductCarousel = memo(function ProductCarousel({
 
   return (
     <div
-      className={`group relative aspect-3/2 shrink-0 overflow-hidden bg-cream ${className}`}
+      className={`group relative aspect-3/2 shrink-0 overflow-hidden bg-gray-100 ${className}`}
     >
       <Swiper
         key={usableImages.join("|")}

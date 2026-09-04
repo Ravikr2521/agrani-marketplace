@@ -6,7 +6,6 @@ const sortAlphabetically = (items) =>
   );
 
 export const locationApi = {
-  // Fetch all states
   getStates: async () => {
     try {
       const response = await apiFetch("/api/v1/master/states");
@@ -24,7 +23,6 @@ export const locationApi = {
     }
   },
 
-  // Fetch districts by state code
   getDistricts: async (stateCode) => {
     if (!stateCode || stateCode === "all") return [];
 
@@ -46,7 +44,6 @@ export const locationApi = {
     }
   },
 
-  // Fetch blocks by district code
   getBlocks: async (districtCode) => {
     if (!districtCode || districtCode === "all") return [];
 
