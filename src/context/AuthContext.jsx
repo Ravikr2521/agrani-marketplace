@@ -86,19 +86,23 @@ function getInitialAuth() {
   }
 
   // Fallback to dev tokens
-  // return {
-  //   token: DEV_TOKEN,
-  //   AgraniToken: DEV_AGRANI_TOKEN,
-  //   SellerMobile: DEV_MOBILE_NO,
-  // };
+  return {
+    token: DEV_TOKEN,
+    // AgraniToken: DEV_AGRANI_TOKEN,
+    // SellerMobile: DEV_MOBILE_NO,
+  };
 }
 
 export const AuthProvider = ({ children }) => {
   const initialAuth = useMemo(() => getInitialAuth(), []);
 
-  const [token, setToken] = useState(initialAuth.token);
-  const [AgraniToken, setAgraniToken] = useState(initialAuth.AgraniToken);
-  const [SellerMobile, setSellerMobile] = useState(initialAuth.SellerMobile);
+  const [token, setToken] = useState(initialAuth?.token ?? null);
+  const [AgraniToken, setAgraniToken] = useState(
+    initialAuth?.AgraniToken ?? null,
+  );
+  const [SellerMobile, setSellerMobile] = useState(
+    initialAuth?.SellerMobile ?? null,
+  );
 
   const value = {
     token,
