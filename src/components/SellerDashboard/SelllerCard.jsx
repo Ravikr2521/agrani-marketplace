@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { memo, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { memo, useMemo, useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,7 +14,6 @@ import {
 
 import { formatINR } from "@/lib/utils";
 import ProductCarousel from "../products/ProductCarousel";
-import ProductDetailsSheet from "../products/ProductDetailsSheet";
 
 import { useProductApi } from "@/api/products";
 import { useAuth } from "@/context/AuthContext";
@@ -24,8 +22,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { MoreVertical, Pencil, Power } from "lucide-react";
+import { MoreVertical, Pencil, Power, Edit } from "lucide-react";
 import { toast } from "sonner";
+import SellerProductPreview from "./SellerProductPreview";
+import EditProductModal from "./EditProductModal";
 
 const toTitleCase = (str = "") =>
   str.replace(
@@ -49,18 +49,14 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
   const [actionSheetOpen, setActionSheetOpen] = useState(false);
   const [actionType, setActionType] = useState(null);
 
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
   const [isActive, setIsActive] = useState(product?.is_active === true);
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Check if current user is the seller of this product
-  const isOwnProduct = useMemo(() => {
-    const productSellerMobile = product?.seller_detail?.mobile;
-    return (
-      productSellerMobile &&
-      SellerMobile &&
-      productSellerMobile === SellerMobile
-    );
-  }, [product?.seller_detail?.mobile, SellerMobile]);
+  useEffect(() => {
+    setIsActive(product?.is_active === true);
+  }, [product?.is_active]);
 
   const availableVariants = useMemo(() => {
     return (product?.variants ?? []).filter(
@@ -260,20 +256,41 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
             }}
             className="min-w-0"
           >
-            <Card className="overflow-hidden rounded-2xl border-border/70 bg-white shadow-xs transition-all duration-200  md:hidden">
+            <Card
+              className={`group overflow-hidden rounded-2xl border bg-white shadow-xs transition-all duration-300 md:hidden ${
+                isActive
+                  ? "border-border/70"
+                  : "border-stone-200 bg-stone-50/80 opacity-75"
+              }`}
+            >
               <button
                 type="button"
-                onClick={() => openProductDetails(variant)}
-                className="block w-full p-1.5 text-left"
+                onClick={() => isActive && openProductDetails(variant)}
+                disabled={!isActive}
+                className={`block w-full p-1.5 text-left ${
+                  !isActive ? "cursor-not-allowed" : ""
+                }`}
               >
-                <div className="relative overflow-hidden rounded-xl bg-cream shadow-sm ring-1 ring-black/5">
+                <div
+                  className={`relative overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5 ${
+                    !isActive ? "grayscale" : "bg-cream"
+                  }`}
+                >
                   <ProductCarousel
                     images={variantImages}
                     alt={`${product?.name || "Product"} ${variant?.name || ""}`}
-                    autoPlay
+                    autoPlay={isActive}
                   />
 
-                  <div className="absolute right-2 top-2 z-10 flex h-6 items-center rounded-full border border-orange-200/80 bg-white/95 px-2 shadow-sm backdrop-blur-sm">
+                  {!isActive && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/15">
+                      <span className="rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-stone-700 shadow-sm">
+                        Product disabled
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="absolute right-2 top-2 z-20 flex h-6 items-center rounded-full border border-orange-200/80 bg-white/95 px-2 shadow-sm backdrop-blur-sm">
                     <span className="text-[10px] font-bold leading-none text-orange-700">
                       {variant.pack_quantity}
                     </span>
@@ -289,8 +306,13 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                 <div className="flex items-start justify-between gap-2">
                   <button
                     type="button"
-                    onClick={() => openProductDetails(variant)}
-                    className="min-w-0 flex-1 break-all text-left text-[14px] font-semibold leading-tight text-body-dark"
+                    onClick={() => isActive && openProductDetails(variant)}
+                    disabled={!isActive}
+                    className={`min-w-0 flex-1 break-all text-left text-[14px] font-semibold leading-tight ${
+                      isActive
+                        ? "text-body-dark"
+                        : "cursor-not-allowed text-stone-400"
+                    }`}
                   >
                     {toTitleCase(product.name)}
 
@@ -305,7 +327,11 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
 
                 <div className="flex items-end justify-between gap-3">
                   <div className="flex flex-col items-baseline gap-1">
-                    <span className="text-[18px] font-semibold leading-none tracking-tight text-body-dark">
+                    <span
+                      className={`text-[18px] font-semibold leading-none tracking-tight ${
+                        isActive ? "text-body-dark" : "text-stone-400"
+                      }`}
+                    >
                       {formatINR(variant.price)}
                     </span>
 
@@ -314,19 +340,17 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                     </span>
                   </div>
 
-                  {/* <span className="shrink-0 text-[10px] font-semibold text-primary">
-                    {variant.no_of_units} available
-                  </span> */}
                   <Popover>
                     <PopoverTrigger asChild>
                       <button
                         type="button"
                         aria-label="Product actions"
-                        className="grid w-8 h-8 shrink-0 place-items-center rounded-lg border border-border bg-white text-muted shadow-none transition hover:bg-stone-50 hover:text-body-dark active:scale-95"
+                        className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-border bg-white text-muted shadow-none transition hover:bg-stone-50 hover:text-body-dark active:scale-95"
                       >
                         <MoreVertical className="h-5 w-5" />
                       </button>
                     </PopoverTrigger>
+
                     <PopoverContent
                       align="end"
                       sideOffset={8}
@@ -338,21 +362,28 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                         className="flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left hover:bg-stone-50"
                       >
                         <div
-                          className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl ${isActive ? "bg-red-50 text-red-500" : "bg-emerald-50 text-emerald-600"}`}
+                          className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl ${
+                            isActive
+                              ? "bg-red-50 text-red-500"
+                              : "bg-emerald-50 text-emerald-600"
+                          }`}
                         >
                           <Power className="h-4 w-4" />
                         </div>
+
                         <div>
                           <p className="text-sm font-semibold text-body-dark">
                             {isActive ? "Disable product" : "Enable product"}
                           </p>
-                          <p className=" text-[10px] text-muted">
+
+                          <p className="text-[10px] text-muted">
                             {isActive
                               ? "Hide from marketplace"
                               : "Show on marketplace"}
                           </p>
                         </div>
                       </button>
+
                       <button
                         type="button"
                         onClick={() => openActionSheet("edit")}
@@ -361,11 +392,13 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                         <div className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-orange-50 text-orange-600">
                           <Pencil className="h-4 w-4" />
                         </div>
+
                         <div>
                           <p className="text-sm font-semibold text-body-dark">
                             Request edit
                           </p>
-                          <p className=" text-[10px] text-muted">
+
+                          <p className="text-[10px] text-muted">
                             Request product changes
                           </p>
                         </div>
@@ -373,39 +406,51 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
                     </PopoverContent>
                   </Popover>
                 </div>
-
-                {/* <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => openActionSheet("edit")}
-                  className="h-9 w-full rounded-xl text-xs"
-                >
-                  <Pencil className="mr-1.5 h-3.5 w-3.5" />
-                  Request Edit
-                </Button> */}
               </div>
             </Card>
 
-            <Card className="group hidden overflow-hidden border-border/80 bg-white shadow-xs transition-all duration-300 hover:shadow-sm md:block">
+            {/* Desktop */}
+            <Card
+              className={`group hidden overflow-hidden border bg-white shadow-xs transition-all duration-300 md:block ${
+                isActive
+                  ? "border-border/80 hover:shadow-sm"
+                  : "border-stone-200 bg-stone-50/80 opacity-75"
+              }`}
+            >
               <div className="p-2">
-                <div className="overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5">
+                <div
+                  onClick={() => isActive && openProductDetails(variant)}
+                  className={`relative overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5 ${
+                    isActive ? "cursor-pointer" : "cursor-not-allowed grayscale"
+                  }`}
+                >
                   <ProductCarousel
                     images={variantImages}
                     alt={`${product?.name || "Product"} ${variant?.name || ""}`}
-                    autoPlay
+                    autoPlay={isActive}
                   />
+
+                  {!isActive && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/15">
+                      <span className="rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-stone-700 shadow-sm">
+                        Product disabled
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="flex flex-col gap-3 p-4 -mt-2">
                 <div>
                   <div className="flex items-center justify-between gap-2">
-                    <Link
-                      to={`/products/${product.id}`}
-                      className="min-w-0 truncate text-left text-[15px] font-bold text-body-dark/90 transition-colors hover:text-primary"
+                    <button
+                      type="button"
+                      onClick={() => openProductDetails(variant)}
+                      disabled={!isActive}
+                      className="min-w-0 truncate text-left text-[15px] font-bold text-body-dark/90 transition-colors hover:text-primary disabled:text-muted"
                     >
                       {product?.name}
-                    </Link>
+                    </button>
 
                     <span className="shrink-0 text-xs font-semibold text-orange-500">
                       {toTitleCase(variant.name || "Standard")}
@@ -594,7 +639,7 @@ const SellerCard = memo(function SellerCard({ product, onProductUpdated }) {
         onRequestEdit={handleRequestEdit}
       />
 
-      <ProductDetailsSheet
+      <SellerProductPreview
         open={productDetailsOpen}
         onOpenChange={setProductDetailsOpen}
         product={product}

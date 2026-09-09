@@ -89,7 +89,7 @@ const ProductCarousel = memo(function ProductCarousel({
       <div
         className={`relative aspect-3/2 shrink-0 overflow-hidden bg-gray-100 ${className}`}
       >
-        <ImageFallback />
+        {autoPlay && <ImageFallback />}
       </div>
     );
   }

@@ -548,11 +548,11 @@ export default function CartDrawer({ open, onOpenChange }) {
                                     text-muted
                                     hover:bg-red-50
                                     hover:text-red-600
-                                    active:scale-90
+                                    active:scale-90 group
                                   "
                                   aria-label={`Remove ${item.productName}`}
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 className="h-4 w-4 group-hover:text-red-600" />
                                 </button>
                               </div>
 
@@ -579,7 +579,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                       w-7
                                       place-items-center
                                       text-muted
-                                      hover:bg-cream
+                                      hover:bg-gray-100/80
                                       disabled:opacity-30
                                     "
                                     aria-label="Decrease quantity"
@@ -614,7 +614,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                       w-7
                                       place-items-center
                                       text-muted
-                                      hover:bg-cream
+                                      hover:bg-gray-100/80
                                       disabled:cursor-not-allowed
                                       disabled:opacity-30
                                     "

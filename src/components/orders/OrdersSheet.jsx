@@ -231,7 +231,7 @@ function OrdersContent({ phone, onReset }) {
           </Button>
         </div>
       ) : orders.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-cream/50 p-6 text-center">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-gray-50 p-6 text-center">
           <div className="grid h-14 w-14 place-items-center rounded-xl border border-border bg-white shadow-xs">
             <ShoppingBag className="h-6 w-6 text-muted" />
           </div>

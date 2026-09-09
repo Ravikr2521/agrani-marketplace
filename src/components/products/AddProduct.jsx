@@ -25,8 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import DeliveryLocation from "../SellerDashboard/DeliveryLocation";
 import { useAuth } from "@/context/AuthContext";
+import DeliveryAddressList from "../SellerDashboard/DeliveryAddressList";
 
 const TAG_OPTIONS = ["Fruits", "Vegetables", "Pulses", "Oil", "Dry Fruits"];
 
@@ -417,7 +417,7 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
     <div
       className={`flex flex-col bg-gray-100 ${embedded ? "min-h-full md:bg-gray-100" : "min-h-dvh"}`}
     >
-      <header className="sticky top-0 z-30 border-b border-border/70 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-border/70 bg-white/95 backdrop-blur rounded-t-3xl">
         <div className="mx-auto flex h-14 max-w-xl items-center gap-3 px-4 md:hidden">
           <button
             type="button"
@@ -767,8 +767,15 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
             </>
           )}
 
-          {step === 2 && (
+          {/* {step === 2 && (
             <DeliveryLocation
+              SellerMobile={SellerMobile}
+              onBack={handleBack}
+              onContinue={handleDeliveryContinue}
+            />
+          )} */}
+          {step === 2 && (
+            <DeliveryAddressList
               SellerMobile={SellerMobile}
               onBack={handleBack}
               onContinue={handleDeliveryContinue}
@@ -801,7 +808,7 @@ function AddButton({ onClick, label }) {
       onClick={onClick}
       className="flex items-center gap-1.5 rounded-xl bg-primary/8 px-3 py-2 text-[11px] font-bold text-primary transition active:scale-95"
     >
-      <Plus className="h-3.5 w-3.5" />
+      <Plus className="h-3.5 w-3.5 mb-0.5" />
       {label}
     </button>
   );
@@ -1001,7 +1008,7 @@ function VariantCard({
             </div>
 
             <label className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-primary/8 px-3 py-2 text-[10px] md:text-[12px] font-bold text-primary transition active:scale-95">
-              <Plus className="h-3.5 w-3.5" />
+              <Plus className="h-3.5 w-3.5 mb-0.5" />
               Add photo
               <input
                 type="file"

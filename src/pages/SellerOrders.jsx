@@ -10,7 +10,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { useOrderApi } from "@/api/orders";
@@ -61,6 +61,9 @@ export default function SellerOrders() {
   const navigate = useNavigate();
   const { SellerMobile } = useAuth();
   const { getSellerOrders } = useOrderApi();
+
+  const hideHeader = sessionStorage.getItem("hideHeader") === "true";
+  console.log(hideHeader, "hideheader");
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -126,11 +129,13 @@ export default function SellerOrders() {
   };
 
   return (
-    <main className="min-h-full bg-[#f6f8f5] px-8 py-2">
-      <div className="mx-auto max-w-350">
+    <main
+      className={`min-h-full  ${hideHeader ? "py-0" : "bg-[#f6f8f5] px-8 py-2"} `}
+    >
+      <div className={`mx-auto ${hideHeader ? "max-w-full" : "max-w-350"} `}>
         <div className="flex items-center justify-between">
           <Link
-            to="/seller"
+            to={`/seller`}
             className="inline-flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -139,12 +144,12 @@ export default function SellerOrders() {
 
           <Button
             variant="outline"
+            size="sm"
             onClick={handleRefresh}
             disabled={loading || refreshing}
-            className="rounded-xl"
           >
             <RefreshCw
-              className={`mr-1.5 h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+              className={` h-3.5 w-3.5 mb-0.5 ${refreshing ? "animate-spin" : ""}`}
             />
             Refresh
           </Button>
@@ -307,7 +312,7 @@ export default function SellerOrders() {
               )}
             </>
           ) : (
-            <div className="flex min-h-72 flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-[#fffdf8] text-center">
+            <div className="flex min-h-72 flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-gray-50 text-center">
               <span className="grid h-14 w-14 place-items-center rounded-2xl bg-light-blue text-primary">
                 <ShoppingBag className="h-6 w-6" />
               </span>
@@ -407,7 +412,7 @@ function OrderRow({ order, onUpdated }) {
         <div className="mt-3 flex items-center gap-4 text-xs text-muted">
           <span className="inline-flex items-center gap-1 capitalize">
             <UserRound className="mb-0.5 h-3.5 w-3.5 text-primary" />
-            {info?.buyer_name || "Customer"}
+            {info?.receiver_name || "Customer"}
           </span>
 
           {order?.created_at && (
@@ -433,13 +438,13 @@ function OrderRow({ order, onUpdated }) {
             .join(", ") || "Address unavailable"}
         </p>
 
-        {info?.buyer_phone && (
+        {info?.receiver_phone && (
           <a
-            href={`tel:${info.buyer_phone}`}
+            href={`tel:${info.receiver_phone}`}
             className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary"
           >
             <Phone className="h-3.5 w-3.5" />
-            {info.buyer_phone}
+            {info.receiver_phone}
           </a>
         )}
       </div>
@@ -476,11 +481,12 @@ function OrderRow({ order, onUpdated }) {
             size="sm"
             onClick={update}
             disabled={updating || status === order?.status}
+            className="rounded-lg"
           >
             {updating ? (
               <RefreshCw className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              "Save"
+              "Update"
             )}
           </Button>
         </div>

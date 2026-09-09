@@ -1,6 +1,5 @@
 import EmptyState from "@/components/common/EmptyState";
 import ErrorState from "@/components/common/ErrorState";
-import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import SellerOrdersSheet from "@/components/orders/SellerOrdersSheet";
 import AddProduct from "@/components/products/AddProduct";
 import { Button } from "@/components/ui/button";
@@ -11,14 +10,17 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/context/AuthContext";
+import { useProducts } from "@/hooks/useProducts";
 import {
-  ClipboardList,
   Boxes,
+  Check,
+  ClipboardList,
   Filter,
   LayoutDashboard,
   Plus,
   RotateCcw,
-  Check,
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -26,20 +28,76 @@ import { Link } from "react-router-dom";
 import SearchInput from "../components/common/SearchInput";
 import SellerCard from "../components/SellerDashboard/SelllerCard";
 import useDebouncedValue from "../hooks/useDebouncedValue";
-import { useAuth } from "@/context/AuthContext";
-import { useProducts } from "@/hooks/useProducts";
 
 const STATUS_FILTER_OPTIONS = [
   { value: "all", label: "All Status" },
   { value: "pending", label: "Pending" },
   { value: "approved", label: "Approved" },
   { value: "rejected", label: "Rejected" },
-  { value: "edit_requested", label: "Edit Requested" },
+  { value: "Edit Requested", label: "Edit Requested" },
   // { value: "order completed", label: "Order Completed" },
 ];
 
+export function LoadingCards({ count = 8 }) {
+  return (
+    <div className="grid min-w-0 grid-cols-2 gap-2.5 xs:gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="min-w-0">
+          {/* Mobile */}
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-white shadow-xs md:hidden">
+            <div className="p-1.5">
+              <Skeleton className="aspect-3/2 w-full rounded-xl" />
+            </div>
+
+            <div className="flex flex-col gap-3 p-3 pt-1">
+              <Skeleton className="h-3.5 w-4/5 rounded-md" />
+
+              <Skeleton className="h-5 w-20 rounded-md" />
+
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton className="h-4 w-14 rounded-md" />
+                  <Skeleton className="h-2.5 w-16 rounded-md" />
+                </div>
+
+                <Skeleton className="h-7 w-7 shrink-0 rounded-lg" />
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop */}
+          <div className="hidden overflow-hidden rounded-2xl border border-border/70 bg-white shadow-xs md:block">
+            <div className="p-2">
+              <Skeleton className="aspect-3/2 w-full rounded-xl" />
+            </div>
+
+            <div className="flex flex-col px-4 pb-4">
+              <Skeleton className="h-4.5 w-3/4 rounded-md" />
+
+              <Skeleton className="mt-2 h-6 w-28 rounded-lg" />
+
+              <div className="my-3 h-px bg-border/60" />
+
+              <div className="flex items-end justify-between gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton className="h-5 w-16 rounded-md" />
+                  <Skeleton className="h-3 w-20 rounded-md" />
+                </div>
+
+                <Skeleton className="h-9 w-28 shrink-0 rounded-xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const Seller = () => {
   const { SellerMobile } = useAuth();
+
+  const hideHeader = sessionStorage.getItem("hideHeader") === "true";
 
   const [input, setInput] = useState("");
   const [page, setPage] = useState(1);
@@ -53,7 +111,8 @@ const Seller = () => {
   const { products, loading, error, retry } = useProducts({
     search,
     page,
-    qc_status: status === "all" ? "approved" : status,
+    qc_status: status === "all" ? "" : status,
+    seller_mobile: SellerMobile,
   });
 
   const filtered = useMemo(() => {
@@ -90,7 +149,9 @@ const Seller = () => {
 
   return (
     <div>
-      <main className="min-h-full pb-20 md:bg-[#f6f8f5] md:px-8 md:py-4">
+      <main
+        className={`min-h-full pb-20 md:bg-[#f6f8f5] ${hideHeader ? "md:px-0 md:py-1" : "md:px-8 md:py-4"} `}
+      >
         <div className="sticky top-0 z-50 flex items-center justify-between gap-3 border border-stone-200 bg-white px-4 py-3 sm:px-5 md:static md:mx-auto md:hidden md:max-w-350">
           <div className="flex min-w-0 items-center gap-2">
             <div className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-amber-600/80 text-white shadow-sm">
@@ -122,7 +183,7 @@ const Seller = () => {
           </div>
         </div>
 
-        <div className="mx-auto max-w-350 md:space-y-6">
+        <div className="mx-auto md:space-y-6">
           <section className="hidden overflow-hidden rounded-3xl bg-linear-to-br from-primary via-[#086c3b] to-[#0f4e30] p-5 text-white shadow-xs md:block lg:p-6">
             <div className="flex items-start justify-between gap-8">
               <div>
@@ -144,14 +205,14 @@ const Seller = () => {
                   className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
                 >
                   <Link to="/seller/orders">
-                    <ClipboardList className="h-4 w-4" /> View orders
+                    <ClipboardList className="h-4 w-4 mb-0.5" /> View orders
                   </Link>
                 </Button>
                 <Button
                   onClick={() => setAddProductOpen(true)}
                   className="bg-orange-500 text-white hover:bg-orange-600"
                 >
-                  <Plus className="h-4 w-4" /> Add product
+                  <Plus className="h-4 w-4 mb-0.5" /> Add product
                 </Button>
               </div>
             </div>
@@ -232,7 +293,7 @@ const Seller = () => {
                 </div>
 
                 {loading ? (
-                  <LoadingSkeleton count={6} />
+                  <LoadingCards count={8} />
                 ) : error ? (
                   <ErrorState message={error} onRetry={retry} />
                 ) : filtered.length ? (
@@ -382,7 +443,7 @@ const Seller = () => {
       />
 
       <Dialog open={addProductOpen} onOpenChange={setAddProductOpen}>
-        <DialogContent className="h-[90dvh] max-w-4xl overflow-y-auto rounded-3xl p-0 md:w-[min(94vw,1180px)]">
+        <DialogContent className="h-[90dvh] max-w-4xl overflow-y-auto rounded-3xl p-0">
           <AddProduct
             embedded
             onClose={() => setAddProductOpen(false)}

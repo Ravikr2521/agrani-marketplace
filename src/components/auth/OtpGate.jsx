@@ -193,7 +193,7 @@ export default function OtpGate({ onVerified }) {
             )}
           </div> */}
           <div className="mx-auto flex items-center justify-center py-2 ">
-            <img src="images/lock.png" className="h-20" />
+            <img src="/images/lock.png" className="h-20" />
           </div>
           <h2 className="text-base font-bold text-body-dark">
             {step === "phone" ? "Verify Your Mobile" : "Enter OTP"}

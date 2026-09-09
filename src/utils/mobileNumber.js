@@ -2,6 +2,7 @@ export function getBuyerMobileNumber() {
   const localStorageMobile = localStorage.getItem(
     "farmers_marketplace_buyer_phone",
   );
+
   if (localStorageMobile) {
     return localStorageMobile;
   }
@@ -31,14 +32,21 @@ export function getBuyerMobileNumber() {
 
   if (urlToken) {
     const payload = decodeJwtPayload(urlToken);
+    console.log("getBuyerMobileNumber token payload:", payload);
+
     const mobile =
       payload?.preferred_username ||
       payload?.mobile ||
       payload?.phone_number ||
       payload?.phone;
     if (mobile) {
-      localStorage.setItem("farmers_marketplace_buyer_phone", String(mobile));
-      return String(mobile);
+      const mobileString = String(mobile);
+      console.log("getBuyerMobileNumber extracted mobile:", mobileString);
+
+      localStorage.setItem("farmers_marketplace_buyer_phone", mobileString);
+      localStorage.setItem("farmers_marketplace_verified_phone", mobileString);
+
+      return mobileString;
     }
   }
 
@@ -48,11 +56,13 @@ export function getBuyerMobileNumber() {
 export function saveBuyerMobileNumber(mobileNumber) {
   if (mobileNumber && /^\d{10}$/.test(mobileNumber)) {
     localStorage.setItem("farmers_marketplace_buyer_phone", mobileNumber);
+    localStorage.setItem("farmers_marketplace_verified_phone", mobileNumber);
   }
 }
 
 export function clearBuyerMobileNumber() {
   localStorage.removeItem("farmers_marketplace_buyer_phone");
+  localStorage.removeItem("farmers_marketplace_verified_phone");
 }
 
 export function hasBuyerMobileNumber() {

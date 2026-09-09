@@ -32,27 +32,33 @@ function decodeJwtPayload(token) {
 
 function getInitialAuth() {
   const params = new URLSearchParams(window.location.search);
-  const urlToken = params.get("token");
 
-  // First, check if we have a token from query params
+  const urlToken = params.get("token");
+  console.log("AuthContext urlToken:", urlToken ? "present" : "not present");
+
   if (urlToken) {
     const payload = decodeJwtPayload(urlToken);
+    console.log("AuthContext token payload:", payload);
 
     const mobile =
       payload?.preferred_username ||
       payload?.mobile ||
       payload?.phone_number ||
-      payload?.phone ||
-      DEV_MOBILE_NO;
+      payload?.phone;
+    // ||  DEV_MOBILE_NO;
+
+    const mobileString = String(mobile);
+
+    localStorage.setItem("agrani_auth_token", urlToken);
+    localStorage.setItem("farmers_marketplace_verified_phone", mobileString);
 
     return {
       token: DEV_TOKEN,
       AgraniToken: urlToken,
-      SellerMobile: String(mobile),
+      SellerMobile: mobileString,
     };
   }
 
-  // Second, check if we have a saved agrani_auth_token from OTP verification
   const savedAgraniToken = localStorage.getItem("agrani_auth_token");
   if (savedAgraniToken) {
     const payload = decodeJwtPayload(savedAgraniToken);
@@ -63,19 +69,28 @@ function getInitialAuth() {
       payload?.phone ||
       DEV_MOBILE_NO;
 
+    const mobileString = String(mobile);
+
+    const savedPhone = localStorage.getItem(
+      "farmers_marketplace_verified_phone",
+    );
+    if (!savedPhone) {
+      localStorage.setItem("farmers_marketplace_verified_phone", mobileString);
+    }
+
     return {
       token: DEV_TOKEN,
       AgraniToken: savedAgraniToken,
-      SellerMobile: String(mobile),
+      SellerMobile: mobileString,
     };
   }
 
   // Fallback to dev tokens
-  return {
-    token: DEV_TOKEN,
-    AgraniToken: DEV_AGRANI_TOKEN,
-    SellerMobile: DEV_MOBILE_NO,
-  };
+  // return {
+  //   token: DEV_TOKEN,
+  //   AgraniToken: DEV_AGRANI_TOKEN,
+  //   SellerMobile: DEV_MOBILE_NO,
+  // };
 }
 
 export const AuthProvider = ({ children }) => {

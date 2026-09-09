@@ -333,7 +333,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
                   <p className="text-xs font-medium text-muted">Buyer</p>
 
                   <p className="truncate text-sm font-bold capitalize text-body-dark">
-                    {order.buyer_name}
+                    {order?.receiver_name}
                   </p>
                 </div>
               </div>
@@ -343,7 +343,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
                   <PhoneCall className="h-3.5 w-3.5" />
                 </div>
 
-                <p className="text-sm text-muted">{order.buyer_phone}</p>
+                <p className="text-sm text-muted">{order?.receiver_phone}</p>
               </div>
             </div>
 

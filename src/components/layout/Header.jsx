@@ -1,25 +1,48 @@
 import {
-  ShoppingBag,
   ClipboardList,
-  Home,
-  Package,
-  UserRoundCogIcon,
   Heart,
   HeartIcon,
+  Home,
+  Package,
+  ShoppingBag,
+  UserCircle,
+  LogOut,
+  Settings,
 } from "lucide-react";
-import { NavLink, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import AgraniLogo from "../../../public/images/logo.svg";
 
-import { useCart } from "@/context/CartContext";
 import CartDrawer from "@/components/cart/CartDrawer";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function Header() {
   const { getCartItemCount } = useCart();
+  const { SellerMobile, setToken, setAgraniToken, setSellerMobile } = useAuth();
+  const navigate = useNavigate();
 
   const [cartOpen, setCartOpen] = useState(false);
   const [ordersOpen, setOrdersOpen] = useState(false);
   const [cartAnimating, setCartAnimating] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("agrani_auth_token");
+    localStorage.removeItem("agrani_refresh_token");
+    localStorage.removeItem("farmers_marketplace_verified_phone");
+    localStorage.removeItem("farmers_marketplace_buyer_phone");
+
+    setToken("");
+    setAgraniToken("");
+    setSellerMobile("");
+
+    navigate("/");
+  };
 
   const location = useLocation();
 
@@ -318,9 +341,64 @@ export default function Header() {
                     )}
                   </div>
                 </div>
-
-                {/* <span className="font-medium">Cart</span> */}
               </button>
+
+              {SellerMobile && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex h-full items-center group text-muted   "
+                      aria-label="Profile"
+                    >
+                      <UserCircle className="h-5 w-5 group-hover:scale-110 group-hover:text-primary transition-all duration-300 " />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-48 overflow-hidden rounded-xl border border-gray-200 bg-white p-0 shadow-lg"
+                    align="end"
+                    sideOffset={8}
+                  >
+                    <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+                      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-orange-100 text-orange-600">
+                        <UserCircle className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-[13px] font-semibold text-gray-900">
+                            My Account
+                          </p>
+                          {/* <span className="rounded-full bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
+                          Active
+                        </span> */}
+                        </div>
+                        {SellerMobile && (
+                          <p className="truncate text-xs text-gray-500 ">
+                            {SellerMobile}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="p-1 ">
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors group hover:bg-red-50 hover:text-red-600"
+                      >
+                        <LogOut className="h-4 w-4 text-gray-500 group-hover:text-red-600" />
+                        Logout
+                      </button>
+                    </div>
+
+                    <div className="border-t border-gray-100 bg-gray-50 px-4 py-1.5">
+                      <p className="text-center text-[10px] font-medium text-gray-400">
+                        Agrani Marketplace
+                      </p>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           </div>
         </div>

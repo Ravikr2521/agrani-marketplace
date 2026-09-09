@@ -13,6 +13,7 @@ import ProductDetailsSheet from "./ProductDetailsSheet";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { Pagination } from "swiper/modules";
+import showCartToast from "@/custom/showCartToast";
 
 const getMediaUrl = (media) =>
   media?.productImgUrl || media?.image || media?.file || media?.url || "";
@@ -82,9 +83,10 @@ function MiniProductCard({ product, variant }) {
       category: product.category,
     });
 
-    toast.success("Added to cart", {
-      description: `${product.name} · ${variant.name || "Standard"}`,
-    });
+    // toast.success("Added to cart", {
+    //   description: `${product.name} · ${variant.name || "Standard"}`,
+    // });
+    showCartToast(product, variant);
   };
 
   const handleIncrease = (event) => {

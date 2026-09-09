@@ -71,7 +71,7 @@ export function CartProvider({ children }) {
           );
 
           if (index === -1) {
-            return prev; // Item not in cart, nothing to increase
+            return prev;
           }
 
           return prev.map((x, i) =>

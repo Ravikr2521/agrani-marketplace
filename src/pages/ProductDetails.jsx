@@ -429,7 +429,7 @@ export default function ProductDetails() {
                   variant={variant}
                   isWishlisted={isWishlisted(variant)}
                   loading={wishlistLoading === variant?.id}
-                  disabled={!buyerMobile}
+                  // disabled={!buyerMobile}
                   onToggle={() => toggleWishlist(variant)}
                 />
                 <div className="flex h-11 shrink-0 items-center overflow-hidden rounded-xl border border-border bg-white">

@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from "react";
 import {
   Check,
   ChevronDown,
@@ -7,17 +6,12 @@ import {
   MapPin,
   Search,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
+import { marketPlaceApi } from "@/api/marketplace";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import {
-  createDeliveryLocation,
-  getDeliveryLocation,
-  getDistrictsByState,
-  getStates,
-  updateDeliveryLocation,
-} from "@/api/marketplace";
 
 const getResults = (response) =>
   response?.data?.results || response?.results || response?.data || [];
@@ -29,7 +23,18 @@ const getFirstRecord = (response) =>
   response?.data ||
   null;
 
-export default function DeliveryLocation({ SellerMobile, onBack, onContinue }) {
+export default function DeliveryLocation({
+  SellerMobile,
+  onBack,
+  onContinue,
+  editRecord = null,
+}) {
+  const {
+    createDeliveryLocation,
+    getStates,
+    getDistrictsByState,
+    updateDeliveryLocation,
+  } = marketPlaceApi();
   const [mode, setMode] = useState("allIndia");
 
   const [states, setStates] = useState([]);
@@ -59,16 +64,13 @@ export default function DeliveryLocation({ SellerMobile, onBack, onContinue }) {
 
   useEffect(() => {
     loadData();
-  }, [SellerMobile]);
+  }, [SellerMobile, editRecord]);
 
   const loadData = async () => {
     try {
       setLoading(true);
 
-      const [statesResponse, locationResponse] = await Promise.all([
-        getStates(),
-        SellerMobile ? getDeliveryLocation(SellerMobile) : null,
-      ]);
+      const statesResponse = await getStates();
 
       const stateList = getResults(statesResponse);
 
@@ -82,12 +84,10 @@ export default function DeliveryLocation({ SellerMobile, onBack, onContinue }) {
 
       setStates(normalizedStates);
 
-      const existing = getFirstRecord(locationResponse);
+      if (editRecord) {
+        setExistingLocation(editRecord);
 
-      if (existing) {
-        setExistingLocation(existing);
-
-        loadExistingLocation(existing, normalizedStates);
+        loadExistingLocation(editRecord, normalizedStates);
       }
     } catch (error) {
       console.error("Failed to load delivery location", error);
@@ -378,7 +378,7 @@ export default function DeliveryLocation({ SellerMobile, onBack, onContinue }) {
           Where can you deliver?
         </p>
 
-        <p className="mt-1 text-xs leading-5 text-muted">
+        <p className=" text-xs leading-5 text-muted">
           Choose the areas where customers can receive this product.
         </p>
       </div>
@@ -405,7 +405,7 @@ export default function DeliveryLocation({ SellerMobile, onBack, onContinue }) {
 
           <p className="text-sm font-bold text-body-dark">All India</p>
 
-          <p className="mt-1 text-[11px] leading-4 text-muted">
+          <p className=" text-[11px] leading-4 text-muted">
             Deliver across India
           </p>
         </button>
@@ -431,7 +431,7 @@ export default function DeliveryLocation({ SellerMobile, onBack, onContinue }) {
 
           <p className="text-sm font-bold text-body-dark">Select Areas</p>
 
-          <p className="mt-1 text-[11px] leading-4 text-muted">
+          <p className=" text-[11px] leading-4 text-muted">
             Choose states & districts
           </p>
         </button>
@@ -663,7 +663,7 @@ export default function DeliveryLocation({ SellerMobile, onBack, onContinue }) {
             </>
           ) : (
             <>
-              Continue
+              Proceed
               <ChevronRight className="h-4 w-4" />
             </>
           )}

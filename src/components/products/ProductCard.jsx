@@ -21,6 +21,7 @@ import { Separator } from "../ui/separator";
 import ProductCarousel from "./ProductCarousel";
 import ProductDetailsSheet from "./ProductDetailsSheet";
 import WishlistButton from "./WishlistButton";
+import showCartToast from "@/custom/showCartToast";
 
 const toTitleCase = (str = "") =>
   str.replace(
@@ -122,9 +123,10 @@ const ProductCard = memo(function ProductCard({ product }) {
 
     addToCart(getCartPayload(variant));
 
-    toast.success("Added to cart", {
-      description: `${product.name} · ${variant.name || "Standard"}`,
-    });
+    // toast.success("Added to cart", {
+    //   description: `${product.name} · ${variant.name || "Standard"}`,
+    // });
+    showCartToast(product, variant);
   };
 
   const handleIncrease = (variant) => {
@@ -163,9 +165,10 @@ const ProductCard = memo(function ProductCard({ product }) {
     if (quantity === 0) {
       addToCart(getCartPayload(selectedVariant));
 
-      toast.success("Added to cart", {
-        description: `${product.name} · ${selectedVariant.name || "Standard"}`,
-      });
+      // toast.success("Added to cart", {
+      //   description: `${product.name} · ${selectedVariant.name || "Standard"}`,
+      // });
+      showCartToast(product, selectedVariant);
     }
   };
 

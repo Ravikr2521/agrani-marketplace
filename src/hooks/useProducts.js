@@ -9,6 +9,7 @@ export function useProducts({
   districtCode = "",
   blockCode = "",
   qc_status = "approved",
+  seller_mobile = "",
 } = {}) {
   const { getProducts } = useProductApi();
   const [state, setState] = useState({
@@ -36,6 +37,7 @@ export function useProducts({
         districtCode,
         blockCode,
         qc_status,
+        seller_mobile,
       });
 
       setState({

@@ -38,6 +38,7 @@ export function useProductApi() {
     districtCode = "",
     blockCode = "",
     qc_status = "approved",
+    seller_mobile = "",
   } = {}) {
     const params = new URLSearchParams({
       qc_status,
@@ -51,6 +52,10 @@ export function useProductApi() {
 
     if (buyerMobile?.trim()) {
       params.set("buyer", buyerMobile?.trim());
+    }
+
+    if (seller_mobile?.trim()) {
+      params.set("seller_mobile", seller_mobile.trim());
     }
 
     if (seller_id?.trim()) {
@@ -138,6 +143,53 @@ export function useProductApi() {
     });
   }
 
+  function updateProduct(id, payload) {
+    return agraniFetch(`/marketplace/api/product/${id}/`, {
+      method: "PATCH",
+      body: payload,
+    });
+  }
+
+  function createProductSpec(payload) {
+    return agraniFetch("/marketplace/api/specification/", {
+      method: "POST",
+      body: payload,
+    });
+  }
+
+  function updateProductSpec(id, payload) {
+    return agraniFetch(`/marketplace/api/specification/${id}/`, {
+      method: "PATCH",
+      body: payload,
+    });
+  }
+
+  function createProductVariant(payload) {
+    return agraniFetch("/marketplace/api/variant/", {
+      method: "POST",
+      body: payload,
+    });
+  }
+
+  function updateProductVariant(id, payload) {
+    return agraniFetch(`/marketplace/api/variant/${id}/`, {
+      method: "PATCH",
+      body: payload,
+    });
+  }
+
+  function deleteVariantMedia(id) {
+    return agraniFetch(`/marketplace/api/media-storage/variant/${id}/`, {
+      method: "DELETE",
+    });
+  }
+
+  function getDeliveryLocation(sellerMobile) {
+    return agraniFetch(
+      `/marketplace/api/me/delivery-locations/?seller_mobile=${sellerMobile}`,
+    );
+  }
+
   return {
     getProducts,
     getProductRecommendations,
@@ -150,5 +202,12 @@ export function useProductApi() {
     submitStockForApproval,
     addtoWishlist,
     getWishlist,
+    updateProduct,
+    createProductSpec,
+    updateProductSpec,
+    createProductVariant,
+    updateProductVariant,
+    deleteVariantMedia,
+    getDeliveryLocation,
   };
 }
