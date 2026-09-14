@@ -357,9 +357,10 @@ export default function Category() {
       </section>
 
       {/* Main Content */}
-      <div className="mx-auto flex min-h-0 items-start md:gap-10   gap-3 px-2">
+      <div className="mx-auto flex min-h-0 items-start md:gap-8  gap-1">
         {/* Category Sidebar */}
-        <aside className="sticky top-20 md:top-3 w-fit min-w-0 shrink-0 self-start">
+        {/* <aside className="sticky top-20 md:top-3 w-fit min-w-0 shrink-0 self-start"> */}
+        <aside className="sticky top-20 md:top-3 w-20  place-items-center  shrink-0 self-start max-h-[calc(100vh-5rem)] md:max-h-[calc(100vh-5rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden">
           <div className="flex items-start gap-2 ">
             <CategorySidePanel
               products={products}

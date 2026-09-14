@@ -18,8 +18,6 @@ export default function Layout() {
   const hideHeader =
     paramHideHeader || sessionStorage.getItem("hideHeader") === "true";
 
-  console.log(hideHeader, "boolean");
-
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
       <ScrollToTop />

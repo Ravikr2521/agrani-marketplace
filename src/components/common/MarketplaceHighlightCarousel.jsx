@@ -44,7 +44,7 @@ const carouselSlides = [...slides, ...slides, ...slides];
 
 export default function MarketplaceHighlightCarousel() {
   return (
-    <section className="my-6 lg:my-8">
+    <section className="lg:mb-0 mt-14">
       <Swiper
         modules={[Autoplay, Pagination]}
         loop={true}

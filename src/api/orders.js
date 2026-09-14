@@ -65,11 +65,21 @@ export function useOrderApi() {
     });
   }
 
+  function getSellerAnalytics(phone) {
+    return apiFetch(
+      `/marketplace/api/orders/analytics/?seller_mobile=${encodeURIComponent(phone)}`,
+      {
+        headers: agraniAuthHeaders,
+      },
+    );
+  }
+
   return {
     createOrder,
     getOrdersByPhone,
     getOrderStatuses,
     getSellerOrders,
     updateOrderStatus,
+    getSellerAnalytics,
   };
 }

@@ -23,11 +23,12 @@ import {
   RotateCcw,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SearchInput from "../components/common/SearchInput";
 import SellerCard from "../components/SellerDashboard/SelllerCard";
 import useDebouncedValue from "../hooks/useDebouncedValue";
+import { useOrderApi } from "@/api/orders";
 
 const STATUS_FILTER_OPTIONS = [
   { value: "all", label: "All Status" },
@@ -96,6 +97,7 @@ export function LoadingCards({ count = 8 }) {
 
 const Seller = () => {
   const { SellerMobile } = useAuth();
+  const { getSellerAnalytics } = useOrderApi();
 
   const hideHeader = sessionStorage.getItem("hideHeader") === "true";
 
@@ -105,6 +107,22 @@ const Seller = () => {
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [status, setStatus] = useState("all");
+  const [analytics, setAnalytics] = useState(null);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await getSellerAnalytics(SellerMobile);
+        setAnalytics(res?.data[0]);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
+
+  console.log(analytics, "check");
 
   const search = useDebouncedValue(input, 400);
 
@@ -216,12 +234,20 @@ const Seller = () => {
                 </Button>
               </div>
             </div>
-            <div className="mt-5 grid max-w-xl grid-cols-3 divide-x divide-white/15">
+            <div className="mt-5 grid max-w-3xl grid-cols-5 divide-x divide-white/15">
               <DashboardStat label="Listings" value={products.length} />
               <DashboardStat label="Live now" value={activeListings} />
               <DashboardStat
                 label="In-stock variants"
                 value={availableVariants}
+              />
+              <DashboardStat
+                label="Total Orders"
+                value={analytics?.total_orders}
+              />
+              <DashboardStat
+                label="Total Revenue"
+                value={`₹ ${analytics?.revenue}`}
               />
             </div>
           </section>

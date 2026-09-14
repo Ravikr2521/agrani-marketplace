@@ -575,8 +575,6 @@ export default function Home() {
                 )
               )}
 
-              <MarketplaceHighlightCarousel />
-
               {categorizedProducts.map((section) => (
                 <section key={section.key}>
                   <div className="mb-5">
@@ -601,6 +599,8 @@ export default function Home() {
               ))}
             </div>
           )}
+
+          <MarketplaceHighlightCarousel />
         </section>
       </main>
     </div>

@@ -565,7 +565,6 @@ export default function SellerProductPreview({
             onClose={() => setEditModalOpen(false)}
             onBack={() => {
               setEditModalOpen(false);
-              // Re-open the product preview after editing
               setTimeout(() => onOpenChange(true), 100);
             }}
           />
@@ -593,7 +592,7 @@ export default function SellerProductPreview({
                 onOpenChange(false);
                 setEditModalOpen(true);
               }}
-              className="gap-1.5"
+              className="gap-1.5 mr-8"
             >
               <Edit className="h-3.5 w-3.5" />
               Edit

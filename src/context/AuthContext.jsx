@@ -34,11 +34,11 @@ function getInitialAuth() {
   const params = new URLSearchParams(window.location.search);
 
   const urlToken = params.get("token");
-  console.log("AuthContext urlToken:", urlToken ? "present" : "not present");
+  // console.log("AuthContext urlToken:", urlToken ? "present" : "not present");
 
   if (urlToken) {
     const payload = decodeJwtPayload(urlToken);
-    console.log("AuthContext token payload:", payload);
+    // console.log("AuthContext token payload:", payload);
 
     const mobile =
       payload?.preferred_username ||

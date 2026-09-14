@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   CalendarDays,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Package,
@@ -63,7 +64,6 @@ export default function SellerOrders() {
   const { getSellerOrders } = useOrderApi();
 
   const hideHeader = sessionStorage.getItem("hideHeader") === "true";
-  console.log(hideHeader, "hideheader");
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -462,34 +462,45 @@ function OrderRow({ order, onUpdated }) {
           {order?.no_of_units || 0} units
         </p>
 
-        <div className="mt-3 flex gap-2">
-          <Select value={status} onValueChange={setStatus} disabled={updating}>
-            <SelectTrigger className="h-9 flex-1 rounded-lg text-xs">
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
+        {order?.status !== "Order Delivered" ? (
+          <div className="mt-3 flex gap-2">
+            <Select
+              value={status}
+              onValueChange={setStatus}
+              disabled={updating}
+            >
+              <SelectTrigger className="h-9 flex-1 rounded-lg text-xs">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
 
-            <SelectContent>
-              {orderStatuses?.map((option) => (
-                <SelectItem key={option} value={option} className="text-xs">
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <SelectContent>
+                {orderStatuses?.map((option) => (
+                  <SelectItem key={option} value={option} className="text-xs">
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Button
-            size="sm"
-            onClick={update}
-            disabled={updating || status === order?.status}
-            className="rounded-lg"
-          >
-            {updating ? (
-              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              "Update"
-            )}
-          </Button>
-        </div>
+            <Button
+              size="sm"
+              onClick={update}
+              disabled={updating || status === order?.status}
+              className="rounded-lg"
+            >
+              {updating ? (
+                <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                "Update"
+              )}
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-2 flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-xs font-medium text-green-700">
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Order Delivered
+          </div>
+        )}
       </div>
     </article>
   );
