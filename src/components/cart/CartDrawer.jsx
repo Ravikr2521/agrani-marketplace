@@ -462,19 +462,19 @@ export default function CartDrawer({ open, onOpenChange }) {
                       </p>
                     </div>
 
-                    <span
-                      className="
-                        rounded-full
-                        bg-light-blue
-                        px-2.5
-                        py-1
-                        text-[11px]
-                        font-semibold
-                        text-primary
-                      "
-                    >
-                      {count} {t(count !== 1 ? "items" : "item")}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full bg-light-blue px-2.5 py-1 text-[11px] font-semibold text-primary">
+                        {count} {t(count !== 1 ? "items" : "item")}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={clearCart}
+                        className="text-[11px] font-semibold text-red-600 hover:underline"
+                      >
+                        {t("Clear cart")}
+                      </button>
+                    </div>
                   </div>
 
                   <div className="space-y-3">

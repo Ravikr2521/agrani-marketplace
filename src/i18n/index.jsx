@@ -369,22 +369,28 @@ function LegacyTextTranslator() {
     const root = document.getElementById("root");
     if (!root) return undefined;
 
+    const originals = new WeakMap();
+
     const translate = () => {
+      observer.disconnect();
       const language = i18n.language === "hi" ? "hi" : "en";
+
       root
         .querySelectorAll("[placeholder], [aria-label], [title]")
         .forEach((element) => {
           ["placeholder", "aria-label", "title"].forEach((attribute) => {
-            const originalAttribute = `data-i18n-${attribute}`;
+            const current = element.getAttribute(attribute);
+            if (!current) return;
+            const record = originals.get(element) || {};
             const original =
-              element.getAttribute(originalAttribute) ||
-              element.getAttribute(attribute);
-            if (!original) return;
-            element.setAttribute(originalAttribute, original);
-            element.setAttribute(
-              attribute,
-              language === "hi" ? i18n.t(original) : original,
-            );
+              record[`${attribute}:applied`] === current
+                ? record[attribute]
+                : current;
+            const next = language === "hi" ? i18n.t(original) : original;
+            record[attribute] = original;
+            record[`${attribute}:applied`] = next;
+            originals.set(element, record);
+            if (current !== next) element.setAttribute(attribute, next);
           });
         });
 
@@ -392,19 +398,29 @@ function LegacyTextTranslator() {
       const nodes = [];
       while (walker.nextNode()) nodes.push(walker.currentNode);
       nodes.forEach((node) => {
-        const parent = node.parentElement;
-        const original = parent?.dataset.i18nText || node.nodeValue.trim();
+        const current = node.nodeValue;
+        const record = originals.get(node);
+        const original =
+          record && record.applied === current
+            ? record.original
+            : current.trim();
         if (!original || !hi[original]) return;
-        parent.dataset.i18nText = original;
-        const prefix = node.nodeValue.match(/^\s*/)?.[0] || "";
-        const suffix = node.nodeValue.match(/\s*$/)?.[0] || "";
-        node.nodeValue = `${prefix}${language === "hi" ? i18n.t(original) : original}${suffix}`;
+        const prefix = current.match(/^\s*/)?.[0] || "";
+        const suffix = current.match(/\s*$/)?.[0] || "";
+        const next = `${prefix}${language === "hi" ? i18n.t(original) : original}${suffix}`;
+        originals.set(node, { original, applied: next });
+        if (current !== next) node.nodeValue = next;
+      });
+
+      observer.observe(root, {
+        childList: true,
+        subtree: true,
+        characterData: true,
       });
     };
 
-    translate();
     const observer = new MutationObserver(translate);
-    observer.observe(root, { childList: true, subtree: true });
+    translate();
     return () => observer.disconnect();
   }, []);
   return null;
