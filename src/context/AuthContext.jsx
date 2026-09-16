@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, useState } from "react";
+import { getLanguageFromQuery, LANGUAGE_STORAGE_KEY } from "@/i18n";
 
 const AuthContext = createContext(null);
 
@@ -32,6 +33,10 @@ function decodeJwtPayload(token) {
 
 function getInitialAuth() {
   const params = new URLSearchParams(window.location.search);
+  // Persist the normalised language alongside the auth data. `hi` is Hindi;
+  // any missing or unsupported value is intentionally stored as English.
+  const language = getLanguageFromQuery();
+  localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
 
   const urlToken = params.get("token");
   // console.log("AuthContext urlToken:", urlToken ? "present" : "not present");
@@ -56,6 +61,7 @@ function getInitialAuth() {
       token: DEV_TOKEN,
       AgraniToken: urlToken,
       SellerMobile: mobileString,
+      language,
     };
   }
 
@@ -82,12 +88,14 @@ function getInitialAuth() {
       token: DEV_TOKEN,
       AgraniToken: savedAgraniToken,
       SellerMobile: mobileString,
+      language,
     };
   }
 
   // Fallback to dev tokens
   return {
     token: DEV_TOKEN,
+    language,
     // AgraniToken: DEV_AGRANI_TOKEN,
     // SellerMobile: DEV_MOBILE_NO,
   };
@@ -103,6 +111,7 @@ export const AuthProvider = ({ children }) => {
   const [SellerMobile, setSellerMobile] = useState(
     initialAuth?.SellerMobile ?? null,
   );
+  const [language] = useState(initialAuth?.language ?? "en");
 
   const value = {
     token,
@@ -111,6 +120,7 @@ export const AuthProvider = ({ children }) => {
     setSellerMobile,
     AgraniToken,
     setAgraniToken,
+    language,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

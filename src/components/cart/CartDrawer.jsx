@@ -33,12 +33,14 @@ import { useOrder } from "@/context/OrderContext";
 import { formatINR } from "@/lib/utils";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n";
 
 function CheckoutSteps({ step }) {
+  const { t } = useTranslation();
   const steps = [
-    { label: "Review", key: 1 },
-    { label: "Details", key: 2 },
-    { label: "Done", key: 3 },
+    { label: t("Review"), key: 1 },
+    { label: t("Details"), key: 2 },
+    { label: t("Done"), key: 3 },
   ];
 
   return (
@@ -118,6 +120,7 @@ function validPin(value) {
 }
 
 export default function CartDrawer({ open, onOpenChange }) {
+  const { t } = useTranslation();
   const {
     items,
     getCartTotal,
@@ -132,6 +135,30 @@ export default function CartDrawer({ open, onOpenChange }) {
   const { createOrder } = useOrderApi();
   const { requireMobileNumber } = useContext(MobileNumberContext);
   const verifiedMobile = getBuyerMobileNumber();
+
+  function decodeJwtPayload(token) {
+    try {
+      const parts = token.split(".");
+
+      if (parts.length !== 3) {
+        return null;
+      }
+
+      const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+
+      const padded = base64.padEnd(
+        base64.length + ((4 - (base64.length % 4)) % 4),
+        "=",
+      );
+
+      return JSON.parse(atob(padded));
+    } catch {
+      return null;
+    }
+  }
+
+  const savedAgraniToken = localStorage.getItem("agrani_auth_token");
+  const decodedToken = decodeJwtPayload(savedAgraniToken);
 
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -206,19 +233,19 @@ export default function CartDrawer({ open, onOpenChange }) {
     const nextErrors = {};
 
     if (!form.name.trim()) {
-      nextErrors.name = "Name is required";
+      nextErrors.name = t("Name is required");
     }
 
     if (!validPhone(form.phone)) {
-      nextErrors.phone = "Enter a valid 10-digit Indian mobile number";
+      nextErrors.phone = t("Enter a valid 10-digit mobile number");
     }
 
     if (!form.address.trim()) {
-      nextErrors.address = "Delivery address is required";
+      nextErrors.address = t("Delivery address is required");
     }
 
     if (!validPin(form.pincode)) {
-      nextErrors.pincode = "Enter a valid 6-digit pincode";
+      nextErrors.pincode = t("Enter a valid 6-digit pincode");
     }
 
     setErrors(nextErrors);
@@ -244,6 +271,8 @@ export default function CartDrawer({ open, onOpenChange }) {
         receiver_name: form.name.trim(),
         receiver_phone: form.phone,
         buyer_phone: verifiedMobile,
+        buyer_name: decodedToken?.name,
+        buyer_id: decodedToken?.sub,
       };
 
       const response = await createOrder(payload);
@@ -265,8 +294,8 @@ export default function CartDrawer({ open, onOpenChange }) {
 
       setStep(3);
     } catch (error) {
-      toast.error("Failed to place order", {
-        description: error.message || "Please try again.",
+      toast.error(t("Failed to place order"), {
+        description: error.message || t("Please try again."),
       });
     } finally {
       setSubmitting(false);
@@ -338,21 +367,22 @@ export default function CartDrawer({ open, onOpenChange }) {
 
             <div className="min-w-0">
               <SheetTitle className="truncate text-lg font-bold tracking-tight text-body-dark sm:text-[18px] ">
-                {step === 1 && "Your Cart"}
-                {step === 2 && "Delivery Details"}
-                {step === 3 && "Order Confirmed"}
+                {step === 1 && t("Your Cart")}
+                {step === 2 && t("Delivery Details")}
+                {step === 3 && t("Order Confirmed")}
               </SheetTitle>
 
               <p className="truncate text-xs text-muted sm:text-[13px]">
                 {step === 1 && (
                   <>
-                    {count} item{count === 1 ? "" : "s"} in your basket
+                    {count} {t(count === 1 ? "item" : "items")}{" "}
+                    {t("in your basket")}
                   </>
                 )}
 
-                {step === 2 && "Enter your delivery information"}
+                {step === 2 && t("Enter your delivery information")}
 
-                {step === 3 && "Your order has been placed successfully"}
+                {step === 3 && t("Your order has been placed successfully")}
               </p>
             </div>
           </div>
@@ -379,12 +409,14 @@ export default function CartDrawer({ open, onOpenChange }) {
               <img src="/images/empty-cart.png" alt="Empty Cart" />
             </div>
 
-            <h3 className=" text-2xl font-semibold tracking-tight text-body-dark">
-              Your cart is empty
+            <h3 className="text-2xl font-semibold tracking-tight text-body-dark">
+              {t("Your cart is empty")}
             </h3>
 
             <p className="mt-2 max-w-xs text-sm leading-6 text-muted">
-              Pick a fresh variant from the marketplace and it will appear here.
+              {t(
+                "Pick a fresh variant from the marketplace and it will appear here.",
+              )}
             </p>
 
             <Button
@@ -405,7 +437,7 @@ export default function CartDrawer({ open, onOpenChange }) {
               onClick={closeDrawer}
             >
               <Link to="/">
-                Browse Produce
+                {t("Browse Produce")}
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
@@ -422,11 +454,11 @@ export default function CartDrawer({ open, onOpenChange }) {
                   <div className="mb-4 flex items-center justify-between">
                     <div>
                       <h2 className="text-base font-bold text-body-dark">
-                        Review your order
+                        {t("Review your order")}
                       </h2>
 
                       <p className="mt-0.5 text-xs text-muted">
-                        Check your items before continuing.
+                        {t("Check your items before continuing.")}
                       </p>
                     </div>
 
@@ -441,7 +473,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                         text-primary
                       "
                     >
-                      {count} item{count !== 1 ? "s" : ""}
+                      {count} {t(count !== 1 ? "items" : "item")}
                     </span>
                   </div>
 
@@ -493,7 +525,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                     <ImageOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                   </span>
                                   <span className="text-[8px] font-semibold leading-none sm:text-[9px]">
-                                    No image
+                                    {t("No image")}
                                   </span>
                                 </div>
                               )}
@@ -519,7 +551,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                     </Link>
 
                                     <p className="mt-0.5 truncate text-xs font-semibold text-primary">
-                                      ( {item.variantName || "Standard"} )
+                                      ({item.variantName || t("Standard")})
                                     </p>
                                   </div>
 
@@ -631,7 +663,7 @@ export default function CartDrawer({ open, onOpenChange }) {
 
                               {maxReached && (
                                 <p className="mt-1.5 text-[10px] font-medium text-amber-600">
-                                  Maximum available quantity reached
+                                  {t("Maximum available quantity reached")}
                                 </p>
                               )}
                             </div>
@@ -655,7 +687,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                   "
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted">Items</span>
+                    <span className="text-sm text-muted">{t("Items")}</span>
 
                     <span className="text-sm font-semibold text-body-light">
                       {count}
@@ -664,7 +696,7 @@ export default function CartDrawer({ open, onOpenChange }) {
 
                   <div className="mt-1.5 flex items-center justify-between">
                     <span className="text-base font-semibold text-body-dark">
-                      Subtotal
+                      {t("Subtotal")}
                     </span>
 
                     <span className="text-xl font-bold tracking-tight text-body-dark sm:text-2xl">
@@ -673,7 +705,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                   </div>
 
                   <p className=" text-right text-[10px] text-muted">
-                    Taxes and delivery charges may apply
+                    {t("Taxes and delivery charges may apply")}
                   </p>
 
                   <Button
@@ -704,7 +736,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                       }
                     }}
                   >
-                    Continue to delivery
+                    {t("Continue to delivery")}
                     <ArrowRight className="ml-1.5 h-4 w-4" />
                   </Button>
                 </div>
@@ -723,11 +755,11 @@ export default function CartDrawer({ open, onOpenChange }) {
                   <div className="px-4 py-4 sm:px-5">
                     <div className="mb-5">
                       <h2 className="text-base font-bold text-body-dark">
-                        Delivery details
+                        {t("Delivery details")}
                       </h2>
 
                       <p className="mt-0.5 text-xs text-muted">
-                        Where should we deliver your order?
+                        {t("Where should we deliver your order?")}
                       </p>
                     </div>
 
@@ -735,7 +767,8 @@ export default function CartDrawer({ open, onOpenChange }) {
                       <div className="flex gap-4">
                         <div>
                           <label className="mb-1.5 block text-sm font-semibold text-body-light">
-                            Your name <span className="text-red-500">*</span>
+                            {t("Your name")}{" "}
+                            <span className="text-red-500">*</span>
                           </label>
 
                           <Input
@@ -743,7 +776,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                             onChange={(event) =>
                               updateForm("name", event.target.value)
                             }
-                            placeholder="Full name"
+                            placeholder={t("Full name")}
                             autoComplete="name"
                             className="h-11 rounded-xl"
                           />
@@ -758,7 +791,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                         <div>
                           <div className="mb-1.5 flex items-center justify-between">
                             <label className="block text-sm font-semibold text-body-light">
-                              Mobile number{" "}
+                              {t("Mobile number")}{" "}
                               <span className="text-red-500">*</span>
                             </label>
 
@@ -769,7 +802,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                 className="flex items-center gap-1 text-xs text-primary hover:underline"
                               >
                                 <Edit2 className="h-3 w-3" />
-                                Change
+                                {t("Change")}
                               </button>
                             ) : (
                               verifiedMobile &&
@@ -782,7 +815,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                   }}
                                   className="flex items-center gap-1 text-xs text-primary hover:underline"
                                 >
-                                  Verified Mobile
+                                  {t("Verified Mobile")}
                                 </button>
                               )
                             )}
@@ -802,7 +835,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                 );
                               }
                             }}
-                            placeholder="10-digit number"
+                            placeholder={t("10-digit number")}
                             autoComplete="tel"
                             className="h-11 rounded-xl"
                             disabled={isMobileLocked}
@@ -818,7 +851,7 @@ export default function CartDrawer({ open, onOpenChange }) {
 
                       <div>
                         <label className="mb-1.5 block text-sm font-semibold text-body-light">
-                          Delivery address{" "}
+                          {t("Delivery address")}{" "}
                           <span className="text-red-500">*</span>
                         </label>
 
@@ -827,7 +860,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                           onChange={(event) =>
                             updateForm("address", event.target.value)
                           }
-                          placeholder="House / flat no., street, locality"
+                          placeholder={t("House / flat no., street, locality")}
                           autoComplete="street-address"
                           className="min-h-25 resize-none rounded-xl"
                         />
@@ -841,7 +874,7 @@ export default function CartDrawer({ open, onOpenChange }) {
 
                       <div>
                         <label className="mb-1.5 block text-sm font-semibold text-body-light">
-                          Pincode <span className="text-red-500">*</span>
+                          {t("Pincode")} <span className="text-red-500">*</span>
                         </label>
 
                         <Input
@@ -854,7 +887,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                               event.target.value.replace(/\D/g, "").slice(0, 6),
                             )
                           }
-                          placeholder="6-digit pincode"
+                          placeholder={t("6-digit pincode")}
                           className="h-11 rounded-xl"
                         />
 
@@ -868,14 +901,16 @@ export default function CartDrawer({ open, onOpenChange }) {
 
                     <div className="mt-5 flex items-center gap-2 rounded-xl bg-light-blue px-3 py-2.5 text-xs text-primary">
                       <LockKeyhole className="h-4 w-4 shrink-0" />
-                      Your delivery information is securely handled.
+                      {t("Your delivery information is securely handled.")}
                     </div>
                   </div>
                 </form>
 
                 <div className="shrink-0 border-t border-border/80 bg-[#fffdf8] px-4 py-3 shadow-[0_-10px_25px_rgba(0,0,0,0.04)] sm:px-5">
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="text-sm text-muted">Order total</span>
+                    <span className="text-sm text-muted">
+                      {t("Order total")}
+                    </span>
 
                     <span className="text-lg font-bold text-body-dark">
                       {formatINR(total)}
@@ -893,7 +928,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                       }}
                     >
                       <ArrowLeft className="mr-1.5 h-4 w-4" />
-                      Back
+                      {t("Back")}
                     </Button>
 
                     <Button
@@ -902,7 +937,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                       disabled={submitting}
                       onClick={placeOrder}
                     >
-                      {submitting ? "Placing order..." : "Place Order"}
+                      {submitting ? t("Placing order...") : t("Place Order")}
                     </Button>
                   </div>
                 </div>
@@ -921,13 +956,14 @@ export default function CartDrawer({ open, onOpenChange }) {
                       />
                     </div>
 
-                    <h2 className=" text-xl font-black tracking-tight text-body-dark">
-                      Order confirmed!
+                    <h2 className="text-xl font-black tracking-tight text-body-dark">
+                      {t("Order confirmed!")}
                     </h2>
 
                     <p className="mt-2 max-w-xs text-sm leading-6 text-muted">
-                      Thank you for your order. We've received it and will start
-                      preparing it shortly.
+                      {t(
+                        "Thank you for your order. We've received it and will start preparing it shortly.",
+                      )}
                     </p>
 
                     <div className="mt-6 w-full overflow-hidden rounded-2xl border border-orange-100 bg-white text-left shadow-xs">
@@ -939,12 +975,14 @@ export default function CartDrawer({ open, onOpenChange }) {
 
                           <div className="min-w-0">
                             <p className="text-xs font-medium text-muted">
-                              Order summary
+                              {t("Order summary")}
                             </p>
 
                             <p className=" text-sm font-bold text-body-dark">
-                              {confirmedSummary.count} item
-                              {confirmedSummary.count !== 1 ? "s" : ""}
+                              {confirmedSummary.count}{" "}
+                              {t(
+                                confirmedSummary.count !== 1 ? "items" : "item",
+                              )}
                             </p>
                           </div>
                         </div>
@@ -959,7 +997,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                       <div className="grid grid-cols-2 divide-x divide-stone-200 bg-cream/70">
                         <div className="px-4 py-3">
                           <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">
-                            Items
+                            {t("Items")}
                           </p>
 
                           <p className="mt-1 text-sm font-bold text-body-light">
@@ -969,11 +1007,11 @@ export default function CartDrawer({ open, onOpenChange }) {
 
                         <div className="px-4 py-3">
                           <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">
-                            Status
+                            {t("Status")}
                           </p>
 
                           <p className="mt-1 text-sm font-bold text-primary">
-                            Order placed
+                            {t("Order placed")}
                           </p>
                         </div>
                       </div>
@@ -984,12 +1022,13 @@ export default function CartDrawer({ open, onOpenChange }) {
 
                       <div>
                         <p className="text-xs font-bold text-primary">
-                          What's next?
+                          {t("What's next?")}
                         </p>
 
                         <p className="mt-0.5 text-[11px] leading-5 text-primary/80">
-                          Your order has been received and will be prepared for
-                          delivery.
+                          {t(
+                            "Your order has been received and will be prepared for delivery.",
+                          )}
                         </p>
                       </div>
                     </div>

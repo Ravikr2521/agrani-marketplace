@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, Loader2, Phone } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n";
 import { useAuth } from "@/context/AuthContext";
 
 const OtpInput = ({ value, onChange, onEnter }) => {
@@ -101,6 +102,7 @@ const OtpInput = ({ value, onChange, onEnter }) => {
 };
 
 export default function OtpGate({ onVerified }) {
+  const { t } = useTranslation();
   const [step, setStep] = useState("phone");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
@@ -111,7 +113,7 @@ export default function OtpGate({ onVerified }) {
   const handleSendOtp = async () => {
     const cleaned = phone.trim();
     if (!/^\d{10}$/.test(cleaned)) {
-      toast.warning("Please enter a valid 10-digit mobile number.");
+      toast.warning(t("Please enter a valid 10-digit mobile number."));
       return;
     }
 
@@ -120,7 +122,7 @@ export default function OtpGate({ onVerified }) {
       await getOTP(cleaned);
       setOtp("");
       setStep("otp");
-      toast.success("OTP sent to your mobile number.");
+      toast.success(t("OTP sent to your mobile number."));
     } catch (err) {
       toast.error(err?.message || "Failed to send OTP. Please try again.");
     } finally {
@@ -130,7 +132,7 @@ export default function OtpGate({ onVerified }) {
 
   const handleVerify = async () => {
     if (otp.length !== 4) {
-      toast.warning("Please enter the complete 4-digit OTP.");
+      toast.warning(t("Please enter the complete 4-digit OTP."));
       return;
     }
 
@@ -156,14 +158,14 @@ export default function OtpGate({ onVerified }) {
         setAgraniToken(accessToken);
         setSellerMobile(phone.trim());
 
-        toast.success("Mobile number verified and logged in!");
+        toast.success(t("Mobile number verified and logged in!"));
       } else {
-        toast.success("Mobile number verified!");
+        toast.success(t("Mobile number verified!"));
       }
 
       onVerified(phone.trim());
     } catch (err) {
-      toast.error(err?.message || "Invalid OTP. Please try again.");
+      toast.error(err?.message || t("Invalid OTP. Please try again."));
     } finally {
       setVerifying(false);
     }
@@ -173,9 +175,9 @@ export default function OtpGate({ onVerified }) {
     setSending(true);
     try {
       await getOTP(phone.trim());
-      toast.success("OTP resent.");
+      toast.success(t("OTP resent."));
     } catch {
-      toast.error("Failed to resend OTP.");
+      toast.error(t("Failed to resend OTP."));
     } finally {
       setSending(false);
     }
@@ -196,7 +198,7 @@ export default function OtpGate({ onVerified }) {
             <img src="/images/lock.png" className="h-20" />
           </div>
           <h2 className="text-base font-bold text-body-dark">
-            {step === "phone" ? "Verify Your Mobile" : "Enter OTP"}
+            {step === "phone" ? t("Verify Your Mobile") : t("Enter OTP")}
           </h2>
           <p className="text-[13px] text-muted leading-relaxed">
             {step === "phone"
@@ -242,7 +244,7 @@ export default function OtpGate({ onVerified }) {
                 ) : (
                   <ArrowRight className="w-4 h-4" />
                 )}
-                {sending ? "Sending OTP…" : "Send OTP"}
+                {sending ? t("Sending OTP…") : t("Send OTP")}
               </Button>
             </motion.div>
           ) : (
@@ -264,7 +266,7 @@ export default function OtpGate({ onVerified }) {
                 ) : (
                   <CheckCircle2 className="w-4 h-4" />
                 )}
-                {verifying ? "Verifying…" : "Verify OTP"}
+                {verifying ? t("Verifying…") : t("Verify OTP")}
               </Button>
               <div className="flex items-center justify-between text-xs">
                 <button
@@ -283,7 +285,7 @@ export default function OtpGate({ onVerified }) {
                   disabled={sending}
                   className="text-primary hover:underline disabled:opacity-50 transition-colors"
                 >
-                  {sending ? "Sending…" : "Resend OTP"}
+                  {sending ? t("Sending…") : t("Resend OTP")}
                 </button>
               </div>
             </motion.div>

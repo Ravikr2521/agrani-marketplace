@@ -15,9 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "@/i18n";
 import { LocationFilter } from "./LocationFilter";
 
 function FilterFields({ value, onChange, categories, packUnits, onClear }) {
+  const { t } = useTranslation();
   const activeCount = [
     value.category !== "all",
     value.availability !== "all",
@@ -31,7 +33,7 @@ function FilterFields({ value, onChange, categories, packUnits, onClear }) {
     <div className="space-y-3">
       <div>
         <label className="mb-2 block text-xs font-bold  tracking-[0.12em] text-muted">
-          Category
+          {t("Category")}
         </label>
         <Select
           value={value.category || "all"}
@@ -41,7 +43,7 @@ function FilterFields({ value, onChange, categories, packUnits, onClear }) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
+            <SelectItem value="all">{t("All categories")}</SelectItem>
             {categories.map((c) => (
               <SelectItem key={c} value={c}>
                 {c}
@@ -74,7 +76,7 @@ function FilterFields({ value, onChange, categories, packUnits, onClear }) {
       </div> */}
       <div>
         <label className="mb-2 block text-xs font-bold  tracking-[0.12em] text-muted">
-          Price
+          {t("Price")}
         </label>
         <Select
           value={value.price || "all"}
@@ -84,17 +86,19 @@ function FilterFields({ value, onChange, categories, packUnits, onClear }) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Any price</SelectItem>
-            <SelectItem value="0-250">Under ₹250</SelectItem>
-            <SelectItem value="250-500">₹250 – ₹500</SelectItem>
-            <SelectItem value="500-1000">₹500 – ₹1,000</SelectItem>
-            <SelectItem value="1000+">Above ₹1,000</SelectItem>
+            <SelectItem value="all">{t("Any price")}</SelectItem>
+            <SelectItem value="0-250">{t("Under ₹250")}</SelectItem>
+            <SelectItem value="250-500">{t("₹250 – ₹500")}</SelectItem>
+            <SelectItem value="500-1000">{t("₹500 – ₹1,000")}</SelectItem>
+            <SelectItem value="1000+">{t("Above ₹1,000")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className=" border-border pt-2">
-        <h3 className="mb-3 text-sm font-bold text-gray-800">Location</h3>
+        <h3 className="mb-3 text-sm font-bold text-gray-800">
+          {t("Location")}
+        </h3>
         <LocationFilter
           value={{
             state: value.state || "all",
@@ -112,8 +116,8 @@ function FilterFields({ value, onChange, categories, packUnits, onClear }) {
           className="w-full text-muted hover:bg-gray-100!"
           onClick={onClear}
         >
-          <RotateCcw className="h-4 w-4" /> Clear {activeCount} filter
-          {activeCount > 1 ? "s" : ""}
+          <RotateCcw className="h-4 w-4" /> {t("Clear")} {activeCount}{" "}
+          {activeCount > 1 ? t("filters") : t("filter")}
         </Button>
       )}
     </div>
@@ -126,6 +130,7 @@ export default function ProductFilters({
   value,
   onChange,
 }) {
+  const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const activeCount = useMemo(
     () =>
@@ -157,7 +162,8 @@ export default function ProductFilters({
         <div className="sticky top-24 rounded-2xl border border-border bg-white p-5 shadow-xs">
           <div className="mb-5 flex items-center justify-between">
             <div className="flex items-center gap-2 font-bold">
-              <SlidersHorizontal className="h-4 w-4 text-primary" /> Filters
+              <SlidersHorizontal className="h-4 w-4 text-primary" />{" "}
+              {t("Filters")}
             </div>
             {activeCount > 0 && (
               <span className="grid h-6 min-w-6 place-items-center rounded-full bg-light-blue px-1.5 text-xs font-bold text-primary">
@@ -179,7 +185,7 @@ export default function ProductFilters({
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" className="relative">
-              <Filter className="h-4 w-4" /> Filters{" "}
+              <Filter className="h-4 w-4" /> {t("Filters")}{" "}
               {activeCount > 0 && (
                 <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] text-white">
                   {activeCount}
@@ -192,9 +198,9 @@ export default function ProductFilters({
             className="max-h-[88vh] overflow-y-auto rounded-t-3xl bg-[#fffdf8] p-0"
           >
             <SheetHeader className="border-b border-border pr-14">
-              <SheetTitle>Filter products</SheetTitle>
+              <SheetTitle>{t("Filter products")}</SheetTitle>
               <p className="text-left text-sm text-muted">
-                Refine the marketplace by what you need.
+                {t("Refine the marketplace by what you need.")}
               </p>
             </SheetHeader>
             <div className="p-5">
@@ -209,7 +215,7 @@ export default function ProductFilters({
                 className="mt-5 w-full"
                 onClick={() => setMobileOpen(false)}
               >
-                Show Products
+                {t("Show Products")}
               </Button>
             </div>
           </SheetContent>

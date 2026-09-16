@@ -22,6 +22,7 @@ import ProductCarousel from "./ProductCarousel";
 import ProductDetailsSheet from "./ProductDetailsSheet";
 import WishlistButton from "./WishlistButton";
 import showCartToast from "@/custom/showCartToast";
+import { useTranslation } from "@/i18n";
 
 const toTitleCase = (str = "") =>
   str.replace(
@@ -33,6 +34,7 @@ const getMediaUrl = (media) =>
   media?.productImgUrl || media?.image || media?.file || media?.url || "";
 
 const ProductCard = memo(function ProductCard({ product }) {
+  const { t } = useTranslation();
   const { isWishlisted, wishlistLoading, toggleWishlist } = useWishlist(
     product?.variants,
   );
@@ -182,7 +184,7 @@ const ProductCard = memo(function ProductCard({ product }) {
           disabled={Number(variant.no_of_units) <= 0}
           onClick={() => handleAdd(variant)}
           className="h-7 w-7  shrink-0 rounded-lg p-0 bg-primary/90 "
-          aria-label="Add to cart"
+          aria-label={t("Add to cart")}
         >
           <Plus className="h-3.5 w-3.5" />
         </Button>
@@ -195,7 +197,7 @@ const ProductCard = memo(function ProductCard({ product }) {
           type="button"
           onClick={() => handleDecrease(variant)}
           className="grid h-full w-7 place-items-center text-muted transition-colors active:bg-cream active:text-primary"
-          aria-label="Decrease quantity"
+          aria-label={t("Decrease quantity")}
         >
           <Minus className="h-3.5 w-3.5" />
         </button>
@@ -209,7 +211,7 @@ const ProductCard = memo(function ProductCard({ product }) {
           disabled={cartQty >= Number(variant.no_of_units)}
           onClick={() => handleIncrease(variant)}
           className="grid h-full w-7 place-items-center text-muted transition-colors active:bg-cream active:text-primary disabled:opacity-30"
-          aria-label="Increase quantity"
+          aria-label={t("Increase quantity")}
         >
           <Plus className="h-3.5 w-3.5" />
         </button>
@@ -245,7 +247,7 @@ const ProductCard = memo(function ProductCard({ product }) {
               {product?.name}
             </Link>
 
-            <p className="mt-1 text-xs text-red-500">Currently unavailable</p>
+            <p className="mt-1 text-xs text-red-500">{t("Currently unavailable")}</p>
           </div>
         </Card>
       </motion.div>
@@ -314,13 +316,14 @@ const ProductCard = memo(function ProductCard({ product }) {
                   onClick={() => openProductDetails(variant)}
                   className="w-fulll text-left break-all text-[14px] font-semibold leading-tight text-body-dark"
                 >
-                  {toTitleCase(product.name)}
-                  {variant?.name && (
+                  {/* {toTitleCase(product.name)} */}
+                  {product.name}
+                  {/* {variant?.name && (
                     <span className="">
                       {" - "}
                       {toTitleCase(variant.name)}
                     </span>
-                  )}
+                  )} */}
                 </button>
 
                 <Link
@@ -331,7 +334,6 @@ const ProductCard = memo(function ProductCard({ product }) {
                   className="-mt-1 flex w-fit max-w-full items-center gap-1 rounded-md bg-green-100 px-2 py-1 text-[10px] font-medium leading-none text-primary ring-1 ring-inset ring-green-200/70"
                 >
                   <User2Icon className="h-2.5 w-2.5 shrink-0" />
-
                   <span className="truncate">
                     {product?.seller_detail?.user_name || "Farmer"}
                   </span>

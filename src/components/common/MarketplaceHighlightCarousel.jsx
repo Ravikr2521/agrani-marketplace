@@ -6,6 +6,7 @@ import { BadgeCheck, Leaf, ShoppingBasket } from "lucide-react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "@/i18n";
 
 const slides = [
   {
@@ -43,8 +44,9 @@ const slides = [
 const carouselSlides = [...slides, ...slides, ...slides];
 
 export default function MarketplaceHighlightCarousel() {
+  const { t } = useTranslation();
   return (
-    <section className="lg:mb-0 mt-14">
+    <section className="lg:mb-0 mt-8">
       <Swiper
         modules={[Autoplay, Pagination]}
         loop={true}
@@ -221,7 +223,7 @@ export default function MarketplaceHighlightCarousel() {
                       lg:text-xl
                     "
                   >
-                    {slide.title}
+                    {t(slide.title)}
                   </h3>
 
                   <p
@@ -235,7 +237,7 @@ export default function MarketplaceHighlightCarousel() {
                       lg:text-sm
                     "
                   >
-                    {slide.subtitle}
+                    {t(slide.subtitle)}
                   </p>
 
                   <div
@@ -250,7 +252,7 @@ export default function MarketplaceHighlightCarousel() {
                       ${slide.accent}
                     `}
                   >
-                    Explore category
+                    {t("Explore category")}
                     <span className="transition-transform duration-300 group-hover:translate-x-1">
                       →
                     </span>

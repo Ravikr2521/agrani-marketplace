@@ -5,6 +5,7 @@ import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ArrowRight, Apple, Carrot, Wheat } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "@/i18n";
 
 const promoSlides = [
   {
@@ -115,6 +116,7 @@ export default function ProductPromoCarousel() {
 }
 
 function PromoCard({ slide, onClick }) {
+  const { t } = useTranslation();
   const Icon = slide.icon;
 
   return (
@@ -144,17 +146,17 @@ function PromoCard({ slide, onClick }) {
           <h3
             className={`truncate text-sm font-bold sm:text-base lg:text-lg ${slide.titleClass}`}
           >
-            {slide.title}
+            {t(slide.title)}
           </h3>
           <p
             className={`mt-2 text-[10px] leading-3 sm:text-xs lg:text-[13px] ${slide.subtitleClass}`}
           >
-            {slide.subtitle}
+            {t(slide.subtitle)}
           </p>
           <span
             className={`mt-2 hidden text-[11px] font-semibold lg:inline-block ${slide.subtitleClass}`}
           >
-            Explore products
+            {t("Explore products")}
           </span>
         </div>
       </div>

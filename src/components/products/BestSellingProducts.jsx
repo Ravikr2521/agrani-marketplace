@@ -3,6 +3,7 @@ import { Flame, ShoppingBag, TrendingUp } from "lucide-react";
 
 import ProductDetailsSheet from "./ProductDetailsSheet";
 import { Link } from "react-router-dom";
+import { useTranslation } from "@/i18n";
 
 function getProductImage(product) {
   const variants = product?.variants || [];
@@ -27,6 +28,7 @@ function getAvailableVariant(product) {
 }
 
 export default function BestSellingProducts({ products = [] }) {
+  const { t } = useTranslation();
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedVariantId, setSelectedVariantId] = useState(null);
@@ -54,12 +56,12 @@ export default function BestSellingProducts({ products = [] }) {
               </span>
 
               <h2 className="text-xl font-semibold tracking-tight text-body-dark sm:text-2xl">
-                Best Sellers
+                {t("Best Sellers")}
               </h2>
             </div>
 
             <p className="pl-9 text-sm leading-5 text-muted">
-              Popular products shoppers are buying now.
+              {t("Popular products shoppers are buying now.")}
             </p>
           </div>
 
@@ -119,7 +121,7 @@ export default function BestSellingProducts({ products = [] }) {
                     <TrendingUp className="h-3 w-3 text-orange-500" />
 
                     <span className="text-[11px] font-bold text-orange-600">
-                      Best selling
+                      {t("Best selling")}
                     </span>
                   </div>
                 </div>
@@ -142,7 +144,7 @@ export default function BestSellingProducts({ products = [] }) {
                   disabled={!variant}
                   className="group relative flex  p-2 shrink-0 overflow-hidden rounded-2xl border border-border/70 bg-white text-left shadow-xs transition-all duration-300  hover:border-orange-200 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 lg:w-76 xl:w-80"
                 >
-                  <div className="relative h-36 w-36 shrink-0 overflow-hidden bg-cream ">
+                  <div className="relative h-36 w-36 shrink-0 overflow-hidden border border-gray-100 rounded-lg">
                     {image ? (
                       <img
                         src={image}
@@ -189,7 +191,7 @@ export default function BestSellingProducts({ products = [] }) {
                     <div className="mt-3 flex items-center justify-between gap-2">
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-1.5 text-[10px] font-bold text-orange-600">
                         <TrendingUp className="h-3 w-3" />
-                        Best selling
+                        {t("Best selling")}
                       </span>
                     </div>
                   </div>

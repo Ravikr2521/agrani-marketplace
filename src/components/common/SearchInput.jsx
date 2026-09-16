@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Search, X } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "@/i18n";
 
 export default function SearchInput({
   value = "",
@@ -11,6 +12,7 @@ export default function SearchInput({
   placeholder = "Search for",
   className = "",
 }) {
+  const { t } = useTranslation();
   const [suggestionIndex, setSuggestionIndex] = useState(0);
   const [suggestionVisible, setSuggestionVisible] = useState(true);
 
@@ -68,7 +70,7 @@ export default function SearchInput({
                 : "-translate-y-3 opacity-0"
             }`}
           >
-            {placeholder}{" "}
+            {t(placeholder)}{" "}
             <span className="font-medium text-body-dark/90">
               {suggestions[suggestionIndex]}
             </span>
@@ -97,7 +99,7 @@ export default function SearchInput({
             hover:text-body-light
             active:scale-90
           "
-          aria-label="Clear search"
+          aria-label={t("Clear search")}
         >
           <X className="h-4 w-4" />
         </button>

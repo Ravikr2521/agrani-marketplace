@@ -21,15 +21,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 
 export default function Header() {
   const { getCartItemCount } = useCart();
+
   const { SellerMobile, setToken, setAgraniToken, setSellerMobile } = useAuth();
   const navigate = useNavigate();
 
   const [cartOpen, setCartOpen] = useState(false);
   const [ordersOpen, setOrdersOpen] = useState(false);
   const [cartAnimating, setCartAnimating] = useState(false);
+  const keyboardVisible = useKeyboardVisible();
 
   const handleLogout = () => {
     localStorage.removeItem("agrani_auth_token");
@@ -405,7 +408,13 @@ export default function Header() {
       </header>
 
       {/* Mobile Header  */}
-      <nav className="fixed -bottom-1.5 left-0 right-0 z-50 rounded-t-2xl border-t border-border bg-white md:hidden">
+      <nav
+        className={`fixed -bottom-1.5 left-0 right-0 z-50 rounded-t-2xl border-t border-border bg-white transition-transform duration-200 md:hidden ${
+          keyboardVisible
+            ? "pointer-events-none translate-y-full"
+            : "translate-y-0"
+        }`}
+      >
         <div className="mx-auto flex h-17 max-w-350 items-center justify-around px-2">
           <NavLink
             to="/"

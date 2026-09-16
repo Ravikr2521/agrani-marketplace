@@ -4,6 +4,7 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import { Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useTranslation } from "@/i18n";
 
 const heroSlides = [
   {
@@ -36,6 +37,7 @@ const heroSlides = [
 ];
 
 const WelcomCarousel = () => {
+  const { t } = useTranslation();
   return (
     <section>
       <Swiper
@@ -61,7 +63,7 @@ const WelcomCarousel = () => {
               <Link
                 to="/category"
                 className="block cursor-pointer"
-                aria-label="Explore products"
+                aria-label={t("Explore products")}
               >
                 <div
                   className={`
@@ -96,15 +98,15 @@ const WelcomCarousel = () => {
                     <div className="w-full px-6 py-6 sm:px-10 lg:w-[62%] lg:px-12">
                       <div className="flex items-center gap-2 text-sm font-semibold text-white/90">
                         <Icon className="h-5 w-5 shrink-0" />
-                        <span>{slide.badge}</span>
+                        <span>{t(slide.badge)}</span>
                       </div>
 
                       <h1 className="mt-3 max-w-2xl text-xl font-bold leading-[1.1] tracking-tight text-white sm:text-3xl lg:text-3xl">
-                        {slide.title}
+                        {t(slide.title)}
                       </h1>
 
                       <p className="mt-2 max-w-xl text-[13px] leading-6 text-white/85 sm:text-base">
-                        {slide.description}
+                        {t(slide.description)}
                       </p>
                     </div>
                   </div>

@@ -1,35 +1,22 @@
+import { Globe, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  SlidersHorizontal,
-  ClipboardList,
-  Globe,
-} from "lucide-react";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import ProductGrid from "@/components/products/ProductGrid";
-import ProductFilters from "@/components/products/ProductFilters";
-import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import ErrorState from "@/components/common/ErrorState";
+import LoadingSkeleton from "@/components/common/LoadingSkeleton";
+import ProductCard from "@/components/products/ProductCard";
+import ProductFilters from "@/components/products/ProductFilters";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useProducts } from "@/hooks/useProducts";
+import { useTranslation } from "@/i18n";
 import CategorySidePanel from "../components/category/CategorySidePanel";
 import SearchInput from "../components/common/SearchInput";
 import useDebouncedValue from "../hooks/useDebouncedValue";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import ProductCard from "@/components/products/ProductCard";
 
 export default function Category() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -206,7 +193,6 @@ export default function Category() {
 
     if (key === "category") {
       const params = new URLSearchParams(searchParams);
-
       params.delete("category");
       setSearchParams(params);
     }
@@ -216,13 +202,13 @@ export default function Category() {
 
   const formatFilterName = (key) => {
     const names = {
-      category: "Category",
-      availability: "Availability",
-      packUnit: "Pack",
-      price: "Price",
-      state: "State",
-      district: "District",
-      block: "Block",
+      category: t("Category"),
+      availability: t("Availability"),
+      packUnit: t("Pack"),
+      price: t("Price"),
+      state: t("State"),
+      district: t("District"),
+      block: t("Block"),
     };
 
     return names[key] || key;
@@ -244,10 +230,15 @@ export default function Category() {
     return value;
   };
 
-  const searchSuggestions = ["vegetables", "fruits", "pulses", "grains"];
+  const searchSuggestions = [
+    t("vegetables"),
+    t("fruits"),
+    t("pulses"),
+    t("grains"),
+  ];
+
   return (
     <main className="pb-20 md:px-8 lg:pb-8 lg:pt-4">
-      {/* Mobile Header */}
       <div className="sticky top-0 z-50 flex items-center gap-3 border border-stone-200 bg-white px-4 py-3 sm:px-5 md:hidden">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-600/80 text-white shadow-sm">
           <Globe className="h-4.5 w-4.5" />
@@ -255,30 +246,30 @@ export default function Category() {
 
         <div className="min-w-0">
           <h1 className="truncate text-lg font-bold tracking-tight text-stone-900">
-            Explore fresh picks
+            {t("Explore fresh picks")}
           </h1>
 
           <p className="truncate text-xs text-stone-500">
-            Fresh products direct from local farmers.
+            {t("Fresh products direct from local farmers.")}
           </p>
         </div>
       </div>
 
-      {/* Desktop Heading */}
-      <div className=" hidden  md:flex items-center justify-between mb-10">
-        <div className="">
+      <div className="hidden items-center justify-between md:flex mb-10">
+        <div>
           <div className="flex items-center gap-2.5">
             <span className="h-7 w-1 rounded-full bg-orange-500" />
 
-            <h1 className="text-2xl font-bold tracking-tight text-body-dark/90 ">
-              Explore fresh picks
+            <h1 className="text-2xl font-bold tracking-tight text-body-dark/90">
+              {t("Explore fresh picks")}
             </h1>
           </div>
 
           <p className="mt-1 pl-3.5 text-sm text-muted">
-            Fresh products direct from local farmers.
+            {t("Fresh products direct from local farmers.")}
           </p>
         </div>
+
         <div className="flex w-120 items-center gap-3">
           <SearchInput
             value={input}
@@ -291,18 +282,18 @@ export default function Category() {
               setPage(1);
             }}
             suggestions={searchSuggestions}
-            placeholder="Search for"
+            placeholder={t("Search for")}
             className="flex-1"
           />
 
           <Button
             variant="outline"
             onClick={() => setFiltersOpen(true)}
-            className="hidden lg:flex h-10.5"
+            className="hidden h-10.5 lg:flex"
           >
             <SlidersHorizontal className="h-4 w-4" />
 
-            <span>Filters</span>
+            <span>{t("Filters")}</span>
 
             {activeFilters > 0 && (
               <span className="grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
@@ -313,8 +304,7 @@ export default function Category() {
         </div>
       </div>
 
-      {/* Search */}
-      <section className="mx-auto max-w-350 px-3 py-5 sm:px-3 md:py-6 lg:px-0 md:hidden block">
+      <section className="mx-auto block max-w-350 px-3 py-5 sm:px-3 md:hidden md:py-6 lg:px-0">
         <div className="flex w-full items-center gap-3">
           <SearchInput
             value={input}
@@ -327,11 +317,10 @@ export default function Category() {
               setPage(1);
             }}
             suggestions={searchSuggestions}
-            placeholder="Search for"
+            placeholder={t("Search for")}
             className="flex-1"
           />
 
-          {/* Mobile Filter */}
           <div className="flex shrink-0 md:hidden">
             <ProductFilters
               categories={categories}
@@ -356,12 +345,9 @@ export default function Category() {
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="mx-auto flex min-h-0 items-start md:gap-8  gap-1">
-        {/* Category Sidebar */}
-        {/* <aside className="sticky top-20 md:top-3 w-fit min-w-0 shrink-0 self-start"> */}
-        <aside className="sticky top-20 md:top-3 w-20  place-items-center  shrink-0 self-start max-h-[calc(100vh-5rem)] md:max-h-[calc(100vh-5rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden">
-          <div className="flex items-start gap-2 ">
+      <div className="mx-auto flex min-h-0 items-start gap-1 md:gap-8">
+        <aside className="sticky top-16 z-10 h-[calc(100dvh-15rem)] w-20 shrink-0 place-items-center self-start overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden md:top-3 md:h-[calc(100vh-12rem)]">
+          <div className="flex items-start gap-2">
             <CategorySidePanel
               products={products}
               categories={categories}
@@ -391,22 +377,23 @@ export default function Category() {
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               {loading ? (
-                <p className="text-sm text-muted">Loading produce...</p>
+                <p className="text-sm text-muted">{t("Loading produce...")}</p>
               ) : (
                 <p className="text-sm text-muted">
                   <span className="font-semibold text-body-dark">
                     {filtered.length}
                   </span>{" "}
-                  {filtered.length === 1 ? "listing" : "listings"} on this page
+                  {filtered.length === 1 ? t("listing") : t("listings")}{" "}
+                  {t("on this page")}
                 </p>
               )}
             </div>
 
             {activeFilters > 0 && (
-              <div className="hidden lg:flex items-center gap-2">
+              <div className="hidden items-center gap-2 lg:flex">
                 <span className="text-xs font-semibold text-muted">
-                  {activeFilters} active filter
-                  {activeFilters > 1 ? "s" : ""}
+                  {activeFilters} {t("active filter")}
+                  {activeFilters > 1 ? t("s") : ""}
                 </span>
               </div>
             )}
@@ -415,7 +402,7 @@ export default function Category() {
           {activeFilters > 0 && (
             <div className="mb-5 flex flex-wrap items-center gap-2">
               <span className="mr-1 text-xs font-semibold text-muted">
-                Active:
+                {t("Active")}:
               </span>
 
               {activeFilterEntries.map(([key, value]) => (
@@ -447,14 +434,13 @@ export default function Category() {
             </div>
           ) : (
             <EmptyState
-              title="No products found"
-              description="Try changing your search or filters."
+              title={t("No products found")}
+              description={t("Try changing your search or filters.")}
             />
           )}
         </section>
       </div>
 
-      {/* Desktop  */}
       <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
         <SheetContent
           side="right"
@@ -503,7 +489,7 @@ export default function Category() {
                   }}
                   className="w-full rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-body-dark transition-colors hover:bg-muted/10"
                 >
-                  Clear Filters
+                  {t("Clear Filters")}
                 </button>
               </div>
             )}

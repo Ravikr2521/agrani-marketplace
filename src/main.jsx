@@ -5,14 +5,17 @@ import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
+import { I18nProvider } from "./i18n";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <CartProvider>
-        <OrderProvider>
-          <App />
-        </OrderProvider>
-      </CartProvider>
-    </AuthProvider>
+    <I18nProvider>
+      <AuthProvider>
+        <CartProvider>
+          <OrderProvider>
+            <App />
+          </OrderProvider>
+        </CartProvider>
+      </AuthProvider>
+    </I18nProvider>
   </StrictMode>,
 );

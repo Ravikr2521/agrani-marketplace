@@ -21,8 +21,10 @@ import ProductCard from "@/components/products/ProductCard";
 import { useSearchParams } from "react-router-dom";
 import SearchInput from "../components/common/SearchInput";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslation } from "@/i18n";
 
 export default function Home() {
+  const { t } = useTranslation();
   const { getProducts, getProductRecommendations } = useProductApi();
   const { AgraniToken } = useAuth();
 
@@ -37,18 +39,18 @@ export default function Home() {
   const categorySections = [
     {
       key: "FRUIT",
-      title: "Fresh Fruits",
-      description: "Fresh and naturally grown fruits from local sellers.",
+      title: t("Fresh Fruits"),
+      description: t("Fresh and naturally grown fruits from local sellers."),
     },
     {
       key: "VEGETABLE",
-      title: "Fresh Vegetables",
-      description: "Fresh vegetables sourced from verified  sellers.",
+      title: t("Fresh Vegetables"),
+      description: t("Fresh vegetables sourced from verified sellers."),
     },
     {
       key: "PULSES",
-      title: "Pulses",
-      description: "Quality pulses for your everyday needs.",
+      title: t("Pulses"),
+      description: t("Quality pulses for your everyday needs."),
     },
   ];
 
@@ -76,7 +78,7 @@ export default function Home() {
     setPage(1);
   }, [searchParams]);
 
-  const searchSuggestions = ["vegetables", "fruits", "pulses", "grains"];
+  const searchSuggestions = ["vegetables", "fruits", "pulses", "grains"].map(t);
 
   const { products, loading, error, retry } = useProducts({
     search: debouncedSearch,
@@ -317,7 +319,7 @@ export default function Home() {
       block: "Block",
     };
 
-    return names[key] || key;
+    return t(names[key] || key);
   };
 
   const getFilterDisplayValue = (key, value) => {
@@ -434,12 +436,12 @@ export default function Home() {
                 <span className="h-6 w-1 rounded-full bg-orange-500" />
 
                 <h1 className="text-[17px] font-semibold tracking-tight text-body-dark md:text-2xl">
-                  Products Near By
+                  {t("Products Near By")}
                 </h1>
               </div>
 
               <p className="pl-3.5 text-[13px] leading-6 text-muted sm:text-sm">
-                Fresh products from verified agricultural sellers.
+                {t("Fresh products from verified agricultural sellers.")}
               </p>
             </div>
 
@@ -451,7 +453,7 @@ export default function Home() {
                   setPage(1);
                 }}
                 suggestions={searchSuggestions}
-                placeholder="Search for"
+                placeholder={t("Search for")}
                 className="w-full"
               />
 
@@ -484,7 +486,7 @@ export default function Home() {
                   setPage(1);
                 }}
                 suggestions={searchSuggestions}
-                placeholder="Search for"
+                placeholder={t("Search for")}
                 className="flex-1"
               />
 
@@ -498,7 +500,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="min-w-0 pb-20 md:pb-7 md:-mt-3">
+        <section className="min-w-0 pb-14 md:pb-3 md:-mt-3">
           <div className="grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_250px] xl:gap-6">
             <div className="min-w-0">
               {loading ? (
@@ -509,8 +511,8 @@ export default function Home() {
                 <ProductGrid products={filtered} />
               ) : (
                 <EmptyState
-                  title="No products found"
-                  description="Try changing your search or filters."
+                  title={t("No products found")}
+                  description={t("Try changing your search or filters.")}
                 />
               )}
             </div>
@@ -538,12 +540,12 @@ export default function Home() {
                       <span className="h-6 w-1 rounded-full bg-orange-500" />
 
                       <h2 className="text-xl font-semibold tracking-tight text-body-dark sm:text-2xl">
-                        Top Recommendations
+                        {t("Top Recommendations")}
                       </h2>
                     </div>
 
                     <p className="pl-3.5 text-sm leading-6 text-muted">
-                      Products picked especially for you.
+                      {t("Products picked especially for you.")}
                     </p>
                   </div>
 
@@ -557,12 +559,12 @@ export default function Home() {
                         <span className="h-6 w-1 rounded-full bg-orange-500" />
 
                         <h2 className="text-xl font-semibold tracking-tight text-body-dark sm:text-2xl">
-                          Top Recommendations
+                          {t("Top Recommendations")}
                         </h2>
                       </div>
 
                       <p className="pl-3.5 text-sm leading-6 text-muted">
-                        Products picked especially for you.
+                        {t("Products picked especially for you.")}
                       </p>
                     </div>
 

@@ -1,5 +1,6 @@
 import { MapPin, Phone, PhoneCall, ShoppingBag, UserRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useOrderApi } from "@/api/orders";
 import { useProductApi } from "@/api/products";
@@ -80,6 +81,7 @@ function OrderDetailsLoading() {
 }
 
 export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
+  const { t } = useTranslation();
   const { getProducts } = useProductApi();
   const { getOrdersByPhone } = useOrderApi();
 
@@ -115,7 +117,9 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
       localStorage.getItem("farmers_marketplace_buyer_phone");
 
     if (!phone) {
-      setError("Please verify your mobile number first to view order details.");
+      setError(
+        t("Please verify your mobile number first to view order details."),
+      );
       setLoading(false);
       return;
     }
@@ -132,7 +136,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
       const found = results.find((item) => String(item.id) === String(orderId));
 
       if (!found) {
-        throw new Error("Order not found.");
+        throw new Error(t("Order not found."));
       }
 
       const products = productsResponse?.results || [];
@@ -168,7 +172,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
         items: enrichedItems,
       });
     } catch (error) {
-      setError(error.message || "Unable to load order.");
+      setError(error.message || t("Unable to load order."));
     } finally {
       setLoading(false);
     }
@@ -198,14 +202,14 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
         <ErrorState message={error} onRetry={loadOrder} />
       ) : !order ? (
         <div className="p-6 text-center text-sm text-muted">
-          Order not found.
+          {t("Order not found.")}
         </div>
       ) : (
         <>
           <div className="rounded-2xl border border-border bg-white p-4 sm:p-5">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-xs text-muted">Order placed</p>
+                <p className="text-xs text-muted">{t("Order placed")}</p>
 
                 <p className="mt-1 text-sm font-semibold text-body-dark">
                   {formatDate(order.created_at)}
@@ -217,18 +221,20 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
               </div>
 
               <Badge variant="warning" className="shrink-0">
-                {order.status || "Pending"}
+                {t(order.status || "Pending")}
               </Badge>
             </div>
           </div>
 
           <section className="rounded-2xl border border-border bg-white p-4 sm:p-5">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="font-bold text-body-dark">Ordered products</h2>
+              <h2 className="font-bold text-body-dark">
+                {t("Ordered products")}
+              </h2>
 
               <span className="text-xs text-muted">
                 {order.items?.length || 0}{" "}
-                {order.items?.length === 1 ? "item" : "items"}
+                {order.items?.length === 1 ? t("item") : t("items")}
               </span>
             </div>
 
@@ -246,39 +252,40 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
                       {image ? (
                         <img
                           src={image}
-                          alt={item.product?.name || "Product"}
+                          alt={item.product?.name || t("Product")}
                           className="h-full w-full object-cover"
                         />
                       ) : (
                         <div className="grid h-full w-full place-items-center text-xs text-muted">
-                          No image
+                          {t("No image")}
                         </div>
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-body-dark">
-                        {item.product?.name || "Product"}
+                        {item.product?.name || t("Product")}
                       </p>
 
-                      <p className="mt-0.5 text-xs text-muted capitalize">
-                        {item.variant?.name || "Standard"} ·{" "}
+                      <p className="mt-0.5 text-xs capitalize text-muted">
+                        {item.variant?.name || t("Standard")} ·{" "}
                         {item.variant?.pack_quantity} {item.variant?.pack_unit}
                       </p>
 
                       <p className="mt-0.5 text-[11px] text-muted">
-                        Quantity: {item.no_of_units}
+                        {t("Quantity")}: {item.no_of_units}
                       </p>
 
                       {item.seller?.user_name && (
                         <div className="mt-1 flex flex-wrap items-center gap-1.5">
                           <span className="text-[11px] font-medium text-muted">
-                            Sold by :
+                            {t("Sold by")} :
                           </span>
 
-                          <span className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-[10px] font-medium text-primary ring-1 ring-inset ring-green-200/60">
+                          <span className="inline-flex max-w-full items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-[10px] font-medium text-primary ring-1 ring-inset ring-green-200/60">
                             <UserRound className="h-2.5 w-2.5 shrink-0" />
-                            <span className="truncate max-w-32">
+
+                            <span className="max-w-32 truncate">
                               {item.seller.user_name}
                             </span>
                           </span>
@@ -303,7 +310,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
                       </p>
 
                       <Badge variant="success" className="text-[10px]">
-                        {item.status}
+                        {t(item.status)}
                       </Badge>
                     </div>
                   </div>
@@ -314,7 +321,9 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
             <Separator className="my-2 bg-gray-100" />
 
             <div className="flex items-center justify-between">
-              <span className="text-base font-bold text-body-dark">Total</span>
+              <span className="text-base font-bold text-body-dark">
+                {t("Total")}
+              </span>
 
               <span className="text-xl font-black text-body-dark">
                 {formatINR(total)}
@@ -330,7 +339,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
                 </div>
 
                 <div className="min-w-0">
-                  <p className="text-xs font-medium text-muted">Buyer</p>
+                  <p className="text-xs font-medium text-muted">{t("Buyer")}</p>
 
                   <p className="truncate text-sm font-bold capitalize text-body-dark">
                     {order?.receiver_name}
@@ -355,10 +364,10 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
 
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-muted">
-                    Delivery address
+                    {t("Delivery address")}
                   </p>
 
-                  <p className=" text-sm font-bold leading-5 text-body-dark">
+                  <p className="text-sm font-bold leading-5 text-body-dark">
                     {order.delivery_address}
                   </p>
                 </div>
@@ -370,7 +379,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
                   {order.delivery_block}
                   <br />
                   <span className="font-semibold text-body-light">
-                    PIN {order.delivery_pincode}
+                    {t("PIN")} {order.delivery_pincode}
                   </span>
                 </p>
               </div>
@@ -397,7 +406,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
 
               <div className="min-w-0">
                 <DialogTitle className="truncate text-[18px] font-semibold text-body-dark">
-                  Order details
+                  {t("Order details")}
                 </DialogTitle>
               </div>
             </div>
@@ -425,7 +434,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
 
             <div className="min-w-0">
               <SheetTitle className="truncate text-lg font-bold text-body-dark">
-                Order details
+                {t("Order details")}
               </SheetTitle>
 
               {order && (

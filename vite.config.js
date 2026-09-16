@@ -7,6 +7,6 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { alias: { "@": path.resolve(process.cwd(), "./src") } },
   server: {
-    allowedHosts: ["9083-103-243-63-203.ngrok-free.app"],
+    allowedHosts: ["4f84-180-151-73-58.ngrok-free.app"],
   },
 });

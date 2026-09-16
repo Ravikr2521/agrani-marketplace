@@ -10,6 +10,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useOrderApi } from "@/api/orders";
 
@@ -44,7 +45,6 @@ function OrderCardSkeleton() {
 
         <div className="mt-4 border-t border-border pt-3">
           <div className="h-2.5 w-16 animate-pulse rounded bg-border" />
-
           <div className="mt-1 h-6 w-20 animate-pulse rounded-md bg-border" />
         </div>
 
@@ -57,6 +57,8 @@ function OrderCardSkeleton() {
 }
 
 function OrderCard({ order, onViewDetails }) {
+  const { t } = useTranslation();
+
   const total = (order.items || []).reduce(
     (sum, item) =>
       sum +
@@ -110,7 +112,7 @@ function OrderCard({ order, onViewDetails }) {
               >
                 <span className="flex items-center gap-1">
                   {getStatusIcon()}
-                  {order.status || "Pending"}
+                  {t(order.status || "Pending")}
                 </span>
               </Badge>
             </div>
@@ -122,7 +124,7 @@ function OrderCard({ order, onViewDetails }) {
 
               <span>
                 {order.items?.length || 0}{" "}
-                {order.items?.length === 1 ? "item" : "items"}
+                {order.items?.length === 1 ? t("item") : t("items")}
               </span>
             </div>
 
@@ -140,10 +142,10 @@ function OrderCard({ order, onViewDetails }) {
           <ShoppingBag className="mt-0.5 h-4 w-4 shrink-0 text-muted" />
         </div>
 
-        <div className="flex justify-between items-center border-t border-border/60 mt-4 pt-3 lg:mt-3 lg:pt-4">
-          <div className="">
+        <div className="mt-4 flex items-center justify-between border-t border-border/60 pt-3 lg:mt-3 lg:pt-4">
+          <div>
             <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted">
-              Order total
+              {t("Order total")}
             </p>
 
             <p className="mt-0.5 text-lg font-semibold tracking-tight text-body-dark lg:text-xl">
@@ -151,15 +153,15 @@ function OrderCard({ order, onViewDetails }) {
             </p>
           </div>
 
-          <div className="">
+          <div>
             <Button
               type="button"
               variant="outline"
               onClick={() => onViewDetails(order.id)}
               size="sm"
             >
-              View details
-              <ArrowRight className=" h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+              {t("View details")}
+              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
             </Button>
           </div>
         </div>
@@ -169,14 +171,14 @@ function OrderCard({ order, onViewDetails }) {
 }
 
 function OrdersContent({ phone, onReset }) {
+  const { t } = useTranslation();
   const { getOrdersByPhone } = useOrderApi();
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-
   const [orderDetailsOpen, setOrderDetailsOpen] = useState(false);
 
   const loadOrders = async (isRefresh = false) => {
@@ -195,7 +197,7 @@ function OrdersContent({ phone, onReset }) {
 
       localStorage.setItem("farmers_marketplace_buyer_phone", phone);
     } catch (e) {
-      setError(e.message || "Unable to load orders.");
+      setError(e.message || t("Unable to load orders."));
     } finally {
       if (isRefresh) {
         setRefreshing(false);
@@ -231,7 +233,7 @@ function OrdersContent({ phone, onReset }) {
       <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-white px-3.5 py-2.5 lg:px-4 lg:py-3">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-muted">
-            Orders for
+            {t("Orders for")}
           </p>
 
           <div className="mt-0.5 flex min-w-0 items-center gap-1.5">
@@ -255,7 +257,7 @@ function OrdersContent({ phone, onReset }) {
           onClick={handleRefresh}
           disabled={refreshing}
           className="h-8 w-8 shrink-0 rounded-lg text-muted hover:bg-light-blue hover:text-primary"
-          aria-label="Refresh orders"
+          aria-label={t("Refresh orders")}
         >
           <RefreshCw
             className={refreshing ? "h-3.5 w-3.5 animate-spin" : "h-3.5 w-3.5"}
@@ -279,7 +281,7 @@ function OrdersContent({ phone, onReset }) {
             onClick={() => loadOrders()}
             className="mt-3 h-8 rounded-xl px-3 text-xs"
           >
-            Try Again
+            {t("Try Again")}
           </Button>
         </div>
       ) : orders.length === 0 ? (
@@ -289,10 +291,12 @@ function OrdersContent({ phone, onReset }) {
           </div>
 
           <div className="mt-4">
-            <p className="font-semibold text-body-light">No orders yet</p>
+            <p className="font-semibold text-body-light">
+              {t("No orders yet")}
+            </p>
 
             <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-muted">
-              Orders you place on the marketplace will appear here.
+              {t("Orders you place on the marketplace will appear here.")}
             </p>
           </div>
         </div>
@@ -308,14 +312,14 @@ function OrdersContent({ phone, onReset }) {
         </div>
       )}
 
-      <div className="border-t border-border pt-3 md:hidden flex">
+      <div className="flex border-t border-border pt-3 md:hidden">
         <Button
           size="sm"
           variant="ghost"
           onClick={onReset}
           className="h-8 w-full rounded-xl text-xs font-semibold text-muted underline hover:bg-cream hover:text-body-dark"
         >
-          Switch account
+          {t("Switch account")}
         </Button>
       </div>
 
@@ -329,73 +333,73 @@ function OrdersContent({ phone, onReset }) {
 }
 
 export default function Orders() {
+  const { t } = useTranslation();
+
   const [verifiedPhone, setVerifiedPhone] = useState(
     () => localStorage.getItem("farmers_marketplace_verified_phone") || null,
   );
 
   const handleVerified = (phone) => {
     setVerifiedPhone(phone);
-
     localStorage.setItem("farmers_marketplace_verified_phone", phone);
   };
 
   const handleReset = () => {
     setVerifiedPhone(null);
-
     localStorage.removeItem("farmers_marketplace_verified_phone");
-
     localStorage.removeItem("farmers_marketplace_buyer_phone");
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-280 md:px-8 md:max-w-350 flex-col md:bg-transparent bg-[#fffdf8] lg:pt-4">
-      <div className="sticky top-0 z-10 flex items-center gap-3 border border-stone-200 bg-white  px-4 py-3 sm:px-5 md:hidden">
+    <main className="mx-auto flex min-h-screen max-w-280 flex-col bg-[#fffdf8] md:max-w-350 md:bg-transparent md:px-8 lg:pt-4">
+      <div className="sticky top-0 z-10 flex items-center gap-3 border border-stone-200 bg-white px-4 py-3 sm:px-5 md:hidden">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-600/80 text-white shadow-sm">
           <ClipboardList className="h-4.5 w-4.5" />
         </div>
 
         <div className="min-w-0">
           <h1 className="truncate text-lg font-bold tracking-tight text-stone-900">
-            Order history
+            {t("Order history")}
           </h1>
 
           <p className="truncate text-xs text-stone-500">
             {verifiedPhone
-              ? "View and manage your marketplace orders"
-              : "Verify your mobile number to access your order history"}
+              ? t("View and manage your marketplace orders")
+              : t("Verify your mobile number to access your order history")}
           </p>
         </div>
       </div>
-      <div className=" hidden  md:flex justify-between lg:items-center">
-        <div className=" max-w-350 px-3 pb-2  lg:px-0">
+
+      <div className="hidden justify-between md:flex lg:items-center">
+        <div className="max-w-350 px-3 pb-2 lg:px-0">
           <div className="flex items-center gap-2.5">
             <span className="h-7 w-1 rounded-full bg-orange-500" />
 
             <h1 className="text-xl font-bold tracking-tight text-body-dark/90 lg:text-2xl">
-              Order history
+              {t("Order history")}
             </h1>
           </div>
 
           <p className="mt-1 pl-3.5 text-sm text-muted">
             {verifiedPhone
-              ? "View and manage your marketplace orders"
-              : "Verify your mobile number to access your order history"}
+              ? t("View and manage your marketplace orders")
+              : t("Verify your mobile number to access your order history")}
           </p>
         </div>
 
-        <div className=" border-border pt-3 ">
+        <div className="border-border pt-3">
           <Button
             size="sm"
             variant="outline"
             onClick={handleReset}
             className="h-8 text-xs font-semibold text-muted"
           >
-            Switch account
+            {t("Switch account")}
           </Button>
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col md:px-2 px-4 pb-20 pt-5 ">
+      <div className="flex flex-1 flex-col px-4 pb-20 pt-5 md:px-2">
         {!verifiedPhone ? (
           <div className="flex flex-1 items-center justify-center pb-6">
             <div className="w-full max-w-sm rounded-2xl border border-stone-200 bg-white p-5 sm:p-6">

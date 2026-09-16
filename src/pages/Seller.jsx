@@ -243,11 +243,11 @@ const Seller = () => {
               />
               <DashboardStat
                 label="Total Orders"
-                value={analytics?.total_orders}
+                value={analytics?.total_orders || 0}
               />
               <DashboardStat
                 label="Total Revenue"
-                value={`₹ ${analytics?.revenue}`}
+                value={`₹ ${analytics?.revenue || 0}`}
               />
             </div>
           </section>

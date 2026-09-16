@@ -12,6 +12,7 @@ import { useProductApi } from "@/api/products";
 import { formatINR } from "@/lib/utils";
 import { toast } from "sonner";
 import { MobileNumberContext } from "@/context/MobileNumberContext";
+import { useTranslation } from "react-i18next";
 
 const getMediaUrl = (media) =>
   media?.productImgUrl || media?.image || media?.file || media?.url || "";
@@ -101,6 +102,7 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
   const product = variant?.product_detail;
   const [isLoading, setIsLoading] = useState(false);
   const { isInCart } = useCart();
+  const { t } = useTranslation();
 
   const isInCartAlready = isInCart(product?.id, variant?.id);
 
@@ -212,7 +214,7 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
                   ) : (
                     <ShoppingCart className="mb-0.5 h-4 w-4" />
                   )}
-                  Move to Cart
+                  {t("Move to Cart")}
                 </Button>
               )}
             </div>
@@ -344,10 +346,6 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
   );
 }
 
-/* =========================================================
-   WISHLIST PAGE
-========================================================= */
-
 export default function Wishlist() {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -355,6 +353,7 @@ export default function Wishlist() {
 
   const { getWishlist, addtoWishlist } = useProductApi();
   const { addToCart } = useCart();
+  const { t } = useTranslation();
 
   const { requireMobileNumber, getCurrentMobile } =
     useContext(MobileNumberContext);
@@ -517,7 +516,7 @@ export default function Wishlist() {
 
               <div>
                 <h1 className="text-xl font-bold tracking-tight text-body-dark">
-                  My Wishlist
+                  {t("My Wishlist")}
                 </h1>
 
                 <p className="text-sm text-muted">
