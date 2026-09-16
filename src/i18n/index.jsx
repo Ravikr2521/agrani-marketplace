@@ -212,10 +212,7 @@ const hi = {
   "Quality pulses for your everyday needs.":
     "आपकी रोज़मर्रा की ज़रूरतों के लिए अच्छी दालें।",
 
-  vegetables: "सब्ज़ियाँ",
-  fruits: "फल",
   pulses: "दालें",
-  grains: "अनाज",
 
   "Farm fresh": "खेत की ताज़गी",
   "Fresh picks, every day": "हर दिन ताज़ा चयन",
@@ -341,7 +338,6 @@ const hi = {
   Block: "ब्लॉक",
   vegetables: "सब्ज़ियाँ",
   fruits: "फल",
-  pulses: "दालें",
   grains: "अनाज",
   "Under ₹250": "₹250 से कम",
   "₹250 – ₹500": "₹250 – ₹500",
