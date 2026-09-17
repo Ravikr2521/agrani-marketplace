@@ -97,27 +97,58 @@ export default function ProductDetails() {
   const variant =
     variants.find((v) => String(v.id) === String(variantId)) || variants[0];
 
+  // const galleryImages = useMemo(() => {
+  //   if (!product?.variants) return [];
+
+  //   const result = [];
+
+  //   product.variants
+  //     .filter((v) => v.is_active !== false)
+  //     .forEach((currentVariant) => {
+  //       (currentVariant.all_media || []).forEach((media) => {
+  //         const url =
+  //           media?.file || media?.productImgUrl || media?.image || media?.url;
+
+  //         if (url) {
+  //           result.push({
+  //             url,
+  //             variantId: currentVariant.id,
+  //             variantName: currentVariant.name,
+  //           });
+  //         }
+  //       });
+  //     });
+
+  //   const unique = [];
+  //   const seen = new Set();
+
+  //   for (const image of result) {
+  //     if (!seen.has(image.url)) {
+  //       seen.add(image.url);
+  //       unique.push(image);
+  //     }
+  //   }
+
+  //   return unique;
+  // }, [product]);
+
   const galleryImages = useMemo(() => {
-    if (!product?.variants) return [];
+    if (!variant) return [];
 
     const result = [];
 
-    product.variants
-      .filter((v) => v.is_active !== false)
-      .forEach((currentVariant) => {
-        (currentVariant.all_media || []).forEach((media) => {
-          const url =
-            media?.file || media?.productImgUrl || media?.image || media?.url;
+    (variant.all_media || []).forEach((media) => {
+      const url =
+        media?.file || media?.productImgUrl || media?.image || media?.url;
 
-          if (url) {
-            result.push({
-              url,
-              variantId: currentVariant.id,
-              variantName: currentVariant.name,
-            });
-          }
+      if (url) {
+        result.push({
+          url,
+          variantId: variant.id,
+          variantName: variant.name,
         });
-      });
+      }
+    });
 
     const unique = [];
     const seen = new Set();
@@ -130,7 +161,7 @@ export default function ProductDetails() {
     }
 
     return unique;
-  }, [product]);
+  }, [variant]);
 
   useEffect(() => {
     setQty(1);
@@ -206,9 +237,9 @@ export default function ProductDetails() {
   const handleThumbnailClick = (image, index) => {
     setSelectedImage(index);
 
-    if (image.variantId && String(image.variantId) !== String(variantId)) {
-      setVariantId(image.variantId);
-    }
+    // if (image.variantId && String(image.variantId) !== String(variantId)) {
+    //   setVariantId(image.variantId);
+    // }
   };
 
   const currentImage =
@@ -256,7 +287,7 @@ export default function ProductDetails() {
                         key={`${image.url}-${index}`}
                         type="button"
                         onClick={() => handleThumbnailClick(image, index)}
-                        className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-cream transition-all duration-200 ${
+                        className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-50 border border-gray-500 transition-all duration-200 ${
                           active
                             ? "border-primary ring-2 ring-light-blue"
                             : "border-transparent hover:border-border"
@@ -269,9 +300,7 @@ export default function ProductDetails() {
                           className="h-full w-full object-cover"
                         />
 
-                        {active && (
-                          <span className="absolute inset-0 bg-primary/10" />
-                        )}
+                        {active && <span className="absolute inset-0 " />}
                       </button>
                     );
                   })}
@@ -377,7 +406,7 @@ export default function ProductDetails() {
               )}
             </div>
 
-            <VariantSelector
+            {/* <VariantSelector
               variants={variants}
               value={variant?.id}
               onChange={(value) => {
@@ -390,6 +419,14 @@ export default function ProductDetails() {
                 if (firstImageIndex >= 0) {
                   setSelectedImage(firstImageIndex);
                 }
+              }}
+            /> */}
+            <VariantSelector
+              variants={variants}
+              value={variant?.id}
+              onChange={(value) => {
+                setVariantId(value);
+                setSelectedImage(0);
               }}
             />
           </div>
