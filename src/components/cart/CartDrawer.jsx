@@ -472,7 +472,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                         onClick={clearCart}
                         className="text-[11px] font-semibold text-red-600 hover:underline"
                       >
-                        {t("Clear cart")}
+                        {t("Clear Cart")}
                       </button>
                     </div>
                   </div>
@@ -588,7 +588,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                 </button>
                               </div>
 
-                              <div className="mt-3 flex items-center justify-between gap-2">
+                              <div className="mt-2 flex items-center justify-between gap-2">
                                 <div
                                   className="
                                     inline-flex

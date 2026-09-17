@@ -350,6 +350,7 @@ const hi = {
     "अपनी ज़रूरत के अनुसार मार्केटप्लेस को सीमित करें।",
   "Show Products": "उत्पाद दिखाएं",
   s: "",
+  "Clear Cart": "कार्ट खाली करें",
 };
 
 i18n.use(initReactI18next).init({
