@@ -316,7 +316,6 @@ export default function Cart() {
         count,
         total,
       });
-      // localStorage.removeItem("farmers_marketplace_cart_id");
       clearCart();
 
       setStep(3);

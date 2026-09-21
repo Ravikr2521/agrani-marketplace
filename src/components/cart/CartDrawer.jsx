@@ -300,8 +300,6 @@ export default function CartDrawer({ open, onOpenChange }) {
         count,
         total,
       });
-      // localStorage.removeItem("farmers_marketplace_cart_id");
-
       clearCart();
 
       setStep(3);

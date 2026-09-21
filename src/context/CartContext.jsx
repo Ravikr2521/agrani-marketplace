@@ -213,13 +213,18 @@ export function CartProvider({ children }) {
       },
       clearCart: async () => {
         const cartId = localStorage.getItem(CART_ID_STORAGE_KEY);
-        if (!cartId) return;
+
+        localStorage.removeItem(CART_ID_STORAGE_KEY);
+        setItems([]);
+
+        if (!cartId) return true;
+
         try {
           await clearCartItems(cartId, token);
-          localStorage.removeItem(CART_ID_STORAGE_KEY);
-          setItems([]);
+          return true;
         } catch (error) {
           console.error("Unable to clear cart", error);
+          return false;
         }
       },
       isInCart: (productId, variantId) =>
