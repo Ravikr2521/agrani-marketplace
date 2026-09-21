@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useOrderApi } from "@/api/orders";
 import { useCart } from "@/context/CartContext";
+import { getStoredCartId } from "@/api/cart";
 import { MobileNumberContext } from "@/context/MobileNumberContext";
 import { useOrder } from "@/context/OrderContext";
 import { formatINR } from "@/lib/utils";
@@ -280,6 +281,7 @@ export default function Cart() {
 
     try {
       const payload = {
+        cart_id: getStoredCartId(),
         products: items.map((item) => ({
           no_of_units: item.quantity,
           variant: item.variantId,
@@ -305,7 +307,7 @@ export default function Cart() {
         count,
         total,
       });
-
+      // localStorage.removeItem("farmers_marketplace_cart_id");
       clearCart();
 
       setStep(3);
@@ -456,9 +458,10 @@ export default function Cart() {
                     <button
                       type="button"
                       onClick={clearCart}
-                      className="text-[11px] font-semibold text-red-600 hover:underline"
+                      className="text-[11px] flex items-center gap-0.5 font-semibold text-red-600 px-2 py-1 rounded-md transition-all duration-200 hover:text-red-700 hover:bg-red-50 active:scale-95"
                     >
-                      {t("Clear cart")}
+                      <Trash2 className="h-3.5 w-3.5 mb-1" />
+                      {t("Cart")}
                     </button>
                   </div>
                 </div>
@@ -501,7 +504,7 @@ export default function Cart() {
                           >
                             {item.image ? (
                               <img
-                                src={item.image}
+                                src={item.image?.file}
                                 alt={item.productName}
                                 className="h-full w-full object-cover"
                               />
@@ -543,7 +546,7 @@ export default function Cart() {
                                 <p className="mt-1 truncate text-[11px] text-muted">
                                   {item.packQuantity} {item.packUnit}
                                   <span className="mx-1 text-muted">•</span>
-                                  {item.seller}
+                                  {item?.seller}
                                 </p>
                               </div>
 
@@ -570,7 +573,7 @@ export default function Cart() {
                               </button>
                             </div>
 
-                            <div className="mt-3 flex items-center justify-between gap-2">
+                            <div className="mt-2 flex items-center justify-between gap-2">
                               <div
                                 className="
                                   inline-flex

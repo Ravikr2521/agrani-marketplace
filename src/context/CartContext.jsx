@@ -12,10 +12,8 @@ import {
   addCartItem,
   clearCartItems,
   createCart,
-  deleteCart,
   deleteCartItem,
   getCart,
-  getCartItems,
   updateCartItem,
 } from "@/api/cart";
 import { useAuth } from "@/context/AuthContext";
@@ -23,40 +21,6 @@ import { useAuth } from "@/context/AuthContext";
 const CartContext = createContext(null);
 
 const unwrap = (response) => response?.data ?? response;
-
-function decodeJwtPayload(token) {
-  try {
-    const encoded = token?.split(".")[1];
-    if (!encoded) return null;
-    const padded = encoded
-      .replace(/-/g, "+")
-      .replace(/_/g, "/")
-      .padEnd(Math.ceil(encoded.length / 4) * 4, "=");
-    return JSON.parse(atob(padded));
-  } catch {
-    return null;
-  }
-}
-
-function getBuyer(token) {
-  const claims = decodeJwtPayload(token);
-  if (!claims) return { buyer_phone: "", buyer_name: "", buyer_id: "" };
-
-  return {
-    buyer_phone: String(
-      claims.preferred_username ||
-        claims.mobile ||
-        claims.phone_number ||
-        claims.phone ||
-        "",
-    ),
-    buyer_name:
-      claims.name ||
-      [claims.given_name, claims.family_name].filter(Boolean).join(" ") ||
-      "",
-    buyer_id: claims.sub || "",
-  };
-}
 
 function toUiItem(item) {
   return {
@@ -69,7 +33,7 @@ function toUiItem(item) {
     price: Number(item.price_per_unit) || 0,
     availableUnits: Number(item.no_of_units) || Number.MAX_SAFE_INTEGER,
     image: item.image || "",
-    seller: item.seller_name || item.seller_id || "Farmer",
+    seller: item.seller?.user_name,
     category: item.category,
     packQuantity: item.pack_quantity,
     packUnit: item.pack_unit,
@@ -90,30 +54,21 @@ export function CartProvider({ children }) {
     if (cart && Array.isArray(cart.items)) setItems(cart.items.map(toUiItem));
   }, []);
 
-  const applyItems = useCallback((response) => {
-    const cartItems = unwrap(response);
-    if (Array.isArray(cartItems)) setItems(cartItems.map(toUiItem));
-  }, []);
+  const saveCart = useCallback(
+    (response) => {
+      const cart = unwrap(response);
+      if (!cart?.id) throw new Error("Cart API did not return a cart id.");
+      localStorage.setItem(CART_ID_STORAGE_KEY, cart.id);
+      applyCart(cart);
+      return cart.id;
+    },
+    [applyCart],
+  );
 
-  const getOrCreateCartId = useCallback(async () => {
+  const getCartId = useCallback(() => {
     const savedCartId = localStorage.getItem(CART_ID_STORAGE_KEY);
-    if (savedCartId) return savedCartId;
-
-    if (!createRequest.current) {
-      createRequest.current = createCart(getBuyer(token), token)
-        .then((response) => {
-          const cart = unwrap(response);
-          if (!cart?.id) throw new Error("Cart API did not return a cart id.");
-          localStorage.setItem(CART_ID_STORAGE_KEY, cart.id);
-          applyCart(cart);
-          return cart.id;
-        })
-        .finally(() => {
-          createRequest.current = null;
-        });
-    }
-    return createRequest.current;
-  }, [applyCart, token]);
+    return savedCartId || null;
+  }, []);
 
   const refreshCart = useCallback(async () => {
     const cartId = localStorage.getItem(CART_ID_STORAGE_KEY);
@@ -123,19 +78,14 @@ export function CartProvider({ children }) {
     }
     setLoading(true);
     try {
-      const [cartResponse, itemsResponse] = await Promise.all([
-        getCart(cartId, token),
-        getCartItems(cartId, token),
-      ]);
-      applyCart(cartResponse);
-      applyItems(itemsResponse);
+      applyCart(await getCart(cartId, token));
     } catch {
       localStorage.removeItem(CART_ID_STORAGE_KEY);
       setItems([]);
     } finally {
       setLoading(false);
     }
-  }, [applyCart, applyItems, token]);
+  }, [applyCart, token]);
 
   useEffect(() => {
     refreshCart();
@@ -144,7 +94,7 @@ export function CartProvider({ children }) {
   const addToCart = useCallback(
     async (item, quantity = 1) => {
       try {
-        const cartId = await getOrCreateCartId();
+        const cartId = getCartId();
         const existing = items.find(
           (entry) => String(entry.variantId) === String(item.variantId),
         );
@@ -152,10 +102,28 @@ export function CartProvider({ children }) {
           (existing?.quantity || 0) + quantity,
           item.availableUnits,
         );
+        if (!cartId) {
+          if (!createRequest.current) {
+            createRequest.current = createCart(
+              {
+                items: [{ variant: item.variantId, quantity: nextQuantity }],
+              },
+              token,
+            )
+              .then(saveCart)
+              .finally(() => {
+                createRequest.current = null;
+              });
+          }
+          await createRequest.current;
+          return true;
+        }
+
         const response = existing
           ? await updateCartItem(
               cartId,
               existing.id,
+              // { items: [{ variant: item.variantId, quantity: nextQuantity }] },
               { quantity: nextQuantity },
               token,
             )
@@ -165,15 +133,17 @@ export function CartProvider({ children }) {
                 variant: item.variantId,
                 quantity: Math.min(quantity, item.availableUnits),
               },
+
               token,
             );
         applyCart(response);
-        await refreshCart();
+        return true;
       } catch (error) {
         console.error("Unable to add item to cart", error);
+        return false;
       }
     },
-    [applyCart, getOrCreateCartId, items, refreshCart, token],
+    [applyCart, getCartId, items, saveCart, token],
   );
 
   const changeQuantity = useCallback(
@@ -185,7 +155,7 @@ export function CartProvider({ children }) {
       );
       if (!item) return;
       try {
-        const cartId = localStorage.getItem(CART_ID_STORAGE_KEY);
+        const cartId = getCartId();
         if (quantity <= 0) {
           await deleteCartItem(cartId, item.id, token);
           setItems((current) =>
@@ -193,13 +163,20 @@ export function CartProvider({ children }) {
           );
           return;
         }
-        applyCart(await updateCartItem(cartId, item.id, { quantity }, token));
-        await refreshCart();
+        applyCart(
+          await updateCartItem(
+            cartId,
+            item.id,
+            // { items: [{ variant: item.variantId, quantity }] },
+            { quantity: quantity },
+            token,
+          ),
+        );
       } catch (error) {
         console.error("Unable to update cart item", error);
       }
     },
-    [applyCart, items, refreshCart, token],
+    [applyCart, getCartId, items, token],
   );
 
   const value = useMemo(
@@ -239,7 +216,6 @@ export function CartProvider({ children }) {
         if (!cartId) return;
         try {
           await clearCartItems(cartId, token);
-          await deleteCart(cartId, token);
           localStorage.removeItem(CART_ID_STORAGE_KEY);
           setItems([]);
         } catch (error) {

@@ -35,19 +35,9 @@ export function addCartItem(cartId, payload, token) {
   );
 }
 
-export function getCartItems(cartId, token) {
-  return apiFetch(
-    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/`,
-    {
-      baseUrl: CART_API_BASE_URL,
-      headers: authHeaders(token),
-    },
-  );
-}
-
 export function updateCartItem(cartId, itemId, payload, token) {
   return apiFetch(
-    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(itemId)}/`,
+    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(itemId)}`,
     {
       baseUrl: CART_API_BASE_URL,
       method: "PATCH",
@@ -79,10 +69,6 @@ export function clearCartItems(cartId, token) {
   );
 }
 
-export function deleteCart(cartId, token) {
-  return apiFetch(`/marketplace/api/carts/${encodeURIComponent(cartId)}`, {
-    baseUrl: CART_API_BASE_URL,
-    method: "DELETE",
-    headers: authHeaders(token),
-  });
+export function getStoredCartId() {
+  return localStorage.getItem(CART_ID_STORAGE_KEY) || "";
 }

@@ -186,7 +186,7 @@ export default function ProductDetails() {
     };
   }, [product]);
 
-  const add = () => {
+  const add = async () => {
     if (!variant) return;
 
     const variantImage =
@@ -196,7 +196,7 @@ export default function ProductDetails() {
       galleryImages[0]?.url ||
       "";
 
-    addToCart(
+    const added = await addToCart(
       {
         productId: product.id,
         productName: product.name,
@@ -213,9 +213,13 @@ export default function ProductDetails() {
       qty,
     );
 
-    toast.success("Added to cart", {
-      description: `${product.name} · ${variant.name || "Standard"}`,
-    });
+    if (added) {
+      toast.success("Added to cart", {
+        description: `${product.name} · ${variant.name || "Standard"}`,
+      });
+    } else {
+      toast.error("Failed to add to cart");
+    }
   };
 
   const previousImage = () => {

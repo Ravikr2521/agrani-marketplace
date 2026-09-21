@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
+import { getStoredCartId } from "@/api/cart";
 import { useOrder } from "@/context/OrderContext";
 import { formatINR } from "@/lib/utils";
 import { ArrowLeft, LockKeyhole, ShoppingBag } from "lucide-react";
@@ -56,6 +57,7 @@ export default function Checkout() {
     setSubmitting(true);
     try {
       const payload = {
+        cart_id: getStoredCartId(),
         products: items.map((i) => ({
           no_of_units: i.quantity,
           variant: i.variantId,

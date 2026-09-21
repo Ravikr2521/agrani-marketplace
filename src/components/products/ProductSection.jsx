@@ -54,7 +54,7 @@ function MiniProductCard({ product, variant }) {
     setProductDetailsOpen(true);
   };
 
-  const handleAdd = (event) => {
+  const handleAdd = async (event) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -63,7 +63,7 @@ function MiniProductCard({ product, variant }) {
       return;
     }
 
-    addToCart({
+    const added = await addToCart({
       productId: product.id,
       productName: product.name,
 
@@ -83,10 +83,11 @@ function MiniProductCard({ product, variant }) {
       category: product.category,
     });
 
-    // toast.success("Added to cart", {
-    //   description: `${product.name} · ${variant.name || "Standard"}`,
-    // });
-    showCartToast(product, variant);
+    if (added) {
+      showCartToast(product, variant);
+    } else {
+      toast.error("Failed to add to cart");
+    }
   };
 
   const handleIncrease = (event) => {

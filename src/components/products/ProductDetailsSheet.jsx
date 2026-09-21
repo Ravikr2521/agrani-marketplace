@@ -141,18 +141,20 @@ export default function ProductDetailsSheet({
     };
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!selectedVariant) return;
 
     const available = Number(selectedVariant.no_of_units || 0);
 
     if (available < 1) return;
 
-    addToCart(getCartPayload(), qty);
-
-    toast.success("Added to cart", {
-      description: `${product.name} · ${selectedVariant.name || "Standard"}`,
-    });
+    if (await addToCart(getCartPayload(), qty)) {
+      toast.success("Added to cart", {
+        description: `${product.name} · ${selectedVariant.name || "Standard"}`,
+      });
+    } else {
+      toast.error("Failed to add to cart");
+    }
   };
 
   const handleIncrease = () => {

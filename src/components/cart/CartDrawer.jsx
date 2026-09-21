@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { useOrderApi } from "@/api/orders";
 import { useCart } from "@/context/CartContext";
+import { getStoredCartId } from "@/api/cart";
 import { useOrder } from "@/context/OrderContext";
 import { formatINR } from "@/lib/utils";
 import confetti from "canvas-confetti";
@@ -262,6 +263,7 @@ export default function CartDrawer({ open, onOpenChange }) {
 
     try {
       const payload = {
+        cart_id: getStoredCartId(),
         products: items.map((item) => ({
           no_of_units: item.quantity,
           variant: item.variantId,
@@ -289,6 +291,7 @@ export default function CartDrawer({ open, onOpenChange }) {
         count,
         total,
       });
+      // localStorage.removeItem("farmers_marketplace_cart_id");
 
       clearCart();
 
@@ -470,9 +473,10 @@ export default function CartDrawer({ open, onOpenChange }) {
                       <button
                         type="button"
                         onClick={clearCart}
-                        className="text-[11px] font-semibold text-red-600 hover:underline"
+                        className="text-[11px] flex items-center gap-0.5 font-semibold text-red-600 px-2 py-1 rounded-md transition-all duration-200 hover:text-red-700 hover:bg-red-50 active:scale-95"
                       >
-                        {t("Clear Cart")}
+                        <Trash2 className="h-3.5 w-3.5 mb-1" />
+                        {t("Cart")}
                       </button>
                     </div>
                   </div>
@@ -515,7 +519,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                             >
                               {item.image ? (
                                 <img
-                                  src={item.image}
+                                  src={item.image?.file}
                                   alt={item.productName}
                                   className="h-full w-full object-cover"
                                 />
@@ -558,7 +562,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                                   <p className="mt-1 truncate text-[11px] text-muted">
                                     {item.packQuantity} {item.packUnit}
                                     <span className="mx-1 text-muted">•</span>
-                                    {item.seller}
+                                    {item?.seller}
                                   </p>
                                 </div>
 

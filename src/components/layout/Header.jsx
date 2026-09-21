@@ -497,7 +497,7 @@ export default function Header() {
 
               {count > 0 && (
                 <span
-                  className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-0.5 text-[8px] font-bold text-white"
+                  className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-orange-500 px-0.5 text-[8px] font-bold text-white"
                   style={
                     cartAnimating
                       ? {

@@ -113,7 +113,7 @@ const ProductCard = memo(function ProductCard({ product }) {
     setVariantSheetOpen(true);
   };
 
-  const handleAdd = (variant) => {
+  const handleAdd = async (variant) => {
     if (!variant || Number(variant.no_of_units) <= 0) {
       return;
     }
@@ -123,12 +123,11 @@ const ProductCard = memo(function ProductCard({ product }) {
       return;
     }
 
-    addToCart(getCartPayload(variant));
-
-    // toast.success("Added to cart", {
-    //   description: `${product.name} · ${variant.name || "Standard"}`,
-    // });
-    showCartToast(product, variant);
+    if (await addToCart(getCartPayload(variant))) {
+      showCartToast(product, variant);
+    } else {
+      toast.error("Failed to add to cart");
+    }
   };
 
   const handleIncrease = (variant) => {
@@ -159,18 +158,17 @@ const ProductCard = memo(function ProductCard({ product }) {
     }
   };
 
-  const handleSheetAdd = () => {
+  const handleSheetAdd = async () => {
     if (!selectedVariant) return;
 
     const quantity = getCartQuantity(selectedVariant.id);
 
     if (quantity === 0) {
-      addToCart(getCartPayload(selectedVariant));
-
-      // toast.success("Added to cart", {
-      //   description: `${product.name} · ${selectedVariant.name || "Standard"}`,
-      // });
-      showCartToast(product, selectedVariant);
+      if (await addToCart(getCartPayload(selectedVariant))) {
+        showCartToast(product, selectedVariant);
+      } else {
+        toast.error("Failed to add to cart");
+      }
     }
   };
 

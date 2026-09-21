@@ -415,7 +415,11 @@ export default function Wishlist() {
         category: product.category || "",
       };
 
-      addToCart(cartPayload);
+      const added = await addToCart(cartPayload);
+
+      if (!added) {
+        throw new Error("Unable to add item to cart");
+      }
 
       toast.success("Added to cart", {
         description: `${product.name} · ${variant.name || "Standard"}`,
