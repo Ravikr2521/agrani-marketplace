@@ -39,6 +39,7 @@ export default function Header() {
     localStorage.removeItem("agrani_refresh_token");
     localStorage.removeItem("farmers_marketplace_verified_phone");
     localStorage.removeItem("farmers_marketplace_buyer_phone");
+    localStorage.removeItem("farmers_marketplace_cart_id");
 
     setToken("");
     setAgraniToken("");
