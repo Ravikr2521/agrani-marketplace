@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import ProductGrid from "@/components/products/ProductGrid";
 import WishlistButton from "@/components/products/WishlistButton";
 import { useWishlist } from "@/hooks/useWishlist";
+import showCartToast from "@/custom/showCartToast";
 
 export default function ProductDetails() {
   const { getProducts } = useProductApi();
@@ -214,9 +215,10 @@ export default function ProductDetails() {
     );
 
     if (added) {
-      toast.success("Added to cart", {
-        description: `${product.name} · ${variant.name || "Standard"}`,
-      });
+      // toast.success("Added to cart", {
+      //   description: `${product.name} · ${variant.name || "Standard"}`,
+      // });
+      showCartToast(product, variant);
     } else {
       toast.error("Failed to add to cart");
     }
