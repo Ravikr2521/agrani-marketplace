@@ -166,7 +166,7 @@ export default function CartDrawer({ open, onOpenChange }) {
   const [isMobileLocked, setIsMobileLocked] = useState(false);
 
   const [form, setForm] = useState({
-    name: "",
+    name: decodedToken?.name || "",
     phone: "",
     address: "",
     pincode: "",
@@ -188,6 +188,15 @@ export default function CartDrawer({ open, onOpenChange }) {
       setSubmitting(false);
     }
   }, [open]);
+
+  useEffect(() => {
+    if (decodedToken?.name) {
+      setForm((current) => ({
+        ...current,
+        name: current.name || decodedToken.name,
+      }));
+    }
+  }, [decodedToken?.name]);
 
   useEffect(() => {
     const savedPhone = getBuyerMobileNumber();
@@ -776,7 +785,7 @@ export default function CartDrawer({ open, onOpenChange }) {
                           </label>
 
                           <Input
-                            value={form.name}
+                            value={form.name || decodedToken?.name}
                             onChange={(event) =>
                               updateForm("name", event.target.value)
                             }

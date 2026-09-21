@@ -183,7 +183,7 @@ export default function Cart() {
   const [isMobileLocked, setIsMobileLocked] = useState(false);
 
   const [form, setForm] = useState({
-    name: "",
+    name: decodedToken?.name || "",
     phone: "",
     address: "",
     pincode: "",
@@ -209,6 +209,15 @@ export default function Cart() {
       setIsMobileLocked(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (decodedToken?.name) {
+      setForm((current) => ({
+        ...current,
+        name: current.name || decodedToken.name,
+      }));
+    }
+  }, [decodedToken?.name]);
 
   const updateForm = (field, value) => {
     setForm((current) => ({
