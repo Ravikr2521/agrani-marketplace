@@ -351,7 +351,7 @@ export default function Orders() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-280 flex-col bg-[#fffdf8] md:max-w-350 md:bg-transparent md:px-8 lg:pt-4">
+    <main className="mx-auto flex min-h-screen max-w-280 flex-col bg-gray-50 md:max-w-350 md:bg-transparent md:px-8 lg:pt-4">
       <div className="sticky top-0 z-10 flex items-center gap-3 border border-stone-200 bg-white px-4 py-3 sm:px-5 md:hidden">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-600/80 text-white shadow-sm">
           <ClipboardList className="h-4.5 w-4.5" />

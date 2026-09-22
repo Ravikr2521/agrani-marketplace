@@ -35,7 +35,7 @@ const getItemImage = (item) => {
 
 function OrderDetailsLoading() {
   return (
-    <div className="space-y-4 p-4 md:p-1">
+    <div className="space-y-4  md:p-1">
       <div className="rounded-2xl border border-border bg-white p-4">
         <div className="flex items-center justify-between gap-3">
           <Skeleton className="h-5 w-36 rounded-md" />
@@ -424,7 +424,7 @@ export default function OrderDetailsSheet({ open, onOpenChange, orderId }) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="max-h-[94vh] overflow-hidden rounded-t-[28px] border-t border-border bg-[#fffdf8] p-0"
+        className="max-h-[94vh] overflow-hidden rounded-t-[28px] border-t border-border bg-gray-50  p-0"
       >
         <SheetHeader className="border-b border-border bg-white px-4 py-4 text-left sm:px-6">
           <div className="flex items-center gap-3">

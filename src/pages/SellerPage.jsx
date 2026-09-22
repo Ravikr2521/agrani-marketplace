@@ -73,7 +73,7 @@ export default function SellerPage() {
   }
 
   return (
-    <main className="mx-auto max-w-330  pb-20">
+    <main className="mx-auto max-w-330  pb-20 px-3 md:px-0">
       {/* <Link
         to="/"
         className="inline-flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-primary"

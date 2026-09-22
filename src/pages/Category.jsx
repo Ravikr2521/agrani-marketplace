@@ -373,7 +373,7 @@ export default function Category() {
           </div>
         </aside>
 
-        <section className="min-w-0 flex-1">
+        <section className="min-w-0 flex-1 md:mr-0 mr-2">
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               {loading ? (

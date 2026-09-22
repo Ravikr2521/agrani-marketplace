@@ -284,7 +284,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
                 {variant?.name || "Standard"}
               </p>
 
-              <div className="mt-2">
+              <div className="mt-1">
                 <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
                   {variant?.pack_quantity || 1} {variant?.pack_unit || "unit"}
                 </span>
@@ -301,7 +301,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
           </button>
         </div>
 
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-2 flex items-center justify-between">
           <div>
             <p className="text-base font-bold tracking-tight text-body-dark">
               {formatINR(variant?.price || 0)}
@@ -332,9 +332,9 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
                 className="h-8 bg-primary px-3 text-xs hover:bg-primary/90"
               >
                 {isLoading ? (
-                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin mb-1" />
                 ) : (
-                  <ShoppingCart className="mr-1 h-3 w-3" />
+                  <ShoppingCart className="h-3 w-3 mb-1" />
                 )}
                 Move to Cart
               </Button>
@@ -359,6 +359,7 @@ export default function Wishlist() {
     useContext(MobileNumberContext);
 
   const fetchWishlist = async (buyerMobile) => {
+    console.log(buyerMobile, "check");
     if (!buyerMobile) {
       setError("Please login to view your wishlist");
       setIsLoading(false);
@@ -386,6 +387,17 @@ export default function Wishlist() {
   useEffect(() => {
     requireMobileNumber(fetchWishlist);
   }, [requireMobileNumber]);
+
+  const handleRefresh = async () => {
+    const buyerMobile = getCurrentMobile();
+
+    if (!buyerMobile) {
+      setError("Please login to view your wishlist");
+      return;
+    }
+
+    await fetchWishlist(buyerMobile);
+  };
 
   const handleMoveToCart = async (item) => {
     const variant = item.variant_detail;
@@ -519,7 +531,7 @@ export default function Wishlist() {
               </Link>
 
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-body-dark">
+                <h1 className="text-lg font-bold tracking-tight text-body-dark">
                   {t("My Wishlist")}
                 </h1>
 
@@ -532,7 +544,7 @@ export default function Wishlist() {
 
             {wishlistItems.length > 0 && (
               <Button
-                onClick={fetchWishlist}
+                onClick={handleRefresh}
                 variant="ghost"
                 size="sm"
                 className="text-primary"
@@ -552,7 +564,7 @@ export default function Wishlist() {
             <span className="h-7 w-1 rounded-full bg-orange-500" />
 
             <h1 className="text-2xl font-bold tracking-tight text-body-dark/90">
-              My Wishlist
+              {t("My Wishlist")}
             </h1>
           </div>
         </div>
