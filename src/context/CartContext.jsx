@@ -10,6 +10,7 @@ import {
 import {
   CART_ID_STORAGE_KEY,
   addCartItem,
+  bindCart,
   clearCartItems,
   createCart,
   deleteCartItem,
@@ -48,6 +49,7 @@ export function CartProvider({ children }) {
     Boolean(localStorage.getItem(CART_ID_STORAGE_KEY)),
   );
   const createRequest = useRef(null);
+  const boundToken = useRef(null);
 
   const applyCart = useCallback((response) => {
     const cart = unwrap(response);
@@ -69,6 +71,38 @@ export function CartProvider({ children }) {
     const savedCartId = localStorage.getItem(CART_ID_STORAGE_KEY);
     return savedCartId || null;
   }, []);
+
+  const bindAuthenticatedCart = useCallback(async () => {
+    if (!token || boundToken.current === token) return;
+
+    boundToken.current = token;
+    setLoading(true);
+
+    try {
+      const guestCartId = getCartId();
+
+      // Mobile sessions may already know their cart ID from a previous visit.
+      // Fetch that cart immediately once the query-string token is available.
+      if (guestCartId) {
+        try {
+          applyCart(await getCart(guestCartId, token));
+        } catch (error) {
+          console.info("Stored cart could not be loaded before binding", error);
+        }
+      }
+
+      const boundCartId = saveCart(await bindCart(guestCartId, token));
+      applyCart(await getCart(boundCartId, token));
+    } catch (error) {
+      console.info("No guest cart was available to bind", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [applyCart, getCartId, saveCart, token]);
+
+  useEffect(() => {
+    bindAuthenticatedCart();
+  }, [bindAuthenticatedCart]);
 
   const refreshCart = useCallback(async () => {
     const cartId = localStorage.getItem(CART_ID_STORAGE_KEY);
@@ -123,7 +157,6 @@ export function CartProvider({ children }) {
           ? await updateCartItem(
               cartId,
               existing.id,
-              // { items: [{ variant: item.variantId, quantity: nextQuantity }] },
               { quantity: nextQuantity },
               token,
             )
@@ -164,13 +197,7 @@ export function CartProvider({ children }) {
           return;
         }
         applyCart(
-          await updateCartItem(
-            cartId,
-            item.id,
-            // { items: [{ variant: item.variantId, quantity }] },
-            { quantity: quantity },
-            token,
-          ),
+          await updateCartItem(cartId, item.id, { quantity: quantity }, token),
         );
       } catch (error) {
         console.error("Unable to update cart item", error);

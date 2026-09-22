@@ -17,8 +17,17 @@ export function createCart(payload, token) {
 }
 
 export function getCart(cartId, token) {
-  return apiFetch(`/marketplace/api/carts/${encodeURIComponent(cartId)}`, {
+  return apiFetch(`/marketplace/api/carts/${encodeURIComponent(cartId)}/`, {
     baseUrl: CART_API_BASE_URL,
+    headers: authHeaders(token),
+  });
+}
+
+export function bindCart(cartId, token) {
+  return apiFetch("/marketplace/api/carts/bind/", {
+    baseUrl: CART_API_BASE_URL,
+    method: "POST",
+    body: cartId ? { cart_id: cartId } : {},
     headers: authHeaders(token),
   });
 }
@@ -37,7 +46,7 @@ export function addCartItem(cartId, payload, token) {
 
 export function updateCartItem(cartId, itemId, payload, token) {
   return apiFetch(
-    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(itemId)}`,
+    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(itemId)}/`,
     {
       baseUrl: CART_API_BASE_URL,
       method: "PATCH",
