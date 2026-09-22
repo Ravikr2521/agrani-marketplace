@@ -130,6 +130,7 @@ export default function CartDrawer({ open, onOpenChange }) {
     decreaseQuantity,
     removeFromCart,
     clearCart,
+    refreshCart,
   } = useCart();
 
   const { saveOrder } = useOrder();
@@ -180,6 +181,10 @@ export default function CartDrawer({ open, onOpenChange }) {
 
   const total = getCartTotal();
   const count = getCartItemCount();
+
+  useEffect(() => {
+    if (open) refreshCart();
+  }, [open, refreshCart]);
 
   useEffect(() => {
     if (!open) {

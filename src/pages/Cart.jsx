@@ -120,11 +120,16 @@ export default function Cart() {
     decreaseQuantity,
     removeFromCart,
     clearCart,
+    refreshCart,
   } = useCart();
   const { createOrder } = useOrderApi();
   const verifiedMobile = getBuyerMobileNumber();
   const keyboardVisible = useKeyboardVisible();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    refreshCart();
+  }, [refreshCart]);
 
   function decodeJwtPayload(token) {
     try {
