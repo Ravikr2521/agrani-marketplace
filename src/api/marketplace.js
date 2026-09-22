@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import { getLanguageFromQuery, normaliseLanguage } from "@/i18n";
 import { apiFetch } from "./client";
 
 export function marketPlaceApi() {
@@ -13,12 +14,17 @@ export function marketPlaceApi() {
     Authorization: `Bearer ${getAgraniToken()}`,
   };
 
-  const getStates = () => {
-    return apiFetch("/api/v1/master/states");
+  const getStates = (language = getLanguageFromQuery()) => {
+    const params = new URLSearchParams({ lang: normaliseLanguage(language) });
+    return apiFetch(`/api/v1/master/states?${params}`);
   };
 
-  const getDistrictsByState = (stateCode) => {
-    return apiFetch(`/api/v1/master/districts?state_code=${stateCode}`);
+  const getDistrictsByState = (stateCode, language = getLanguageFromQuery()) => {
+    const params = new URLSearchParams({
+      state_code: stateCode,
+      lang: normaliseLanguage(language),
+    });
+    return apiFetch(`/api/v1/master/districts?${params}`);
   };
 
   const getDeliveryLocation = (sellerMobile) => {

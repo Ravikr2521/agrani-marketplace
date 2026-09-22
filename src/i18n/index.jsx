@@ -23,6 +23,15 @@ export const getLanguageFromQuery = () => {
     : normaliseLanguage(queryLanguage);
 };
 
+export const setApplicationLanguage = (language) => {
+  const nextLanguage = normaliseLanguage(language);
+  window.localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("lang", nextLanguage);
+  window.location.assign(url.toString());
+};
+
 const hi = {
   Home: "होम",
   Category: "श्रेणी",
@@ -35,6 +44,7 @@ const hi = {
   Wishlist: "पसंदीदा",
   "My Account": "मेरा खाता",
   Logout: "लॉग आउट",
+  "Change language": "भाषा बदलें",
 
   "Search for": "खोजें",
   "Search products": "उत्पाद खोजें",

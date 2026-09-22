@@ -7,7 +7,7 @@ import {
   ShoppingBag,
   UserCircle,
   LogOut,
-  Settings,
+  Globe2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -21,7 +21,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { getLanguageFromQuery, setApplicationLanguage } from "@/i18n";
 
 export default function Header() {
   const { getCartItemCount } = useCart();
@@ -74,6 +82,11 @@ export default function Header() {
   const isCartActive = location.pathname.startsWith("/cart") || cartOpen;
 
   const isSellerActive = location.pathname.startsWith("/seller") || ordersOpen;
+  const language = getLanguageFromQuery();
+
+  const handleLanguageChange = (nextLanguage) => {
+    if (nextLanguage !== language) setApplicationLanguage(nextLanguage);
+  };
 
   return (
     <>
@@ -252,6 +265,47 @@ export default function Header() {
             </div>
 
             <div className="ml-auto flex h-full items-center gap-1 ">
+              <div className="flex h-full items-center gap-1.5 px-2 text-muted">
+                {/* <Globe2 className="h-4 w-4" aria-hidden="true" /> */}
+                <Select value={language} onValueChange={handleLanguageChange}>
+                  <SelectTrigger
+                    className="h-8 w-24 rounded-lg border-border/70 bg-transparent px-2 text-xs"
+                    aria-label="Change language"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+
+                  <SelectContent className="min-w-28 rounded-lg">
+                    <SelectItem
+                      value="en"
+                      className="py-1.5 text-xs hover:bg-gray-100!"
+                    >
+                      <div className="flex items-center gap-1.5 whitespace-nowrap">
+                        <img
+                          src="/images/english.svg"
+                          className="h-4 w-4 mb-0.5 shrink-0"
+                          alt="India"
+                        />
+                        <span className="whitespace-nowrap">English</span>
+                      </div>
+                    </SelectItem>
+
+                    <SelectItem
+                      value="hi"
+                      className="py-1.5 text-xs hover:bg-gray-100!"
+                    >
+                      <div className="flex items-center gap-1.5 whitespace-nowrap">
+                        <img
+                          src="/images/india.svg"
+                          className="h-4 w-4 mb-1 shrink-0"
+                          alt="India"
+                        />
+                        <span className="whitespace-nowrap">हिंदी</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <NavLink
                 to="/wishlist"
                 className={({ isActive }) =>

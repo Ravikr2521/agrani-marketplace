@@ -1,4 +1,5 @@
 import { apiFetch } from "./client";
+import { getLanguageFromQuery, normaliseLanguage } from "@/i18n";
 
 const sortAlphabetically = (items) =>
   [...items].sort((a, b) =>
@@ -6,9 +7,12 @@ const sortAlphabetically = (items) =>
   );
 
 export const locationApi = {
-  getStates: async () => {
+  getStates: async (language = getLanguageFromQuery()) => {
     try {
-      const response = await apiFetch("/api/v1/master/states");
+      const params = new URLSearchParams({
+        lang: normaliseLanguage(language),
+      });
+      const response = await apiFetch(`/api/v1/master/states?${params}`);
       const results = response?.data?.results ?? [];
       const formatted = results.map((state) => ({
         value: String(state.state_code),
@@ -23,13 +27,15 @@ export const locationApi = {
     }
   },
 
-  getDistricts: async (stateCode) => {
+  getDistricts: async (stateCode, language = getLanguageFromQuery()) => {
     if (!stateCode || stateCode === "all") return [];
 
     try {
-      const response = await apiFetch(
-        `/api/v1/master/districts?state_code=${stateCode}`,
-      );
+      const params = new URLSearchParams({
+        state_code: stateCode,
+        lang: normaliseLanguage(language),
+      });
+      const response = await apiFetch(`/api/v1/master/districts?${params}`);
       const results = response?.data?.results ?? [];
       const formatted = results.map((district) => ({
         value: String(district.district_code),
@@ -44,13 +50,15 @@ export const locationApi = {
     }
   },
 
-  getBlocks: async (districtCode) => {
+  getBlocks: async (districtCode, language = getLanguageFromQuery()) => {
     if (!districtCode || districtCode === "all") return [];
 
     try {
-      const response = await apiFetch(
-        `/api/v1/master/blocks?district_code=${districtCode}`,
-      );
+      const params = new URLSearchParams({
+        district_code: districtCode,
+        lang: normaliseLanguage(language),
+      });
+      const response = await apiFetch(`/api/v1/master/blocks?${params}`);
       const results = response?.data?.results ?? [];
       const formatted = results.map((block) => ({
         value: String(block.block_code),
