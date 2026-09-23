@@ -20,6 +20,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 
 const CartContext = createContext(null);
+const BOUND_CART_TOKEN_STORAGE_KEY = "farmers_marketplace_cart_bound_token";
 
 const unwrap = (response) => response?.data ?? response;
 
@@ -53,6 +54,17 @@ export function CartProvider({ children }) {
 
   const applyCart = useCallback((response) => {
     const cart = unwrap(response);
+
+    if (
+      String(cart?.status || "")
+        .trim()
+        .toLowerCase() === "completed"
+    ) {
+      localStorage.removeItem(CART_ID_STORAGE_KEY);
+      setItems([]);
+      return;
+    }
+
     if (cart && Array.isArray(cart.items)) setItems(cart.items.map(toUiItem));
   }, []);
 
@@ -61,10 +73,11 @@ export function CartProvider({ children }) {
       const cart = unwrap(response);
       if (!cart?.id) throw new Error("Cart API did not return a cart id.");
       localStorage.setItem(CART_ID_STORAGE_KEY, cart.id);
+      if (token) localStorage.setItem(BOUND_CART_TOKEN_STORAGE_KEY, token);
       applyCart(cart);
       return cart.id;
     },
-    [applyCart],
+    [applyCart, token],
   );
 
   const getCartId = useCallback(() => {
@@ -76,21 +89,17 @@ export function CartProvider({ children }) {
     if (!token || boundToken.current === token) return;
 
     boundToken.current = token;
-    setLoading(true);
+    if (localStorage.getItem(BOUND_CART_TOKEN_STORAGE_KEY) === token) return;
 
     try {
       const guestCartId = getCartId();
 
-      // Mobile sessions may already know their cart ID from a previous visit.
-      // Fetch that cart immediately once the query-string token is available.
-      if (guestCartId) {
-        try {
-          applyCart(await getCart(guestCartId, token));
-        } catch (error) {
-          console.info("Stored cart could not be loaded before binding", error);
-        }
+      if (!guestCartId) {
+        localStorage.setItem(BOUND_CART_TOKEN_STORAGE_KEY, token);
+        return;
       }
 
+      setLoading(true);
       const boundCartId = saveCart(await bindCart(guestCartId, token));
       applyCart(await getCart(boundCartId, token));
     } catch (error) {
@@ -113,9 +122,8 @@ export function CartProvider({ children }) {
     setLoading(true);
     try {
       applyCart(await getCart(cartId, token));
-    } catch {
-      localStorage.removeItem(CART_ID_STORAGE_KEY);
-      setItems([]);
+    } catch (error) {
+      console.error("Unable to refresh cart", error);
     } finally {
       setLoading(false);
     }
@@ -238,16 +246,22 @@ export function CartProvider({ children }) {
         );
         return item && changeQuantity(productId, variantId, item.quantity - 1);
       },
+      resetCartLocally: () => {
+        localStorage.removeItem(CART_ID_STORAGE_KEY);
+        setItems([]);
+      },
       clearCart: async () => {
         const cartId = localStorage.getItem(CART_ID_STORAGE_KEY);
 
-        localStorage.removeItem(CART_ID_STORAGE_KEY);
-        setItems([]);
-
-        if (!cartId) return true;
+        if (!cartId) {
+          setItems([]);
+          return true;
+        }
 
         try {
           await clearCartItems(cartId, token);
+          localStorage.removeItem(CART_ID_STORAGE_KEY);
+          setItems([]);
           return true;
         } catch (error) {
           console.error("Unable to clear cart", error);

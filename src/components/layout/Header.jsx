@@ -32,7 +32,7 @@ import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { getLanguageFromQuery, setApplicationLanguage } from "@/i18n";
 
 export default function Header() {
-  const { getCartItemCount } = useCart();
+  const { getCartItemCount, refreshCart } = useCart();
 
   const { SellerMobile, setToken, setAgraniToken, setSellerMobile } = useAuth();
   const navigate = useNavigate();
@@ -48,6 +48,7 @@ export default function Header() {
     localStorage.removeItem("farmers_marketplace_verified_phone");
     localStorage.removeItem("farmers_marketplace_buyer_phone");
     localStorage.removeItem("farmers_marketplace_cart_id");
+    localStorage.removeItem("farmers_marketplace_cart_bound_token");
 
     setToken("");
     setAgraniToken("");
@@ -520,6 +521,7 @@ export default function Header() {
 
           <NavLink
             to="/cart"
+            onClick={refreshCart}
             className={`flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors ${
               location.pathname.startsWith("/cart") || cartOpen
                 ? "text-primary"

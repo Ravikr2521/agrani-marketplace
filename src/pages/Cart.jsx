@@ -120,6 +120,7 @@ export default function Cart() {
     decreaseQuantity,
     removeFromCart,
     clearCart,
+    resetCartLocally,
     refreshCart,
   } = useCart();
   const { createOrder } = useOrderApi();
@@ -321,7 +322,7 @@ export default function Cart() {
         count,
         total,
       });
-      clearCart();
+      resetCartLocally();
 
       setStep(3);
     } catch (error) {

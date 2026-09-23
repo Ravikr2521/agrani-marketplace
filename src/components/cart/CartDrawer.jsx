@@ -130,6 +130,7 @@ export default function CartDrawer({ open, onOpenChange }) {
     decreaseQuantity,
     removeFromCart,
     clearCart,
+    resetCartLocally,
     refreshCart,
   } = useCart();
 
@@ -305,7 +306,7 @@ export default function CartDrawer({ open, onOpenChange }) {
         count,
         total,
       });
-      clearCart();
+      resetCartLocally();
 
       setStep(3);
     } catch (error) {

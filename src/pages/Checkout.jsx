@@ -21,7 +21,13 @@ function validPin(v) {
   return /^[1-9]\d{5}$/.test(v);
 }
 export default function Checkout() {
-  const { items, getCartTotal, increaseQuantity, decreaseQuantity, clearCart } =
+  const {
+    items,
+    getCartTotal,
+    increaseQuantity,
+    decreaseQuantity,
+    resetCartLocally,
+  } =
     useCart();
   const { createOrder } = useOrderApi();
   const { saveOrder } = useOrder();
@@ -73,7 +79,7 @@ export default function Checkout() {
         throw new Error(response?.message || "Order was not created.");
       localStorage.setItem("farmers_marketplace_buyer_phone", form.phone);
       saveOrder(response.data);
-      clearCart();
+      resetCartLocally();
       window.scrollTo(0, 0);
       navigate("/order-success");
     } catch (e) {
