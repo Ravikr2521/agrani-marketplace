@@ -2,6 +2,7 @@ import OtpGateModal from "@/components/auth/OtpGateModal";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import Header from "@/components/layout/Header";
 import { MobileNumberContext } from "@/context/MobileNumberContext";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useContext } from "react";
 import { Outlet, useSearchParams } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -10,6 +11,7 @@ export default function Layout() {
   const { showOtpGate, handleOtpVerified, handleOtpClose } =
     useContext(MobileNumberContext);
   const [searchParams] = useSearchParams();
+  const keyboardVisible = useKeyboardVisible();
   const paramHideHeader = searchParams.get("showHeader") === "false";
 
   if (paramHideHeader) {
@@ -25,7 +27,7 @@ export default function Layout() {
       {!hideHeader && <Header />}
 
       <main
-        className={`min-h-0 flex-1 overflow-y-auto pb-16 md:pb-0 ${hideHeader ? "md:pt-0" : "md:pt-18"}  md:bg-[#f7f7f9b7]`}
+        className={`min-h-0 flex-1 overflow-y-auto ${keyboardVisible ? "pb-0" : "pb-16"} md:pb-0 ${hideHeader ? "md:pt-0" : "md:pt-18"} md:bg-[#f7f7f9b7]`}
       >
         <div
           className={`mx-auto h-full w-full ${hideHeader ? "max-w-full" : "max-w-350"} px-0`}
