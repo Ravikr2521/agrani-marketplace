@@ -111,7 +111,7 @@ export default function OrderSuccess() {
 
           <Button asChild className="mt-6 rounded-xl">
             <Link to="/products">
-              Continue Shopping
+              {t("Continue Shopping")}
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </Button>
@@ -312,7 +312,7 @@ export default function OrderSuccess() {
 
             <Button asChild className="h-10 rounded-xl">
               <Link to="/products">
-                Continue Shopping
+                {t("Continue Shopping")}
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>

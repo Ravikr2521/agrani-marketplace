@@ -6,7 +6,7 @@ export default function showCartToast(product, variant) {
 
   toast.custom(() => (
     <div className="flex w-90 items-center gap-3 rounded-xl border border-border bg-white p-3 shadow-lg">
-      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-muted">
+      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
         {image && (
           <img
             src={image}

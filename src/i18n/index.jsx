@@ -43,6 +43,72 @@ const hi = {
   "Order Confirmed": "ऑर्डर की पुष्टि",
   Wishlist: "पसंदीदा",
   "My Account": "मेरा खाता",
+  Profile: "प्रोफ़ाइल",
+  "Profile & addresses": "प्रोफ़ाइल और पते",
+  Account: "खाता",
+  "Buyer account": "खरीदार खाता",
+  "Your marketplace profile": "आपकी मार्केटप्लेस प्रोफ़ाइल",
+  "Saved delivery addresses": "सहेजे गए डिलीवरी पते",
+  "No saved addresses yet": "अभी कोई सहेजा हुआ पता नहीं है",
+  "Add one now to make checkout faster.":
+    "तेज़ चेकआउट के लिए अभी एक पता जोड़ें।",
+  "Saved delivery address": "सहेजा गया डिलीवरी पता",
+  "Choose and manage the places where you receive orders.":
+    "वे स्थान चुनें और प्रबंधित करें जहाँ आप ऑर्डर प्राप्त करते हैं।",
+  "Choose a saved address": "सहेजा गया पता चुनें",
+  "Loading addresses...": "पते लोड हो रहे हैं...",
+  "Could not load delivery addresses": "डिलीवरी पते लोड नहीं हो सके",
+  "Add address": "पता जोड़ें",
+  "Add new": "नया जोड़ें",
+  "Address added and selected": "पता जोड़ा और चुना गया",
+  "Address added": "पता जोड़ा गया",
+  "Address updated": "पता अपडेट किया गया",
+  "Could not save address": "पता सहेजा नहीं जा सका",
+  "Add delivery address": "डिलीवरी पता जोड़ें",
+  "Edit delivery address": "डिलीवरी पता संपादित करें",
+  "Save address": "पता सहेजें",
+  "Update the saved delivery details.": "सहेजे गए डिलीवरी विवरण अपडेट करें।",
+  "Save an address for quicker checkout.": "तेज़ चेकआउट के लिए पता सहेजें।",
+  "This address will be selected for the current order.":
+    "यह पता वर्तमान ऑर्डर के लिए चुना जाएगा।",
+  "Add an address to use it for this order.":
+    "इस ऑर्डर के लिए उपयोग करने हेतु पता जोड़ें।",
+  "The selected saved address will be used for this order.":
+    "चुना गया सहेजा हुआ पता इस ऑर्डर के लिए उपयोग होगा।",
+  "Choose a delivery address": "डिलीवरी पता चुनें",
+  "Select a saved address or add a new one to continue.":
+    "आगे बढ़ने के लिए सहेजा हुआ पता चुनें या नया जोड़ें।",
+  "Receiver name": "प्राप्तकर्ता का नाम",
+  "Complete address": "पूरा पता",
+  "Address type": "पते का प्रकार",
+  "Enter the receiver's name.": "प्राप्तकर्ता का नाम दर्ज करें।",
+  "Enter a valid 10-digit mobile number.":
+    "मान्य 10 अंकों का मोबाइल नंबर दर्ज करें।",
+  "Enter the delivery address.": "डिलीवरी पता दर्ज करें।",
+  "Enter a valid 6-digit pincode.": "मान्य 6 अंकों का पिनकोड दर्ज करें।",
+  "This delivery address is locked after saving.":
+    "सहेजने के बाद यह डिलीवरी पता लॉक है।",
+  "This pincode is locked after saving.": "सहेजने के बाद यह पिनकोड लॉक है।",
+  Locked: "लॉक है",
+  home: "घर",
+  Home: "घर",
+  Work: "ऑफिस",
+  Other: "अन्य",
+  Cancel: "रद्द करें",
+  "Saving...": "सहेजा जा रहा है...",
+  Edit: "संपादित करें",
+  Delete: "हटाएं",
+  "Delete this address?": "यह पता हटाएं?",
+  "Orders can no longer use this saved address. This action cannot be undone.":
+    "ऑर्डर अब इस सहेजे गए पते का उपयोग नहीं कर सकेंगे। यह कार्रवाई वापस नहीं की जा सकती।",
+  "Keep address": "पता रखें",
+  "Delete address": "पता हटाएं",
+  "Deleting...": "हटाया जा रहा है...",
+  "Address deleted": "पता हटा दिया गया",
+  "No saved address": "कोई सहेजा हुआ पता नहीं है",
+  "Add a delivery address to continue with your order.":
+    "ऑर्डर जारी रखने के लिए डिलीवरी पता जोड़ें।",
+  "Could not delete address": "पता हटाया नहीं जा सका",
   Logout: "लॉग आउट",
   "Change language": "भाषा बदलें",
 
@@ -133,7 +199,7 @@ const hi = {
   "Refresh orders": "ऑर्डर रीफ़्रेश करें",
   "Ordered products": "ऑर्डर किए गए उत्पाद",
   Buyer: "खरीदार",
-  "Continue shopping": "खरीदारी जारी रखें",
+  "Continue Shopping": "खरीदारी जारी रखें",
   "In stock": "स्टॉक में",
   "Seller details": "विक्रेता विवरण",
   Mobile: "मोबाइल",
@@ -361,6 +427,8 @@ const hi = {
   "Show Products": "उत्पाद दिखाएं",
   s: "",
   "Clear Cart": "कार्ट खाली करें",
+  "Please select a delivery address to continue.":
+    "आगे बढ़ने के लिए कृपया डिलीवरी का पता चुनें।",
 };
 
 i18n.use(initReactI18next).init({

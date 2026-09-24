@@ -5,6 +5,7 @@ import {
   Edit2,
   ImageOff,
   LockKeyhole,
+  MapPin,
   Minus,
   Plus,
   ShoppingBag,
@@ -19,6 +20,24 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useOrderApi } from "@/api/orders";
+import {
+  createDeliveryAddress,
+  getDeliveryAddresses,
+} from "@/api/deliveryAddresses";
+import AddressForm from "@/components/delivery/AddressForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useCart } from "@/context/CartContext";
 import { getStoredCartId } from "@/api/cart";
 import { MobileNumberContext } from "@/context/MobileNumberContext";
@@ -28,6 +47,7 @@ import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/context/AuthContext";
 
 function CheckoutSteps({ step }) {
   const { t } = useTranslation();
@@ -124,6 +144,7 @@ export default function Cart() {
     refreshCart,
   } = useCart();
   const { createOrder } = useOrderApi();
+  const { AgraniToken, SellerMobile } = useAuth();
   const verifiedMobile = getBuyerMobileNumber();
   const keyboardVisible = useKeyboardVisible();
   const { t } = useTranslation();
@@ -186,7 +207,13 @@ export default function Cart() {
 
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [addressesLoading, setAddressesLoading] = useState(false);
+  const [addressDialogOpen, setAddressDialogOpen] = useState(false);
+  const [savingAddress, setSavingAddress] = useState(false);
   const [isMobileLocked, setIsMobileLocked] = useState(false);
+  const [addressError, setAddressError] = useState(false);
 
   const [form, setForm] = useState({
     name: decodedToken?.name || "",
@@ -224,6 +251,28 @@ export default function Cart() {
       }));
     }
   }, [decodedToken?.name]);
+
+  const loadAddresses = async () => {
+    setAddressesLoading(true);
+    try {
+      const nextAddresses = await getDeliveryAddresses({
+        AgraniToken,
+        SellerMobile,
+      });
+      setAddresses(nextAddresses);
+      setSelectedAddressId((current) => current || nextAddresses[0]?.id || "");
+    } catch (error) {
+      toast.error("Could not load delivery addresses", {
+        description: error.message,
+      });
+    } finally {
+      setAddressesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (step === 2) loadAddresses();
+  }, [step, AgraniToken]);
 
   const updateForm = (field, value) => {
     setForm((current) => ({
@@ -281,14 +330,15 @@ export default function Cart() {
       return;
     }
 
-    if (form.phone !== verifiedMobile) {
-      toast.error("Mobile number mismatch", {
-        description: "Please use your verified mobile number",
+    if (!selectedAddressId) {
+      setAddressError(true);
+      toast.error("Choose a delivery address", {
+        description: "Select a saved address or add a new one to continue.",
       });
       return;
     }
 
-    if (!validate() || submitting || items.length === 0) {
+    if (submitting || items.length === 0) {
       return;
     }
 
@@ -297,17 +347,7 @@ export default function Cart() {
     try {
       const payload = {
         cart_id: getStoredCartId(),
-        products: items.map((item) => ({
-          no_of_units: item.quantity,
-          variant: item.variantId,
-        })),
-        delivery_address: form.address.trim(),
-        delivery_pincode: form.pincode,
-        receiver_name: form.name.trim(),
-        receiver_phone: form.phone,
-        buyer_phone: verifiedMobile,
-        buyer_name: decodedToken?.name,
-        buyer_id: decodedToken?.sub,
+        delivery_address_id: selectedAddressId,
       };
 
       const response = await createOrder(payload);
@@ -340,6 +380,21 @@ export default function Cart() {
 
   const handleQuantityIncrease = (item) => {
     increaseQuantity(item.productId, item.variantId);
+  };
+
+  const addAddress = async (payload) => {
+    setSavingAddress(true);
+    try {
+      const address = await createDeliveryAddress(payload, AgraniToken);
+      setAddresses((current) => [address, ...current]);
+      setSelectedAddressId(address.id);
+      setAddressDialogOpen(false);
+      toast.success("Address added and selected");
+    } catch (error) {
+      toast.error("Could not save address", { description: error.message });
+    } finally {
+      setSavingAddress(false);
+    }
   };
 
   return (
@@ -767,7 +822,100 @@ export default function Cart() {
                     </p>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="mb-5 rounded-2xl border border-gray-100 bg-white p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-body-dark">
+                        <MapPin className="h-4 w-4 text-emerald-700" />
+                        Saved delivery address
+                      </div>
+
+                      {!!addresses.length && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-7 rounded-lg text-zinc-800"
+                          onClick={() => setAddressDialogOpen(true)}
+                        >
+                          Add new
+                        </Button>
+                      )}
+                    </div>
+
+                    {addressesLoading ? (
+                      <div className="flex h-11 items-center rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm text-muted">
+                        Loading addresses...
+                      </div>
+                    ) : addresses.length > 0 ? (
+                      <>
+                        <Select
+                          value={selectedAddressId}
+                          onValueChange={(value) => {
+                            setSelectedAddressId(value);
+                            setAddressError(false);
+                          }}
+                        >
+                          <SelectTrigger className="h-11 w-full rounded-xl bg-white">
+                            <SelectValue placeholder="Choose a saved address" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {addresses.map((address) => (
+                              <SelectItem key={address.id} value={address.id}>
+                                <span className="font-medium">
+                                  {t(String(address.address_type || "Address"))}
+                                </span>{" "}
+                                — {address.receiver_name},{" "}
+                                {address.delivery_address || address.address} (
+                                {address.delivery_pincode || address.pincode})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        {!!selectedAddressId && (
+                          <p className="mt-3 text-xs text-emerald-800">
+                            The selected saved address will be used for this
+                            order.
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <div className="rounded-xl border border-dashed border-emerald-200 bg-emerald-50/50 px-4 py-5 text-center">
+                        <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+                          <MapPin className="h-5 w-5 text-emerald-700" />
+                        </div>
+
+                        <p className="text-sm font-semibold text-body-dark">
+                          No saved address
+                        </p>
+
+                        <p className="mt-1 text-xs text-muted">
+                          Add a delivery address to continue with your order.
+                        </p>
+
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="mt-3 h-8 rounded-lg bg-white text-green-800 border border-gray-300/70 px-4 text-xs shadow-none hover:bg-white! hover:shadow-sm"
+                          onClick={() => setAddressDialogOpen(true)}
+                        >
+                          Add delivery address
+                        </Button>
+                      </div>
+                    )}
+
+                    {addressError && (
+                      <div className="mt-4 flex items-center gap-1.5 rounded-lg bg-red-50 px-2.5 py-2 text-xs font-medium text-red-600">
+                        <MapPin className="h-3.5 w-3.5 shrink-0" />
+                        <span>
+                          {t("Please select a delivery address to continue.")}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="hidden space-y-4" aria-hidden="true">
                     <div className="flex gap-4">
                       <div>
                         <label className="mb-1.5 block text-sm font-semibold text-body-light">
@@ -1072,7 +1220,7 @@ export default function Cart() {
                   className=" h-11 w-full rounded-xl font-bold shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <Link to="/">
-                    Continue Shopping
+                    {t("Continue Shopping")}
                     <ArrowRight className="ml-1.5 h-4 w-4" />
                   </Link>
                 </Button>
@@ -1081,6 +1229,21 @@ export default function Cart() {
           )}
         </div>
       )}
+      <Dialog open={addressDialogOpen} onOpenChange={setAddressDialogOpen}>
+        <DialogContent className="max-h-[90dvh] overflow-y-auto">
+          <DialogTitle>{t("Add delivery address")}</DialogTitle>
+          <DialogDescription className="-mt-0.5 text-[13px]!">
+            {t("This address will be selected for the current order.")}
+          </DialogDescription>
+          <div className="mt-5">
+            <AddressForm
+              saving={savingAddress}
+              onSave={addAddress}
+              onCancel={() => setAddressDialogOpen(false)}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

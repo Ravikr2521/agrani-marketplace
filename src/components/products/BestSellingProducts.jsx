@@ -65,7 +65,7 @@ export default function BestSellingProducts({ products = [] }) {
             </p>
           </div>
 
-          <TrendingUp className="hidden h-5 w-5 text-orange-500 sm:block" />
+          {/* <TrendingUp className="hidden h-5 w-5 text-orange-500 sm:block" /> */}
         </div>
 
         {/* Mobile - */}
@@ -120,7 +120,7 @@ export default function BestSellingProducts({ products = [] }) {
                   <div className="mt-2 flex items-center gap-1.5">
                     <TrendingUp className="h-3 w-3 text-orange-500" />
 
-                    <span className="text-[11px] font-bold text-orange-600">
+                    <span className="text-[11px] font-semibold text-orange-600">
                       {t("Best selling")}
                     </span>
                   </div>
@@ -189,7 +189,7 @@ export default function BestSellingProducts({ products = [] }) {
                     </div>
 
                     <div className="mt-3 flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-1.5 text-[10px] font-bold text-orange-600">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-1.5 text-[10px] font-semibold text-orange-600">
                         <TrendingUp className="h-3 w-3" />
                         {t("Best selling")}
                       </span>

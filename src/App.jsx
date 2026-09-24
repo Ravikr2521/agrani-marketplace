@@ -13,6 +13,7 @@ import OrderSuccess from "@/pages/OrderSuccess";
 import Orders from "@/pages/Orders";
 import ProductDetails from "@/pages/ProductDetails";
 import Wishlist from "@/pages/Wishlist";
+import Profile from "@/pages/Profile";
 import ScrollToTop from "./components/common/ScrollToTop";
 import AddProduct from "./components/products/AddProduct";
 import Layout from "./layout/Layout";
@@ -40,6 +41,7 @@ export default function App() {
                   <Route path="/orders" element={<Orders />} />
                   <Route path="/orders/:id" element={<OrderDetails />} />
                   <Route path="/wishlist" element={<Wishlist />} />
+                  <Route path="/profile" element={<Profile />} />
                   <Route path="/seller/:seller_id" element={<SellerPage />} />
                   <Route path="/seller" element={<Seller />} />
                   <Route path="/seller/orders" element={<SellerOrders />} />

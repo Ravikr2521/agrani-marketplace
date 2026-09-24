@@ -359,7 +359,6 @@ export default function Wishlist() {
     useContext(MobileNumberContext);
 
   const fetchWishlist = async (buyerMobile) => {
-    console.log(buyerMobile, "check");
     if (!buyerMobile) {
       setError("Please login to view your wishlist");
       setIsLoading(false);

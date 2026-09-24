@@ -414,7 +414,7 @@ export default function Header() {
                     </button>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-48 overflow-hidden rounded-xl border border-gray-200 bg-white p-0 shadow-lg"
+                    className="w-44 overflow-hidden rounded-xl border border-gray-200 bg-white p-0 shadow-lg"
                     align="end"
                     sideOffset={8}
                   >
@@ -440,6 +440,13 @@ export default function Header() {
                     </div>
 
                     <div className="p-1 ">
+                      <NavLink
+                        to="/profile"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 "
+                      >
+                        <UserCircle className="h-4 w-4" />
+                        Profile
+                      </NavLink>
                       <button
                         type="button"
                         onClick={handleLogout}
@@ -475,7 +482,7 @@ export default function Header() {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors ${
+              `flex flex-1 flex-col items-center justify-center gap-1 py-2 transition-colors ${
                 isActive ? "text-primary" : "text-muted hover:text-body-dark"
               }`
             }
@@ -487,7 +494,7 @@ export default function Header() {
           <NavLink
             to="/category"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors ${
+              `flex flex-1 flex-col items-center justify-center gap-1 py-2 transition-colors ${
                 isActive ? "text-primary" : "text-muted hover:text-body-dark"
               }`
             }
@@ -495,38 +502,34 @@ export default function Header() {
             <Package className="h-5 w-5" />
             <span className="text-xs font-medium">Category</span>
           </NavLink>
-          <NavLink
-            to="/wishlist"
-            className={`flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors ${
-              location.pathname.startsWith("/wishlist") || ordersOpen
-                ? "text-primary"
-                : "text-muted hover:text-body-dark"
-            }`}
-          >
-            <HeartIcon className="h-5 w-5" />
-            <span className="text-xs font-medium">Wishlist</span>
-          </NavLink>
 
           <NavLink
-            to="/orders"
-            className={`flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors ${
-              location.pathname.startsWith("/orders") || ordersOpen
-                ? "text-primary"
-                : "text-muted hover:text-body-dark"
-            }`}
+            to="/wishlist"
+            className={({ isActive }) =>
+              `flex flex-1 flex-col items-center justify-center gap-1 py-2 transition-colors ${
+                isActive ? "text-primary" : "text-muted hover:text-body-dark"
+              }`
+            }
           >
-            <ClipboardList className="h-5 w-5" />
-            <span className="text-xs font-medium">Orders</span>
+            {({ isActive }) => (
+              <>
+                <HeartIcon className={`h-5 w-5 `} />
+
+                <span className="text-xs font-medium">Wishlist</span>
+              </>
+            )}
           </NavLink>
 
           <NavLink
             to="/cart"
             onClick={refreshCart}
-            className={`flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors ${
-              location.pathname.startsWith("/cart") || cartOpen
-                ? "text-primary"
-                : "text-muted hover:text-body-dark"
-            }`}
+            className={({ isActive }) =>
+              `flex flex-1 flex-col items-center justify-center gap-1 py-2 transition-colors ${
+                isActive || cartOpen
+                  ? "text-primary"
+                  : "text-muted hover:text-body-dark"
+              }`
+            }
           >
             <div className="relative">
               {cartAnimating && (
@@ -571,17 +574,72 @@ export default function Header() {
             <span className="text-xs font-medium">Cart</span>
           </NavLink>
 
-          {/* <NavLink
-            to="/seller"
-            className={`flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors ${
-              location.pathname.startsWith("/seller") || ordersOpen
-                ? "text-primary"
-                : "text-muted hover:text-body-dark"
-            }`}
-          >
-            <UserRoundCogIcon className="h-5 w-5" />
-            <span className="text-xs font-medium">Seller</span>
-          </NavLink> */}
+          {SellerMobile && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={`flex flex-1 flex-col items-center justify-center gap-1 py-2 transition-colors ${
+                    location.pathname.startsWith("/profile") ||
+                    location.pathname.startsWith("/orders")
+                      ? "text-primary"
+                      : "text-muted hover:text-body-dark"
+                  }`}
+                  aria-label="Account"
+                >
+                  <UserCircle className="h-5 w-5" />
+                  <span className="text-xs font-medium">Account</span>
+                </button>
+              </PopoverTrigger>
+
+              <PopoverContent
+                side="top"
+                align="end"
+                sideOffset={10}
+                className="w-48 overflow-hidden rounded-xl border border-gray-200 bg-white p-0 shadow-lg"
+              >
+                <div className="flex items-center gap-3 border-b border-gray-100 px-4 py-3">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-orange-100 text-orange-600">
+                    <UserCircle className="h-5 w-5" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-gray-900">
+                      My Account
+                    </p>
+
+                    <p className="truncate text-xs text-gray-500">
+                      {SellerMobile}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-1">
+                  <NavLink
+                    to="/profile"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 "
+                  >
+                    <UserCircle className="h-4 w-4" />
+                    Profile
+                  </NavLink>
+
+                  <NavLink
+                    to="/orders"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                  >
+                    <ClipboardList className="h-4 w-4" />
+                    Orders
+                  </NavLink>
+                </div>
+
+                <div className="border-t border-gray-100 bg-gray-50 px-4 py-1.5">
+                  <p className="text-center text-[10px] font-medium text-gray-400">
+                    Agrani Marketplace
+                  </p>
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
         </div>
       </nav>
 
