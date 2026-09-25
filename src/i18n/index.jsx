@@ -90,8 +90,7 @@ const hi = {
     "सहेजने के बाद यह डिलीवरी पता लॉक है।",
   "This pincode is locked after saving.": "सहेजने के बाद यह पिनकोड लॉक है।",
   Locked: "लॉक है",
-  home: "घर",
-  Home: "घर",
+  home: "होम",
   Work: "ऑफिस",
   Other: "अन्य",
   Cancel: "रद्द करें",
@@ -119,7 +118,7 @@ const hi = {
   "Add to Cart": "कार्ट में जोड़ें",
 
   "Buy Now": "अभी खरीदें",
-  "Continue Shopping": "खरीदारी जारी रखें",
+
   "Continue to delivery": "डिलीवरी के लिए आगे बढ़ें",
 
   Items: "आइटम",

@@ -101,6 +101,7 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
   const variant = item.variant_detail;
   const product = variant?.product_detail;
   const [isLoading, setIsLoading] = useState(false);
+
   const { isInCart } = useCart();
   const { t } = useTranslation();
 
@@ -229,6 +230,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
   const variant = item.variant_detail;
   const product = variant?.product_detail;
   const [isLoading, setIsLoading] = useState(false);
+
   const { isInCart } = useCart();
 
   const isInCartAlready = isInCart(product?.id, variant?.id);
@@ -350,6 +352,8 @@ export default function Wishlist() {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [mobileVerificationCancelled, setMobileVerificationCancelled] =
+    useState(false);
 
   const { getWishlist, addtoWishlist } = useProductApi();
   const { addToCart } = useCart();
@@ -384,7 +388,17 @@ export default function Wishlist() {
   };
 
   useEffect(() => {
-    requireMobileNumber(fetchWishlist);
+    setMobileVerificationCancelled(false);
+
+    requireMobileNumber(async (buyerMobile) => {
+      if (!buyerMobile) {
+        setMobileVerificationCancelled(true);
+        setIsLoading(false);
+        return;
+      }
+
+      await fetchWishlist(buyerMobile);
+    });
   }, [requireMobileNumber]);
 
   const handleRefresh = async () => {
@@ -464,6 +478,21 @@ export default function Wishlist() {
       return <WishlistSkeleton />;
     }
 
+    if (mobileVerificationCancelled) {
+      return (
+        <EmptyState
+          icon={<Heart className="h-12 w-12 text-gray-300" />}
+          title="Mobile verification required"
+          description="Please verify your mobile number to view and manage your wishlist."
+          actionText="Verify Mobile"
+          onAction={() => {
+            setMobileVerificationCancelled(false);
+            setIsLoading(true);
+            requireMobileNumber(fetchWishlist);
+          }}
+        />
+      );
+    }
     if (error) {
       return (
         <ErrorState

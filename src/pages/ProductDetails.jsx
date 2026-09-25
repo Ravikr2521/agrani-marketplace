@@ -31,7 +31,7 @@ import { useWishlist } from "@/hooks/useWishlist";
 import showCartToast from "@/custom/showCartToast";
 
 export default function ProductDetails() {
-  const { getProducts } = useProductApi();
+  const { getProducts, getProductView } = useProductApi();
 
   const { id } = useParams();
 
@@ -89,6 +89,14 @@ export default function ProductDetails() {
   useEffect(() => {
     load();
   }, [id]);
+
+  useEffect(() => {
+    if (!variantId) return;
+
+    getProductView(variantId).catch((error) => {
+      console.error("Failed to track product view:", error);
+    });
+  }, [variantId]);
 
   const variants = useMemo(
     () => product?.variants?.filter((v) => v.is_active !== false) || [],

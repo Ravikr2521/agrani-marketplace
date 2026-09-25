@@ -4,15 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 export function useProducts({
   search = "",
   page = 1,
-  stateCode = "",
+  state = "",
   buyerMobile = "",
-  districtCode = "",
-  blockCode = "",
+  district = "",
+  block = "",
   qc_status = "approved",
   seller_mobile = "",
 } = {}) {
   const { getProducts } = useProductApi();
-  const [state, setState] = useState({
+  const [productState, setProductState] = useState({
     products: [],
     count: 0,
     next: null,
@@ -22,7 +22,7 @@ export function useProducts({
   });
 
   const fetchData = useCallback(async () => {
-    setState((s) => ({
+    setProductState((s) => ({
       ...s,
       loading: true,
       error: null,
@@ -33,14 +33,14 @@ export function useProducts({
         search,
         page,
         buyerMobile,
-        stateCode,
-        districtCode,
-        blockCode,
+        state,
+        district,
+        block,
         qc_status,
         seller_mobile,
       });
 
-      setState({
+      setProductState({
         products: data?.results || [],
         count: data?.count || 0,
         next: data?.next || null,
@@ -49,20 +49,20 @@ export function useProducts({
         error: null,
       });
     } catch (e) {
-      setState((s) => ({
+      setProductState((s) => ({
         ...s,
         loading: false,
         error: e.message || "Unable to load products.",
       }));
     }
-  }, [search, page, stateCode, districtCode, blockCode, qc_status]);
+  }, [search, page, state, district, block, qc_status]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   return {
-    ...state,
+    ...productState,
     retry: fetchData,
   };
 }

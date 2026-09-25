@@ -64,14 +64,6 @@ export default function ProductDetailsSheet({
     setQty(1);
   }, [open, product, variantId]);
 
-  useEffect(() => {
-    if (!open || !variantId) return;
-
-    getProductView(variantId).catch((error) => {
-      console.error("Failed to track product view:", error);
-    });
-  }, [open]);
-
   const buyerMobile = localStorage.getItem("farmers_marketplace_buyer_phone");
 
   const variants = useMemo(
@@ -89,6 +81,14 @@ export default function ProductDetailsSheet({
       ) || variants[0]
     );
   }, [variants, selectedVariantId]);
+
+  useEffect(() => {
+    if (!open || !selectedVariant?.id) return;
+
+    getProductView(selectedVariant.id).catch((error) => {
+      console.error("Failed to track product view:", error);
+    });
+  }, [open, selectedVariant?.id]);
 
   const images = useMemo(() => {
     if (!selectedVariant) return [];

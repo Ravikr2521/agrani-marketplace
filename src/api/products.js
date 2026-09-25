@@ -34,9 +34,9 @@ export function useProductApi() {
     perPage = 20,
     buyerMobile = "",
     seller_id = "",
-    stateCode = "",
-    districtCode = "",
-    blockCode = "",
+    state = "",
+    district = "",
+    block = "",
     qc_status = "approved",
     seller_mobile = "",
   } = {}) {
@@ -62,16 +62,16 @@ export function useProductApi() {
       params.set("seller_id", seller_id.trim());
     }
 
-    if (stateCode?.trim()) {
-      params.set("state", stateCode.trim());
+    if (state?.trim()) {
+      params.set("delivery_state", state.trim());
     }
 
-    if (districtCode?.trim()) {
-      params.set("district", districtCode.trim());
+    if (district?.trim()) {
+      params.set("delivery_district", district.trim());
     }
 
-    if (blockCode?.trim()) {
-      params.set("block", blockCode.trim());
+    if (block?.trim()) {
+      params.set("delivery_block", blockCode.trim());
     }
 
     return apiFetch(

@@ -47,8 +47,12 @@ export function MobileNumberProvider({ children }) {
 
   const handleOtpClose = useCallback(() => {
     setShowOtpGate(false);
-    setPendingAction(null);
-  }, []);
+
+    if (pendingAction) {
+      pendingAction(null);
+      setPendingAction(null);
+    }
+  }, [pendingAction]);
 
   const value = {
     getCurrentMobile,

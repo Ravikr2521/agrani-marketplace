@@ -52,9 +52,9 @@ export default function Category() {
     useProducts({
       search,
       page,
-      stateCode: filters.stateName,
-      districtCode: filters.districtName,
-      blockCode: filters.blockName,
+      state: filters.stateName,
+      district: filters.districtName,
+      block: filters.blockName,
     });
 
   const categories = useMemo(
@@ -80,64 +80,57 @@ export default function Category() {
     [products],
   );
 
-  const filtered = products.filter((product) => {
-    const variants = (product.variants || []).filter(
-      (variant) => variant.is_active !== false,
-    );
-
-    if (filters.category !== "all" && product.category !== filters.category) {
-      return false;
-    }
-
-    if (
-      filters.availability === "in" &&
-      !variants.some((variant) => Number(variant.no_of_units) > 0)
-    ) {
-      return false;
-    }
-
-    if (
-      filters.availability === "out" &&
-      !variants.every((variant) => Number(variant.no_of_units) <= 0)
-    ) {
-      return false;
-    }
-
-    if (filters.packUnit !== "all") {
-      const hasPackUnit = variants.some(
-        (variant) =>
-          String(variant.pack_unit).toUpperCase() ===
-          String(filters.packUnit).toUpperCase(),
-      );
-
-      if (!hasPackUnit) {
-        return false;
-      }
-    }
-
-    if (filters.price !== "all") {
-      const prices = variants
-        .map((variant) => Number(variant.price))
-        .filter(Number.isFinite);
-
-      const min = prices.length ? Math.min(...prices) : Infinity;
-
-      const match =
-        filters.price === "0-250"
-          ? min < 250
-          : filters.price === "250-500"
-            ? min >= 250 && min <= 500
-            : filters.price === "500-1000"
-              ? min > 500 && min <= 1000
-              : min > 1000;
-
-      if (!match) {
-        return false;
-      }
-    }
-
+  const matchesPrice = (price) => {
+    if (filters.price === "all") return true;
+    if (filters.price === "0-250") return price < 250;
+    if (filters.price === "250-500") return price >= 250 && price <= 500;
+    if (filters.price === "500-1000") return price > 500 && price <= 1000;
+    if (filters.price === "1000+") return price > 1000;
     return true;
-  });
+  };
+
+  const matchesPackUnit = (variant) =>
+    filters.packUnit === "all" ||
+    String(variant.pack_unit).toUpperCase() ===
+      String(filters.packUnit).toUpperCase();
+
+  const filtered = useMemo(() => {
+    return products
+      .map((product) => {
+        if (
+          filters.category !== "all" &&
+          product.category !== filters.category
+        ) {
+          return null;
+        }
+
+        const matchingVariants = (product.variants || []).filter((variant) => {
+          if (variant.is_active === false) return false;
+
+          if (
+            filters.availability === "in" &&
+            !(Number(variant.no_of_units) > 0)
+          ) {
+            return false;
+          }
+          if (
+            filters.availability === "out" &&
+            Number(variant.no_of_units) > 0
+          ) {
+            return false;
+          }
+          if (!matchesPackUnit(variant)) return false;
+          if (!matchesPrice(Number(variant.price))) return false;
+
+          return true;
+        });
+
+        if (!matchingVariants.length) return null;
+
+        return { ...product, variants: matchingVariants };
+      })
+      .filter(Boolean);
+  }, [products, filters]);
 
   const filterKeys = [
     "category",
