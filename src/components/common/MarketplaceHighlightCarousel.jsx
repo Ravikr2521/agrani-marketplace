@@ -39,14 +39,25 @@ const slides = [
     iconColor: "text-amber-700",
     accent: "text-amber-700",
   },
+  {
+    title: "Better for you",
+    subtitle: "Quality products, trusted sellers",
+    category: "ESSENTIALS",
+    icon: ShoppingBasket,
+    bg: "bg-[#f5eefb]",
+    circle: "bg-[#e5d5f0]",
+    iconColor: "text-purple-700",
+    accent: "text-purple-700",
+  },
 ];
 
-const carouselSlides = [...slides, ...slides, ...slides];
+// const carouselSlides = [...slides, ...slides];
+const carouselSlides = slides;
 
 export default function MarketplaceHighlightCarousel() {
   const { t } = useTranslation();
   return (
-    <section className="lg:mb-0 mt-8">
+    <section className="lg:mb-0 mt-7 max-w-350">
       <Swiper
         modules={[Autoplay, Pagination]}
         loop={true}
@@ -72,17 +83,20 @@ export default function MarketplaceHighlightCarousel() {
           768: {
             slidesPerView: 1.8,
             spaceBetween: 16,
+            centeredSlides: false,
           },
           1024: {
             slidesPerView: 2.2,
             spaceBetween: 18,
+            centeredSlides: false,
           },
           1280: {
-            slidesPerView: 2.35,
+            slidesPerView: 3,
             spaceBetween: 20,
+            centeredSlides: false,
           },
         }}
-        className="marketplace-feature-carousel pb-7!"
+        className="marketplace-feature-carousel pb-8!"
       >
         {carouselSlides.map((slide, index) => {
           const Icon = slide.icon;
@@ -297,29 +311,44 @@ export default function MarketplaceHighlightCarousel() {
       </Swiper>
 
       <style>{`
-        .marketplace-feature-carousel .swiper-pagination {
-          bottom: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 5px;
-        }
+  .marketplace-feature-carousel {
+  overflow: visible !important;
+  padding-bottom: 32px !important;
+}
 
-        .marketplace-feature-carousel .swiper-pagination-bullet {
-          width: 5px;
-          height: 5px;
-          margin: 0 !important;
-          opacity: 0.3;
-          background: #78716c;
-          transition: all 300ms ease;
-        }
+@media (min-width: 768px) {
+  .marketplace-feature-carousel {
+    overflow: hidden !important;
+  }
+}
 
-        .marketplace-feature-carousel .swiper-pagination-bullet-active {
-          width: 17px;
-          border-radius: 999px;
-          opacity: 1;
-        }
-      `}</style>
+  .marketplace-feature-carousel .swiper-pagination {
+    position: absolute;
+    bottom: 4px !important;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .marketplace-feature-carousel .swiper-pagination-bullet {
+    width: 5px;
+    height: 5px;
+    margin: 0 !important;
+    opacity: 0.3;
+    background: #78716c;
+    transition: all 300ms ease;
+  }
+
+  .marketplace-feature-carousel .swiper-pagination-bullet-active {
+    width: 17px;
+    border-radius: 999px;
+    opacity: 1;
+  }
+`}</style>
     </section>
   );
 }

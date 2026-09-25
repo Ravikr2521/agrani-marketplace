@@ -1,0 +1,400 @@
+const hi = {
+  Home: "होम",
+  Category: "श्रेणी",
+  Categories: "श्रेणियाँ",
+  Orders: "ऑर्डर",
+  Cart: "कार्ट",
+  "Your Cart": "आपका कार्ट",
+  "Delivery Details": "डिलीवरी विवरण",
+  "Order Confirmed": "ऑर्डर की पुष्टि",
+  Wishlist: "पसंदीदा",
+  "My Account": "मेरा खाता",
+  Profile: "प्रोफ़ाइल",
+  "Profile & addresses": "प्रोफ़ाइल और पते",
+  Account: "खाता",
+  "Buyer account": "खरीदार खाता",
+  "Your marketplace profile": "आपकी मार्केटप्लेस प्रोफ़ाइल",
+  "Saved delivery addresses": "सहेजे गए डिलीवरी पते",
+  "No saved addresses yet": "अभी कोई सहेजा हुआ पता नहीं है",
+  "Add one now to make checkout faster.":
+    "तेज़ चेकआउट के लिए अभी एक पता जोड़ें।",
+  "Saved delivery address": "सहेजा गया डिलीवरी पता",
+  "Choose and manage the places where you receive orders.":
+    "वे स्थान चुनें और प्रबंधित करें जहाँ आप ऑर्डर प्राप्त करते हैं।",
+  "Choose a saved address": "सहेजा गया पता चुनें",
+  "Loading addresses...": "पते लोड हो रहे हैं...",
+  "Could not load delivery addresses": "डिलीवरी पते लोड नहीं हो सके",
+  "Add address": "पता जोड़ें",
+  "Add new": "नया जोड़ें",
+  "Address added and selected": "पता जोड़ा और चुना गया",
+  "Address added": "पता जोड़ा गया",
+  "Address updated": "पता अपडेट किया गया",
+  "Could not save address": "पता सहेजा नहीं जा सका",
+  "Add delivery address": "डिलीवरी पता जोड़ें",
+  "Edit delivery address": "डिलीवरी पता संपादित करें",
+  "Save address": "पता सहेजें",
+  "Update the saved delivery details.": "सहेजे गए डिलीवरी विवरण अपडेट करें।",
+  "Save an address for quicker checkout.": "तेज़ चेकआउट के लिए पता सहेजें।",
+  "This address will be selected for the current order.":
+    "यह पता वर्तमान ऑर्डर के लिए चुना जाएगा।",
+  "Add an address to use it for this order.":
+    "इस ऑर्डर के लिए उपयोग करने हेतु पता जोड़ें।",
+  "The selected saved address will be used for this order.":
+    "चुना गया सहेजा हुआ पता इस ऑर्डर के लिए उपयोग होगा।",
+  "Choose a delivery address": "डिलीवरी पता चुनें",
+  "Select a saved address or add a new one to continue.":
+    "आगे बढ़ने के लिए सहेजा हुआ पता चुनें या नया जोड़ें।",
+  "Receiver name": "प्राप्तकर्ता का नाम",
+  "Complete address": "पूरा पता",
+  "Address type": "पते का प्रकार",
+  "Enter the receiver's name.": "प्राप्तकर्ता का नाम दर्ज करें।",
+  "Enter a valid 10-digit mobile number.":
+    "मान्य 10 अंकों का मोबाइल नंबर दर्ज करें।",
+  "Enter the delivery address.": "डिलीवरी पता दर्ज करें।",
+  "Enter a valid 6-digit pincode.": "मान्य 6 अंकों का पिनकोड दर्ज करें।",
+  "This delivery address is locked after saving.":
+    "सहेजने के बाद यह डिलीवरी पता लॉक है।",
+  "This pincode is locked after saving.": "सहेजने के बाद यह पिनकोड लॉक है।",
+  Locked: "लॉक है",
+  home: "होम",
+  Work: "ऑफिस",
+  Other: "अन्य",
+  Cancel: "रद्द करें",
+  "Saving...": "सहेजा जा रहा है...",
+  Edit: "संपादित करें",
+  Delete: "हटाएं",
+  "Delete this address?": "यह पता हटाएं?",
+  "Orders can no longer use this saved address. This action cannot be undone.":
+    "ऑर्डर अब इस सहेजे गए पते का उपयोग नहीं कर सकेंगे। यह कार्रवाई वापस नहीं की जा सकती।",
+  "Keep address": "पता रखें",
+  "Delete address": "पता हटाएं",
+  "Deleting...": "हटाया जा रहा है...",
+  "Address deleted": "पता हटा दिया गया",
+  "No saved address": "कोई सहेजा हुआ पता नहीं है",
+  "Add a delivery address to continue with your order.":
+    "ऑर्डर जारी रखने के लिए डिलीवरी पता जोड़ें।",
+  "Could not delete address": "पता हटाया नहीं जा सका",
+  Logout: "लॉग आउट",
+  "Change language": "भाषा बदलें",
+
+  "Search for": "खोजें",
+  "Search products": "उत्पाद खोजें",
+
+  "Add to cart": "कार्ट में जोड़ें",
+  "Add to Cart": "कार्ट में जोड़ें",
+
+  "Buy Now": "अभी खरीदें",
+
+  "Continue to delivery": "डिलीवरी के लिए आगे बढ़ें",
+
+  Items: "आइटम",
+  Subtotal: "उप-योग",
+  "Order total": "ऑर्डर कुल",
+  "Place Order": "ऑर्डर करें",
+  "Placing order...": "ऑर्डर किया जा रहा है...",
+
+  Back: "वापस",
+  "Delivery details": "डिलीवरी विवरण",
+  "Where should we deliver your order?": "आपका ऑर्डर कहाँ पहुँचाना है?",
+  "Your name": "आपका नाम",
+  "Mobile number": "मोबाइल नंबर",
+  "Delivery address": "डिलीवरी पता",
+  Pincode: "पिनकोड",
+  Change: "बदलें",
+  "Verified Mobile": "सत्यापित मोबाइल",
+  "Full name": "पूरा नाम",
+  "10-digit number": "10 अंकों का नंबर",
+  "6-digit pincode": "6 अंकों का पिनकोड",
+
+  "Order confirmed!": "ऑर्डर की पुष्टि हो गई!",
+  "Order summary": "ऑर्डर सारांश",
+  Status: "स्थिति",
+  "What's next?": "आगे क्या होगा?",
+
+  "Verify Your Mobile": "अपना मोबाइल सत्यापित करें",
+  "Enter OTP": "OTP दर्ज करें",
+  "Send OTP": "OTP भेजें",
+  "Sending OTP…": "OTP भेजा जा रहा है…",
+  "Verify OTP": "OTP सत्यापित करें",
+  "Verifying…": "सत्यापित किया जा रहा है…",
+  "Resend OTP": "OTP फिर से भेजें",
+  "Sending…": "भेजा जा रहा है…",
+  "Edit number": "नंबर बदलें",
+
+  "Please enter a valid 10-digit mobile number.":
+    "कृपया मान्य 10 अंकों का मोबाइल नंबर दर्ज करें।",
+
+  "OTP sent to your mobile number.": "आपके मोबाइल नंबर पर OTP भेज दिया गया है।",
+
+  "Please enter the complete 4-digit OTP.":
+    "कृपया पूरा 4 अंकों का OTP दर्ज करें।",
+
+  "Mobile number verified and logged in!":
+    "मोबाइल नंबर सत्यापित हो गया और लॉग इन हो गया!",
+
+  "Mobile number verified!": "मोबाइल नंबर सत्यापित हो गया!",
+  "Invalid OTP. Please try again.": "अमान्य OTP। कृपया फिर से प्रयास करें।",
+  "OTP resent.": "OTP फिर से भेज दिया गया है।",
+  "Failed to resend OTP.": "OTP फिर से भेजा नहीं जा सका।",
+
+  "Added to cart": "कार्ट में जोड़ दिया गया",
+  Remove: "हटाएं",
+  "Currently unavailable": "अभी उपलब्ध नहीं है",
+  "Decrease quantity": "मात्रा कम करें",
+  "Increase quantity": "मात्रा बढ़ाएं",
+  "Clear search": "खोज साफ करें",
+
+  Filters: "फ़िल्टर",
+  "Loading produce...": "उत्पाद लोड हो रहे हैं...",
+  Quantity: "मात्रा",
+  Price: "कीमत",
+  Total: "कुल",
+  Review: "समीक्षा",
+  Details: "विवरण",
+  Done: "पूर्ण",
+
+  "Your cart is empty": "आपका कार्ट खाली है",
+  "Add products before checking out.": "चेकआउट करने से पहले उत्पाद जोड़ें।",
+  "Browse products": "उत्पाद देखें",
+  Checkout: "चेकआउट",
+  "Review order": "ऑर्डर देखें",
+
+  "No orders yet": "अभी कोई ऑर्डर नहीं है",
+  "View Orders": "ऑर्डर देखें",
+  "Refresh orders": "ऑर्डर रीफ़्रेश करें",
+  "Ordered products": "ऑर्डर किए गए उत्पाद",
+  Buyer: "खरीदार",
+  "Continue Shopping": "खरीदारी जारी रखें",
+  "In stock": "स्टॉक में",
+  "Seller details": "विक्रेता विवरण",
+  Mobile: "मोबाइल",
+  Email: "ईमेल",
+
+  "Choose your preferred pack": "अपना पसंदीदा पैक चुनें",
+  "Select variant": "विकल्प चुनें",
+  "Select unit": "इकाई चुनें",
+  "Select status": "स्थिति चुनें",
+  "Select state": "राज्य चुनें",
+  "Select district": "जिला चुनें",
+  "Select block": "ब्लॉक चुनें",
+  "All States": "सभी राज्य",
+  "All blocks": "सभी ब्लॉक",
+  "All districts": "सभी जिले",
+  "All categories": "सभी श्रेणियाँ",
+  "All pack units": "सभी पैक इकाइयाँ",
+  "Any price": "कोई भी कीमत",
+  Location: "स्थान",
+  "Filter products": "उत्पाद फ़िल्टर करें",
+
+  "No image": "कोई छवि नहीं",
+  "Previous image": "पिछली छवि",
+  "Next image": "अगली छवि",
+  "Previous products": "पिछले उत्पाद",
+  "Next products": "अगले उत्पाद",
+
+  "Remove from wishlist": "पसंदीदा से हटाएं",
+  "Remove from cart": "कार्ट से हटाएं",
+  "Maximum available quantity reached": "अधिकतम उपलब्ध मात्रा पहुँच गई है",
+  "Product unavailable": "उत्पाद उपलब्ध नहीं है",
+  "Failed to add to cart": "कार्ट में जोड़ना विफल रहा",
+  "Removed from wishlist": "पसंदीदा से हटा दिया गया",
+  "Failed to remove from wishlist": "पसंदीदा से हटाना विफल रहा",
+
+  "Please login to view your wishlist":
+    "अपनी पसंदीदा सूची देखने के लिए लॉग इन करें",
+
+  "Failed to fetch wishlist": "पसंदीदा सूची लोड नहीं हो सकी",
+  "Product information not available": "उत्पाद की जानकारी उपलब्ध नहीं है",
+  "Failed to place order": "ऑर्डर नहीं किया जा सका",
+  "Please try again.": "कृपया फिर से प्रयास करें।",
+
+  "Mobile number verification required": "मोबाइल नंबर सत्यापन आवश्यक है",
+  "Mobile number mismatch": "मोबाइल नंबर मेल नहीं खाता",
+  "Name is required": "नाम आवश्यक है",
+  "Delivery address is required": "डिलीवरी पता आवश्यक है",
+
+  "Enter a valid 10-digit mobile number":
+    "मान्य 10 अंकों का मोबाइल नंबर दर्ज करें",
+
+  "Enter a valid 6-digit pincode": "मान्य 6 अंकों का पिनकोड दर्ज करें",
+
+  "All orders": "सभी ऑर्डर",
+  Previous: "पिछला",
+  Next: "अगला",
+  Filter: "फ़िल्टर",
+  "Loading products...": "उत्पाद लोड हो रहे हैं...",
+  "Search your listings": "अपनी लिस्टिंग खोजें",
+  "No variants yet.": "अभी कोई विकल्प नहीं है।",
+  Variants: "विकल्प",
+  "All India": "पूरा भारत",
+  "Select Areas": "क्षेत्र चुनें",
+  "Search state...": "राज्य खोजें...",
+  "No saved addresses": "कोई सहेजा हुआ पता नहीं है",
+  "Add new address": "नया पता जोड़ें",
+  "Delivery location": "डिलीवरी स्थान",
+
+  "Products Near By": "आसपास के उत्पाद",
+  "Fresh products from verified agricultural sellers.":
+    "सत्यापित कृषि विक्रेताओं के ताज़ा उत्पाद।",
+
+  "No products found": "कोई उत्पाद नहीं मिला",
+  "Try changing your search or filters.": "अपनी खोज या फ़िल्टर बदलकर देखें।",
+
+  "Top Recommendations": "आपके लिए सुझाव",
+  "Products picked especially for you.": "आपके लिए खास तौर पर चुने गए उत्पाद।",
+
+  "Fresh Fruits": "ताज़े फल",
+  "Fresh and naturally grown fruits from local sellers.":
+    "स्थानीय विक्रेताओं के ताज़े और प्राकृतिक फल।",
+
+  "Fresh Vegetables": "ताज़ी सब्ज़ियाँ",
+  "Fresh vegetables sourced from verified sellers.":
+    "सत्यापित विक्रेताओं की ताज़ी सब्ज़ियाँ।",
+
+  Pulses: "दालें",
+  "Quality pulses for your everyday needs.":
+    "आपकी रोज़मर्रा की ज़रूरतों के लिए अच्छी दालें।",
+
+  pulses: "दालें",
+
+  "Farm fresh": "खेत की ताज़गी",
+  "Fresh picks, every day": "हर दिन ताज़ा चयन",
+  "Trusted quality": "विश्वसनीय गुणवत्ता",
+  "From verified sellers": "सत्यापित विक्रेताओं से",
+  "Shop smarter": "बेहतर खरीदारी करें",
+  "Find your essentials": "अपनी ज़रूरत की चीज़ें खोजें",
+  "Explore category": "श्रेणी देखें",
+
+  "Best Sellers": "सबसे ज़्यादा बिकने वाले",
+  "Popular products shoppers are buying now.":
+    "लोकप्रिय उत्पाद जिन्हें खरीदार अभी खरीद रहे हैं।",
+
+  "Best selling": "लोकप्रिय",
+  "Explore products": "उत्पाद देखें",
+
+  "Fresh agricultural marketplace": "ताज़ा कृषि बाज़ार",
+  "Fresh produce from local farms": "स्थानीय खेतों से ताज़ी उपज",
+
+  "Browse verified farm stocks, choose your variant, and order without an account.":
+    "सत्यापित खेतों की उपज देखें, अपना विकल्प चुनें और बिना खाते के ऑर्डर करें।",
+
+  "Simple & convenient delivery": "सरल और सुविधाजनक डिलीवरी",
+  "From farm to your doorstep": "खेत से आपके दरवाज़े तक",
+
+  "Choose your preferred produce and pack size and get your order delivered with ease.":
+    "अपनी पसंद की उपज और पैक आकार चुनें और आसानी से डिलीवरी पाएँ।",
+
+  "Verified agricultural sellers": "सत्यापित कृषि विक्रेता",
+  "Quality you can trust": "भरोसेमंद गुणवत्ता",
+
+  "Discover fresh products from verified sellers and select the exact variant and pack size you need.":
+    "सत्यापित विक्रेताओं से ताज़े उत्पाद खोजें और अपनी ज़रूरत का सटीक विकल्प व पैक आकार चुनें।",
+
+  "Naturally fresh, farm-picked": "प्राकृतिक रूप से ताज़ा, खेत से चुने गए",
+  "Crisp, fresh & locally sourced": "कुरकुरी, ताज़ी और स्थानीय उपज",
+  "Quality Pulses": "उत्तम दालें",
+  "Everyday essentials from trusted sellers":
+    "विश्वसनीय विक्रेताओं से रोज़मर्रा की ज़रूरी चीज़ें",
+
+  "Review your order": "अपना ऑर्डर देखें",
+  "Check your items before continuing.": "आगे बढ़ने से पहले आइटम जाँचें",
+
+  "in your basket": "कार्ट में",
+  "Pick a fresh variant from the marketplace and it will appear here.":
+    "मार्केटप्लेस से उत्पाद जोड़ें और वे यहाँ दिखाई देंगे।",
+
+  "Browse Produce": "उत्पाद देखें",
+  Standard: "सामान्य",
+
+  "Taxes and delivery charges may apply":
+    "टैक्स और डिलीवरी शुल्क अलग से लागू हो सकते हैं",
+
+  "Enter your delivery information": "डिलीवरी जानकारी भरें",
+  "House / flat no., street, locality": "मकान / फ्लैट नंबर, गली, क्षेत्र",
+
+  "Your delivery information is securely handled.":
+    "आपकी डिलीवरी जानकारी सुरक्षित रखी जाती है।",
+
+  "Please verify your mobile number before placing order":
+    "ऑर्डर करने से पहले अपना मोबाइल नंबर सत्यापित करें",
+
+  "Please use your verified mobile number":
+    "कृपया अपना सत्यापित मोबाइल नंबर इस्तेमाल करें",
+
+  "Order was not created.": "ऑर्डर नहीं बनाया जा सका",
+
+  "Thank you for your order. We've received it and will start preparing it shortly.":
+    "आपके ऑर्डर के लिए धन्यवाद! आपका ऑर्डर जल्द तैयार किया जाएगा।",
+
+  "Your order has been received and will be prepared for delivery.":
+    "आपका ऑर्डर प्राप्त हो गया है और डिलीवरी के लिए तैयार किया जाएगा।",
+
+  "My Wishlist": "मेरी विशलिस्ट",
+  "Move to Cart": "कार्ट में डालें",
+  "Order history": "ऑर्डर इतिहास",
+
+  "View and manage your marketplace orders":
+    "अपने मार्केटप्लेस ऑर्डर देखें और प्रबंधित करें",
+
+  "Verify your mobile number to access your order history":
+    "ऑर्डर इतिहास देखने के लिए अपना मोबाइल नंबर सत्यापित करें",
+
+  "Orders for": "ऑर्डर",
+  item: "आइटम",
+  items: "आइटम",
+
+  "View details": "विवरण देखें",
+  "Unable to load orders.": "ऑर्डर लोड नहीं किए जा सके।",
+  "Try Again": "पुनः प्रयास करें",
+
+  "Orders you place on the marketplace will appear here.":
+    "मार्केटप्लेस पर आपके द्वारा किए गए ऑर्डर यहाँ दिखाई देंगे।",
+
+  "Switch account": "अकाउंट बदलें",
+  Pending: "लंबित",
+  Shipped: "भेज दिया गया",
+  Delivered: "डिलीवर हो गया",
+  Completed: "पूरा हुआ",
+
+  "Order details": "ऑर्डर विवरण",
+  "Order placed": "ऑर्डर किया गया",
+  Product: "उत्पाद",
+  "Sold by": "विक्रेता",
+  PIN: "पिन",
+  "Order not found.": "ऑर्डर नहीं मिला।",
+  "Unable to load order.": "ऑर्डर लोड नहीं किया जा सका।",
+
+  "Please verify your mobile number first to view order details.":
+    "ऑर्डर विवरण देखने के लिए पहले अपना मोबाइल नंबर सत्यापित करें",
+  "Explore fresh picks": "ताज़ा उत्पाद देखें",
+  "Fresh products direct from local farmers.":
+    "स्थानीय किसानों से सीधे ताज़ा उत्पाद।",
+  listing: "लिस्टिंग",
+  listings: "लिस्टिंग्स",
+  "on this page": "इस पेज पर",
+  "active filter": "सक्रिय फ़िल्टर",
+  Active: "सक्रिय",
+  Availability: "उपलब्धता",
+  Pack: "पैक",
+  State: "राज्य",
+  District: "ज़िला",
+  Block: "ब्लॉक",
+  vegetables: "सब्ज़ियाँ",
+  fruits: "फल",
+  grains: "अनाज",
+  "Under ₹250": "₹250 से कम",
+  "₹250 – ₹500": "₹250 – ₹500",
+  "₹500 – ₹1,000": "₹500 – ₹1,000",
+  "Above ₹1,000": "₹1,000 से अधिक",
+  Clear: "साफ़ करें",
+  filter: "फ़िल्टर",
+  filters: "फ़िल्टर",
+  "Refine the marketplace by what you need.":
+    "अपनी ज़रूरत के अनुसार मार्केटप्लेस को सीमित करें।",
+  "Show Products": "उत्पाद दिखाएं",
+  s: "",
+  "Clear Cart": "कार्ट खाली करें",
+  "Please select a delivery address to continue.":
+    "आगे बढ़ने के लिए कृपया डिलीवरी का पता चुनें।",
+};
+export default hi;

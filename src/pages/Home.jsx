@@ -18,7 +18,7 @@ import ProductSection from "../components/products/ProductSection";
 import { useProductApi } from "@/api/products";
 import HomePageSkeleton from "@/components/common/HomePageSkeleton";
 import ProductCard from "@/components/products/ProductCard";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import SearchInput from "../components/common/SearchInput";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "@/i18n";
@@ -419,7 +419,7 @@ export default function Home() {
 
   return (
     <div>
-      <main className="mx-auto mb-20 min-w-0 max-w-350 px-3 py-2 sm:px-6 lg:mb-0 lg:px-8 lg:py-6 lg:pt-5 pt-4">
+      <main className="mx-auto mb-20 min-w-0 max-w-350 px-3 pb-20 pt-4 sm:px-6 sm:pb-0 lg:mb-0 lg:px-8 lg:py-6 lg:pt-5 lg:pb-6">
         <WelcomCarousel />
 
         <section className="py-6 sm:py-8 lg:py-10">
@@ -493,7 +493,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="min-w-0 pb-14 md:pb-3 md:-mt-3">
+        <section className="min-w-0 pb-3 md:-mt-3">
           <div className="grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_250px] xl:gap-6">
             <div className="min-w-0">
               {loading ? (
@@ -597,6 +597,20 @@ export default function Home() {
 
           <MarketplaceHighlightCarousel />
         </section>
+        <div className="mt-5 flex flex-col items-center gap-2 border-t border-gray-100 px-1 pt-4 text-center text-[11px] text-muted sm:text-xs lg:flex-row lg:justify-between lg:text-left">
+          <span>
+            © 2026 LeadsConnect Services Pvt. Ltd. All Rights Reserved.
+          </span>
+
+          <a
+            href="https://agrani.io/terms-and-conditions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 font-medium text-primary transition-colors hover:underline"
+          >
+            Terms & Conditions
+          </a>
+        </div>
       </main>
     </div>
   );

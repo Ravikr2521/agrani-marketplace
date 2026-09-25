@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Combobox } from "@/components/ui/combobox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { locationApi } from "@/api/location";
+import { useTranslation } from "react-i18next";
 
 const sortAlphabetically = (items) =>
   [...items].sort((a, b) =>
@@ -14,6 +15,7 @@ export function LocationFilter({
   showLabels = true,
 }) {
   const { state = "all", district = "all", block = "all" } = value;
+  const { t } = useTranslation();
 
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -143,7 +145,7 @@ export function LocationFilter({
           <Combobox
             value={state}
             onValueChange={handleStateChange}
-            options={[{ value: "all", label: "All states" }, ...states]}
+            options={[{ value: "all", label: t("All States") }, ...states]}
             placeholder="Select state"
             isLoading={loadingStates}
             disabled={false}
@@ -164,7 +166,10 @@ export function LocationFilter({
           <Combobox
             value={district}
             onValueChange={handleDistrictChange}
-            options={[{ value: "all", label: "All districts" }, ...districts]}
+            options={[
+              { value: "all", label: t("All districts") },
+              ...districts,
+            ]}
             placeholder={
               state === "all" ? "Select state first" : "Select district"
             }
@@ -187,7 +192,7 @@ export function LocationFilter({
           <Combobox
             value={block}
             onValueChange={handleBlockChange}
-            options={[{ value: "all", label: "All blocks" }, ...blocks]}
+            options={[{ value: "all", label: t("All blocks") }, ...blocks]}
             placeholder={
               district === "all" ? "Select district first" : "Select block"
             }

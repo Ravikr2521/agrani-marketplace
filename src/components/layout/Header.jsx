@@ -285,7 +285,7 @@ export default function Header() {
                         <img
                           src="/images/english.svg"
                           className="h-4 w-4 mb-0.5 shrink-0"
-                          alt="India"
+                          alt="English"
                         />
                         <span className="whitespace-nowrap">English</span>
                       </div>
@@ -299,9 +299,51 @@ export default function Header() {
                         <img
                           src="/images/india.svg"
                           className="h-4 w-4 mb-1 shrink-0"
-                          alt="India"
+                          alt="Hindi"
                         />
                         <span className="whitespace-nowrap">हिंदी</span>
+                      </div>
+                    </SelectItem>
+
+                    <SelectItem
+                      value="te"
+                      className="py-1.5 text-xs hover:bg-gray-100!"
+                    >
+                      <div className="flex items-center gap-1.5 whitespace-nowrap">
+                        <img
+                          src="/images/india.svg"
+                          className="h-4 w-4 mb-1 shrink-0"
+                          alt="Telugu"
+                        />
+                        <span className="whitespace-nowrap">తెలుగు</span>
+                      </div>
+                    </SelectItem>
+
+                    <SelectItem
+                      value="kn"
+                      className="py-1.5 text-xs hover:bg-gray-100!"
+                    >
+                      <div className="flex items-center gap-1.5 whitespace-nowrap">
+                        <img
+                          src="/images/india.svg"
+                          className="h-4 w-4 mb-1 shrink-0"
+                          alt="Kannada"
+                        />
+                        <span className="whitespace-nowrap">ಕನ್ನಡ</span>
+                      </div>
+                    </SelectItem>
+
+                    <SelectItem
+                      value="mr"
+                      className="py-1.5 text-xs hover:bg-gray-100!"
+                    >
+                      <div className="flex items-center gap-1.5 whitespace-nowrap">
+                        <img
+                          src="/images/india.svg"
+                          className="h-4 w-4 mb-1 shrink-0"
+                          alt="Marathi"
+                        />
+                        <span className="whitespace-nowrap">मराठी</span>
                       </div>
                     </SelectItem>
                   </SelectContent>
