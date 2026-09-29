@@ -10,6 +10,7 @@ const kn = {
   Wishlist: "ಇಷ್ಟಪಟ್ಟವು",
   "My Account": "ನನ್ನ ಖಾತೆ",
   Profile: "ಪ್ರೊಫೈಲ್",
+  Add: "ಸೇರಿಸಿ",
   "Profile & addresses": "ಪ್ರೊಫೈಲ್ ಮತ್ತು ವಿಳಾಸಗಳು",
   Account: "ಖಾತೆ",
   "Buyer account": "ಖರೀದಿದಾರರ ಖಾತೆ",
@@ -218,6 +219,7 @@ const kn = {
   "Mobile number mismatch": "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ",
   "Name is required": "ಹೆಸರು ಅಗತ್ಯವಿದೆ",
   "Delivery address is required": "ಡೆಲಿವರಿ ವಿಳಾಸ ಅಗತ್ಯವಿದೆ",
+  "Delivery available in": "ಡೆಲಿವರಿ ಲಭ್ಯವಿದೆ",
 
   "Enter a valid 10-digit mobile number":
     "ಮಾನ್ಯವಾದ 10 ಅಂಕಿಗಳ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
@@ -407,8 +409,14 @@ const kn = {
 
   "Show Products": "ಉತ್ಪನ್ನಗಳನ್ನು ತೋರಿಸಿ",
   "Clear Cart": "ಕಾರ್ಟ್ ತೆರವುಗೊಳಿಸಿ",
-
+  "Choose variant": "ವೇರಿಯಂಟ್ ಆಯ್ಕೆಮಾಡಿ",
   "Please select a delivery address to continue.":
     "ಮುಂದುವರಿಯಲು ದಯವಿಟ್ಟು ಡೆಲಿವರಿ ವಿಳಾಸವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+  addToCart: "ಕಾರ್ಟ್‌ಗೆ {{qty}} ಸೇರಿಸಿ",
+  "All over India": "ಭಾರತದಾದ್ಯಂತ",
+  "Better for you": "ನಿಮಗಾಗಿ ಉತ್ತಮ",
+  "Quality products, trusted sellers":
+    "ಗುಣಮಟ್ಟದ ಉತ್ಪನ್ನಗಳು, ವಿಶ್ವಾಸಾರ್ಹ ಮಾರಾಟಗಾರರು",
+  ESSENTIALS: "ಅಗತ್ಯ ವಸ್ತುಗಳು",
 };
 export default kn;

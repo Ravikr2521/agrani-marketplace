@@ -29,9 +29,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
-import { getLanguageFromQuery, setApplicationLanguage } from "@/i18n";
+import {
+  getLanguageFromQuery,
+  setApplicationLanguage,
+  useTranslation,
+} from "@/i18n";
 
 export default function Header() {
+  const { t } = useTranslation();
   const { getCartItemCount, refreshCart } = useCart();
 
   const { SellerMobile, setToken, setAgraniToken, setSellerMobile } = useAuth();
@@ -467,7 +472,7 @@ export default function Header() {
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
                           <p className="text-[13px] font-semibold text-gray-900">
-                            My Account
+                            {t("My Account")}
                           </p>
                           {/* <span className="rounded-full bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
                           Active
@@ -487,7 +492,7 @@ export default function Header() {
                         className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 "
                       >
                         <UserCircle className="h-4 w-4" />
-                        Profile
+                        {t("Profile")}
                       </NavLink>
                       <button
                         type="button"
@@ -495,7 +500,7 @@ export default function Header() {
                         className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors group hover:bg-red-50 hover:text-red-600"
                       >
                         <LogOut className="h-4 w-4 text-gray-500 group-hover:text-red-600" />
-                        Logout
+                        {t("Logout")}
                       </button>
                     </div>
 

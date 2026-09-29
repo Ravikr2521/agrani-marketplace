@@ -10,6 +10,7 @@ export function useProducts({
   block = "",
   qc_status = "approved",
   seller_mobile = "",
+  lang = "en",
 } = {}) {
   const { getProducts } = useProductApi();
   const [productState, setProductState] = useState({
@@ -38,6 +39,7 @@ export function useProducts({
         block,
         qc_status,
         seller_mobile,
+        lang,
       });
 
       setProductState({

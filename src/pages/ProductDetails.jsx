@@ -29,9 +29,12 @@ import ProductGrid from "@/components/products/ProductGrid";
 import WishlistButton from "@/components/products/WishlistButton";
 import { useWishlist } from "@/hooks/useWishlist";
 import showCartToast from "@/custom/showCartToast";
+import { getLanguageFromQuery } from "@/i18n";
+import { useTranslation } from "react-i18next";
 
 export default function ProductDetails() {
   const { getProducts, getProductView } = useProductApi();
+  const { t } = useTranslation();
 
   const { id } = useParams();
 
@@ -52,13 +55,18 @@ export default function ProductDetails() {
     product?.variants,
   );
   const buyerMobile = localStorage.getItem("farmers_marketplace_buyer_phone");
+  const language = getLanguageFromQuery();
 
   const load = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const data = await getProducts({ perPage: 100, buyerMobile });
+      const data = await getProducts({
+        perPage: 100,
+        buyerMobile,
+        lang: language,
+      });
 
       const found = (data.results || []).find(
         (p) => String(p.id) === String(id),
@@ -410,7 +418,7 @@ export default function ProductDetails() {
           <div>
             <div className="mb-2 flex items-center justify-between">
               <label className="text-sm font-bold text-body-dark/80">
-                Choose variant
+                {t("Choose variant")}
               </label>
 
               {variants.length > 1 && (
@@ -519,7 +527,7 @@ export default function ProductDetails() {
                   onClick={add}
                 >
                   <ShoppingCart className="h-4 w-4" />
-                  Add {qty} to Cart
+                  {t("addToCart", { qty, defaultValue: `Add ${qty} to Cart` })}
                 </Button>
               </div>
             </>
@@ -535,13 +543,13 @@ export default function ProductDetails() {
 
                 <div className="min-w-0 flex-1 mt-1">
                   <h3 className="text-sm font-bold text-body-dark">
-                    Delivery available in
+                    {t("Delivery available in")}
                   </h3>
 
                   {deliveryCoverage.allStates ? (
                     <div className="mt-3 inline-flex items-center rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
                       <span className="text-xs font-semibold text-orange-600">
-                        All over India
+                        {t("All over India")}
                       </span>
                     </div>
                   ) : (

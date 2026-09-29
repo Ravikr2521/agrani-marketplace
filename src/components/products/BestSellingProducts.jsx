@@ -137,9 +137,8 @@ export default function BestSellingProducts({ products = [] }) {
             const variant = getAvailableVariant(product);
 
             return (
-              <Link to={`/products/${product.id}`}>
+              <Link key={product.id} to={`/products/${product.id}`}>
                 <button
-                  key={product.id}
                   type="button"
                   disabled={!variant}
                   className="group relative flex  p-2 shrink-0 overflow-hidden rounded-2xl border border-border/70 bg-white text-left shadow-xs transition-all duration-300  hover:border-orange-200 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 lg:w-76 xl:w-80"

@@ -10,6 +10,7 @@ const te = {
   Wishlist: "ఇష్టమైనవి",
   "My Account": "నా ఖాతా",
   Profile: "ప్రొఫైల్",
+  Add: "జోడించండి",
   "Profile & addresses": "ప్రొఫైల్ & చిరునామాలు",
   Account: "ఖాతా",
   "Buyer account": "కొనుగోలుదారు ఖాతా",
@@ -219,6 +220,7 @@ const te = {
   "Mobile number mismatch": "మొబైల్ నంబర్ సరిపోలలేదు",
   "Name is required": "పేరు అవసరం",
   "Delivery address is required": "డెలివరీ చిరునామా అవసరం",
+  "Delivery available in": "డెలివరీ అందుబాటులో ఉంది",
 
   "Enter a valid 10-digit mobile number":
     "చెల్లుబాటు అయ్యే 10 అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి",
@@ -409,10 +411,16 @@ const te = {
     "మీ అవసరాలకు అనుగుణంగా మార్కెట్‌ప్లేస్‌ను ఫిల్టర్ చేయండి.",
 
   "Show Products": "ఉత్పత్తులను చూపించండి",
-  s: "",
+  "Choose variant": "వేరియంట్‌ను ఎంచుకోండి",
   "Clear Cart": "కార్ట్‌ను ఖాళీ చేయండి",
 
   "Please select a delivery address to continue.":
     "కొనసాగించడానికి దయచేసి డెలివరీ చిరునామాను ఎంచుకోండి.",
+  addToCart: "కార్ట్‌కు {{qty}} జోడించండి",
+  "All over India": "భారతదేశం అంతటా",
+  "Better for you": "మీ కోసం మెరుగైనది",
+  "Quality products, trusted sellers":
+    "నాణ్యమైన ఉత్పత్తులు, విశ్వసనీయ విక్రేతలు",
+  ESSENTIALS: "అవసరమైనవి",
 };
 export default te;

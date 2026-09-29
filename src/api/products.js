@@ -39,6 +39,7 @@ export function useProductApi() {
     block = "",
     qc_status = "approved",
     seller_mobile = "",
+    lang = "",
   } = {}) {
     const params = new URLSearchParams({
       qc_status,
@@ -72,6 +73,9 @@ export function useProductApi() {
 
     if (block?.trim()) {
       params.set("delivery_block", blockCode.trim());
+    }
+    if (lang?.trim()) {
+      params.set("lang", lang.trim());
     }
 
     return apiFetch(

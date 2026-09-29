@@ -245,7 +245,9 @@ const ProductCard = memo(function ProductCard({ product }) {
               {product?.name}
             </Link>
 
-            <p className="mt-1 text-xs text-red-500">{t("Currently unavailable")}</p>
+            <p className="mt-1 text-xs text-red-500">
+              {t("Currently unavailable")}
+            </p>
           </div>
         </Card>
       </motion.div>
@@ -485,10 +487,12 @@ const ProductCard = memo(function ProductCard({ product }) {
         >
           <SheetHeader className="border-b border-border px-5 pb-4 pt-5 text-left">
             <SheetTitle className="text-xl font-semibold text-body-dark">
-              Select variant
+              {t("Select variant")}
             </SheetTitle>
 
-            <p className="text-sm text-muted">Choose your preferred pack</p>
+            <p className="text-sm text-muted">
+              {t("Choose your preferred pack")}
+            </p>
           </SheetHeader>
 
           <div className="overflow-y-auto px-5 pb-8 pt-4 md:max-h-[60vh] md:bg-[#f7f7f9b7]">
@@ -558,7 +562,7 @@ const ProductCard = memo(function ProductCard({ product }) {
                     className="h-11 rounded-xl px-5 text-sm font-semibold md:h-11 md:px-6"
                   >
                     <ShoppingCart className="mr-1 h-4 w-4 mb-0.5" />
-                    Add
+                    {t("Add")}
                   </Button>
                 ) : (
                   <div className="flex h-11 items-center justify-between overflow-hidden rounded-xl border border-border bg-white md:h-11">

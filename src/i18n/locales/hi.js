@@ -11,6 +11,7 @@ const hi = {
   "My Account": "मेरा खाता",
   Profile: "प्रोफ़ाइल",
   "Profile & addresses": "प्रोफ़ाइल और पते",
+  Add: "जोड़ें",
   Account: "खाता",
   "Buyer account": "खरीदार खाता",
   "Your marketplace profile": "आपकी मार्केटप्लेस प्रोफ़ाइल",
@@ -212,7 +213,7 @@ const hi = {
   "Mobile number mismatch": "मोबाइल नंबर मेल नहीं खाता",
   "Name is required": "नाम आवश्यक है",
   "Delivery address is required": "डिलीवरी पता आवश्यक है",
-
+  "Delivery available in": "डिलीवरी उपलब्ध है",
   "Enter a valid 10-digit mobile number":
     "मान्य 10 अंकों का मोबाइल नंबर दर्ज करें",
 
@@ -392,9 +393,15 @@ const hi = {
   "Refine the marketplace by what you need.":
     "अपनी ज़रूरत के अनुसार मार्केटप्लेस को सीमित करें।",
   "Show Products": "उत्पाद दिखाएं",
-  s: "",
+  "Choose variant": "वेरिएंट चुनें",
   "Clear Cart": "कार्ट खाली करें",
   "Please select a delivery address to continue.":
     "आगे बढ़ने के लिए कृपया डिलीवरी का पता चुनें।",
+  addToCart: "कार्ट में {{qty}} जोड़ें",
+  "All over India": "पूरे भारत में",
+  "Better for you": "आपके लिए बेहतर",
+  "Quality products, trusted sellers":
+    "गुणवत्तापूर्ण उत्पाद, भरोसेमंद विक्रेता",
+  ESSENTIALS: "ज़रूरी सामान",
 };
 export default hi;

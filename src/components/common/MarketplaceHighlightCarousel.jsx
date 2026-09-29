@@ -22,7 +22,7 @@ const slides = [
   {
     title: "Trusted quality",
     subtitle: "From verified sellers",
-    category: "VEGETABLE",
+    category: "VEGETABLES",
     icon: BadgeCheck,
     bg: "bg-[#edf4fa]",
     circle: "bg-[#d7e7f3]",
@@ -222,7 +222,7 @@ export default function MarketplaceHighlightCarousel() {
                       ${slide.accent}
                     `}
                   >
-                    {slide.category}
+                    {t(slide.category)}
                   </span>
 
                   <h3

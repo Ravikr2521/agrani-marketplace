@@ -21,10 +21,11 @@ import ProductCard from "@/components/products/ProductCard";
 import { Link, useSearchParams } from "react-router-dom";
 import SearchInput from "../components/common/SearchInput";
 import { useAuth } from "@/context/AuthContext";
-import { useTranslation } from "@/i18n";
+import { getLanguageFromQuery, useTranslation } from "@/i18n";
 
 export default function Home() {
   const { t } = useTranslation();
+  const language = getLanguageFromQuery();
   const { getProducts, getProductRecommendations } = useProductApi();
   const { AgraniToken } = useAuth();
 
@@ -87,6 +88,7 @@ export default function Home() {
     state: filters.stateName !== "all" ? filters.stateName : "",
     district: filters.districtName !== "all" ? filters.districtName : "",
     block: filters.blockName !== "all" ? filters.blockName : "",
+    lang: language,
   });
 
   const [recommendedProducts, setRecommendedProducts] = useState([]);
@@ -143,6 +145,7 @@ export default function Home() {
           page: 1,
           perPage: 100,
           buyerMobile: localStorage.getItem("farmers_marketplace_buyer_phone"),
+          lang: language,
         });
 
         const allProducts =

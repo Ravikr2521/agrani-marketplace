@@ -24,6 +24,7 @@ import { formatINR } from "@/lib/utils";
 import { toast } from "sonner";
 import { useProductApi } from "../../api/products";
 import WishlistButton from "./WishlistButton";
+import { useTranslation } from "react-i18next";
 
 function getMediaUrl(media) {
   return (
@@ -38,6 +39,7 @@ export default function ProductDetailsSheet({
   variantId,
   disableAddToCart = false,
 }) {
+  const { t } = useTranslation();
   const [selectedVariantId, setSelectedVariantId] = useState(variantId);
   const { isWishlisted, wishlistLoading, toggleWishlist } = useWishlist(
     product?.variants,
@@ -460,13 +462,13 @@ export default function ProductDetailsSheet({
 
                   <div className="min-w-0 flex-1 mt-1">
                     <h3 className="text-sm font-bold text-body-dark">
-                      Delivery available in
+                      {t("Delivery available in")}
                     </h3>
 
                     {deliveryCoverage.allStates ? (
                       <div className="mt-3 inline-flex items-center rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
                         <span className="text-xs font-semibold text-orange-600">
-                          All over India
+                          {t("All over India")}
                         </span>
                       </div>
                     ) : (

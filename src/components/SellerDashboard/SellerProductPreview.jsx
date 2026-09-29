@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { formatINR } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import EditProductModal from "./EditProductModal";
+import { useTranslation } from "react-i18next";
 
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(
@@ -446,7 +447,7 @@ function PreviewBody({ product, variantId, setVariantId }) {
 
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-bold text-body-dark">
-                    Delivery available in
+                    {t("Delivery available in")}
                   </h3>
 
                   {deliveryCoverage.allStates ? (
@@ -506,6 +507,7 @@ export default function SellerProductPreview({
   product,
   variantId,
 }) {
+  const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const { SellerMobile } = useAuth();
   const [activeVariantId, setActiveVariantId] = useState(variantId);

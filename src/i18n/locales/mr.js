@@ -10,6 +10,7 @@ const mr = {
   Wishlist: "आवडते",
   "My Account": "माझे खाते",
   Profile: "प्रोफाइल",
+  Add: "जोडा",
   "Profile & addresses": "प्रोफाइल आणि पत्ते",
   Account: "खाते",
   "Buyer account": "खरेदीदाराचे खाते",
@@ -75,6 +76,7 @@ const mr = {
   "No saved address": "कोणताही सेव्ह केलेला पत्ता नाही",
   "Add a delivery address to continue with your order.":
     "ऑर्डर सुरू ठेवण्यासाठी डिलिव्हरी पत्ता जोडा.",
+  "Delivery available in": "डिलिव्हरी उपलब्ध आहे",
   "Could not delete address": "पत्ता हटवता आला नाही",
   Logout: "लॉग आउट",
   "Change language": "भाषा बदला",
@@ -401,10 +403,15 @@ const mr = {
     "तुमच्या गरजेनुसार मार्केटप्लेस फिल्टर करा.",
 
   "Show Products": "उत्पादने दाखवा",
-  s: "",
+  "Choose variant": "व्हेरियंट निवडा",
   "Clear Cart": "कार्ट रिकामा करा",
 
   "Please select a delivery address to continue.":
     "पुढे जाण्यासाठी कृपया डिलिव्हरी पत्ता निवडा.",
+  addToCart: "कार्टमध्ये {{qty}} जोडा",
+  "All over India": "संपूर्ण भारतात",
+  "Better for you": "तुमच्यासाठी अधिक चांगले",
+  "Quality products, trusted sellers": "दर्जेदार उत्पादने, विश्वासू विक्रेते",
+  ESSENTIALS: "आवश्यक वस्तू",
 };
 export default mr;
