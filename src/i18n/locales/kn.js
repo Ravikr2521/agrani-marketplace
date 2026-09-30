@@ -418,5 +418,51 @@ const kn = {
   "Quality products, trusted sellers":
     "ಗುಣಮಟ್ಟದ ಉತ್ಪನ್ನಗಳು, ವಿಶ್ವಾಸಾರ್ಹ ಮಾರಾಟಗಾರರು",
   ESSENTIALS: "ಅಗತ್ಯ ವಸ್ತುಗಳು",
+  "Change number": "ಸಂಖ್ಯೆ ಬದಲಾಯಿಸಿ",
+  "10-digit mobile number": "10 ಅಂಕಿಗಳ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+  "Enter your registered mobile number to view your marketplace orders":
+    "ನಿಮ್ಮ ಮಾರುಕಟ್ಟೆ ಆದೇಶಗಳನ್ನು ನೋಡಲು ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "We've sent a 4-digit OTP to {{phone}}. Enter it below to continue.":
+    "ನಾವು {{phone}}ಗೆ 4 ಅಂಕಿಗಳ OTP ಕಳುಹಿಸಿದ್ದೇವೆ. ಮುಂದುವರಿಯಲು ಅದನ್ನು ಕೆಳಗೆ ನಮೂದಿಸಿ.",
+  "Failed to send OTP. Please try again.":
+    "OTP ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "Seller information is not available.": "ಮಾರಾಟಗಾರರ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ.",
+  "Unable to load seller products.": "ಮಾರಾಟಗಾರರ ಉತ್ಪನ್ನಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
+  Seller: "ಮಾರಾಟಗಾರ",
+  Farmer: "ರೈತ",
+  product: "ಉತ್ಪನ್ನ",
+  products: "ಉತ್ಪನ್ನಗಳು",
+  available: "ಲಭ್ಯವಿದೆ",
+  Contact: "ಸಂಪರ್ಕ",
+  "Products by": "ಉತ್ಪನ್ನಗಳು",
+  "Browse products currently available from this seller.":
+    "ಈ ಮಾರಾಟಗಾರರಿಂದ ಪ್ರಸ್ತುತ ಲಭ್ಯವಿರುವ ಉತ್ಪನ್ನಗಳನ್ನು ನೋಡಿ.",
+  "No products available": "ಯಾವುದೇ ಉತ್ಪನ್ನಗಳು ಲಭ್ಯವಿಲ್ಲ",
+  "This seller doesn't have any products available in the marketplace right now.":
+    "ಈ ಸಮಯದಲ್ಲಿ ಮಾರಾಟಗಾರರು ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಯಾವುದೇ ಉತ್ಪನ್ನಗಳನ್ನು ಹೊಂದಿಲ್ಲ.",
+  "Browse marketplace": "ಮಾರುಕಟ್ಟೆ ನೋಡಿ",
+  "Added on": "ಸೇರಿಸಿದ ದಿನಾಂಕ",
+  "In Cart": "ಕಾರ್ಟ್‌ನಲ್ಲಿದೆ",
+  "Unable to add item to cart": "ಐಟಂ ಅನ್ನು ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
+  "Mobile verification required": "ಮೊಬೈಲ್ ಪರಿಶೀಲನೆ ಅಗತ್ಯವಿದೆ",
+  "Please verify your mobile number to view and manage your wishlist.":
+    "ನಿಮ್ಮ ವಿಶ್‌ಲಿಸ್ಟ್ ನೋಡಲು ಮತ್ತು ನಿರ್ವಹಿಸಲು ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.",
+  "Verify Mobile": "ಮೊಬೈಲ್ ಪರಿಶೀಲಿಸಿ",
+  "Your wishlist is empty": "ನಿಮ್ಮ ವಿಶ್‌ಲಿಸ್ಟ್ ಖಾಲಿಯಾಗಿದೆ",
+  "Add products you love to your wishlist to save them for later":
+    "ನಿಮಗೆ ಇಷ್ಟವಾದ ಉತ್ಪನ್ನಗಳನ್ನು ನಂತರಕ್ಕಾಗಿ ಉಳಿಸಲು ವಿಶ್‌ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸಿ.",
+  "Total items": "ಒಟ್ಟು ಐಟಂಗಳು",
+  "Move All to Cart": "ಎಲ್ಲವನ್ನೂ ಕಾರ್ಟ್‌ಗೆ ಸರಿಸಿ",
+  "Add to wishlist": "ವಿಶ್‌ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸಿ",
+  "Failed to update wishlist": "ವಿಶ್‌ಲಿಸ್ಟ್ ನವೀಕರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
+  "All Products": "ಎಲ್ಲಾ ಉತ್ಪನ್ನಗಳು",
+  "Clear Filters": "ಫಿಲ್ಟರ್‌ಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ",
+  "active filters": "ಸಕ್ರಿಯ ಫಿಲ್ಟರ್‌ಗಳು",
+  Fruit: "ಹಣ್ಣು",
+  Fruits: "ಹಣ್ಣುಗಳು",
+  Vegetable: "ತರಕಾರಿ",
+  Vegetables: "ತರಕಾರಿಗಳು",
+  Grains: "ಧಾನ್ಯಗಳು",
+  Daal: "ಬೇಳೆಗಳು",
 };
 export default kn;

@@ -788,6 +788,8 @@ export default function Cart() {
                       setStep(2);
                     } else {
                       requireMobileNumber((mobile) => {
+                        if (!mobile) return;
+
                         setForm((current) => ({ ...current, phone: mobile }));
                         setIsMobileLocked(true);
                         setStep(2);

@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslation } from "@/i18n";
+import { getCategoryTranslationKey } from "@/lib/categoryLabels";
 import { LocationFilter } from "./LocationFilter";
 
 function FilterFields({ value, onChange, categories, packUnits, onClear }) {
@@ -46,7 +47,7 @@ function FilterFields({ value, onChange, categories, packUnits, onClear }) {
             <SelectItem value="all">{t("All categories")}</SelectItem>
             {categories.map((c) => (
               <SelectItem key={c} value={c}>
-                {c}
+                {t(getCategoryTranslationKey(c))}
               </SelectItem>
             ))}
           </SelectContent>

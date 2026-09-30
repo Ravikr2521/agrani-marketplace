@@ -807,6 +807,8 @@ export default function CartDrawer({ open, onOpenChange }) {
                         setStep(2);
                       } else {
                         requireMobileNumber((mobile) => {
+                          if (!mobile) return;
+
                           setForm((current) => ({ ...current, phone: mobile }));
                           setIsMobileLocked(true);
                           setStep(2);

@@ -10,7 +10,8 @@ import ProductFilters from "@/components/products/ProductFilters";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useProducts } from "@/hooks/useProducts";
-import { useTranslation } from "@/i18n";
+import { getLanguageFromQuery, useTranslation } from "@/i18n";
+import { getCategoryTranslationKey } from "@/lib/categoryLabels";
 import CategorySidePanel from "../components/category/CategorySidePanel";
 import SearchInput from "../components/common/SearchInput";
 import useDebouncedValue from "../hooks/useDebouncedValue";
@@ -47,6 +48,7 @@ export default function Category() {
 
     setPage(1);
   }, [categoryFromUrl]);
+  const language = getLanguageFromQuery();
 
   const { products, count, next, previous, loading, error, retry } =
     useProducts({
@@ -55,6 +57,7 @@ export default function Category() {
       state: filters.stateName,
       district: filters.districtName,
       block: filters.blockName,
+      lang: language,
     });
 
   const categories = useMemo(
@@ -208,6 +211,10 @@ export default function Category() {
   };
 
   const getFilterDisplayValue = (key, value) => {
+    if (key === "category") {
+      return t(getCategoryTranslationKey(value));
+    }
+
     if (key === "state" && filters.stateName) {
       return filters.stateName;
     }
@@ -385,8 +392,10 @@ export default function Category() {
             {activeFilters > 0 && (
               <div className="hidden items-center gap-2 lg:flex">
                 <span className="text-xs font-semibold text-muted">
-                  {activeFilters} {t("active filter")}
-                  {activeFilters > 1 ? t("s") : ""}
+                  {activeFilters}{" "}
+                  {t(
+                    activeFilters === 1 ? "active filter" : "active filters",
+                  )}
                 </span>
               </div>
             )}

@@ -1,3 +1,6 @@
+import { useTranslation } from "@/i18n";
+import { getCategoryTranslationKey } from "@/lib/categoryLabels";
+
 const getMediaUrl = (media) =>
   media?.productImgUrl || media?.image || media?.file || media?.url || "";
 
@@ -23,30 +26,22 @@ function getCategoryImage(products, category) {
   return "";
 }
 
-function formatCategoryName(category) {
-  if (!category) return "";
-
-  return category
-    .toLowerCase()
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-}
-
 export default function CategorySidePanel({
   products = [],
   categories = [],
   selectedCategory = "all",
   onSelect,
 }) {
+  const { t } = useTranslation();
   const items = [
     {
       value: "all",
-      label: "All Products",
+      label: t("All Products"),
       image: getCategoryImage(products),
     },
     ...categories.map((category) => ({
       value: category,
-      label: formatCategoryName(category),
+      label: t(getCategoryTranslationKey(category)),
       image: getCategoryImage(products, category),
     })),
   ];
@@ -132,3 +127,5 @@ export default function CategorySidePanel({
     </aside>
   );
 }
+import { useTranslation } from "@/i18n";
+

@@ -422,5 +422,51 @@ const te = {
   "Quality products, trusted sellers":
     "నాణ్యమైన ఉత్పత్తులు, విశ్వసనీయ విక్రేతలు",
   ESSENTIALS: "అవసరమైనవి",
+  "Change number": "నంబర్ మార్చండి",
+  "10-digit mobile number": "10 అంకెల మొబైల్ నంబర్",
+  "Enter your registered mobile number to view your marketplace orders":
+    "మీ మార్కెట్‌ప్లేస్ ఆర్డర్‌లను చూడటానికి మీ నమోదిత మొబైల్ నంబర్‌ను నమోదు చేయండి",
+  "We've sent a 4-digit OTP to {{phone}}. Enter it below to continue.":
+    "మేము {{phone}}కు 4 అంకెల OTP పంపాము. కొనసాగడానికి దిగువన నమోదు చేయండి.",
+  "Failed to send OTP. Please try again.":
+    "OTP పంపడం విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.",
+  "Seller information is not available.": "విక్రేత సమాచారం అందుబాటులో లేదు.",
+  "Unable to load seller products.": "విక్రేత ఉత్పత్తులను లోడ్ చేయలేకపోయాము.",
+  Seller: "విక్రేత",
+  Farmer: "రైతు",
+  product: "ఉత్పత్తి",
+  products: "ఉత్పత్తులు",
+  available: "అందుబాటులో",
+  Contact: "సంప్రదించండి",
+  "Products by": "ఉత్పత్తులు",
+  "Browse products currently available from this seller.":
+    "ఈ విక్రేత వద్ద ప్రస్తుతం అందుబాటులో ఉన్న ఉత్పత్తులను చూడండి.",
+  "No products available": "ఉత్పత్తులు అందుబాటులో లేవు",
+  "This seller doesn't have any products available in the marketplace right now.":
+    "ప్రస్తుతం ఈ విక్రేతకు మార్కెట్‌ప్లేస్‌లో ఉత్పత్తులు అందుబాటులో లేవు.",
+  "Browse marketplace": "మార్కెట్‌ప్లేస్ చూడండి",
+  "Added on": "జోడించిన తేదీ",
+  "In Cart": "కార్ట్‌లో ఉంది",
+  "Unable to add item to cart": "వస్తువును కార్ట్‌కు జోడించలేకపోయాము",
+  "Mobile verification required": "మొబైల్ ధృవీకరణ అవసరం",
+  "Please verify your mobile number to view and manage your wishlist.":
+    "మీ విష్‌లిస్ట్‌ను చూడటానికి మరియు నిర్వహించడానికి మొబైల్ నంబర్‌ను ధృవీకరించండి.",
+  "Verify Mobile": "మొబైల్‌ను ధృవీకరించండి",
+  "Your wishlist is empty": "మీ విష్‌లిస్ట్ ఖాళీగా ఉంది",
+  "Add products you love to your wishlist to save them for later":
+    "మీకు నచ్చిన ఉత్పత్తులను తర్వాత కోసం సేవ్ చేయడానికి విష్‌లిస్ట్‌కు జోడించండి.",
+  "Total items": "మొత్తం వస్తువులు",
+  "Move All to Cart": "అన్నింటినీ కార్ట్‌కు తరలించండి",
+  "Add to wishlist": "విష్‌లిస్ట్‌కు జోడించండి",
+  "Failed to update wishlist": "విష్‌లిస్ట్‌ను నవీకరించలేకపోయాము",
+  "All Products": "అన్ని ఉత్పత్తులు",
+  "Clear Filters": "ఫిల్టర్‌లను క్లియర్ చేయండి",
+  "active filters": "క్రియాశీల ఫిల్టర్‌లు",
+  Fruit: "పండు",
+  Fruits: "పండ్లు",
+  Vegetable: "కూరగాయ",
+  Vegetables: "కూరగాయలు",
+  Grains: "ధాన్యాలు",
+  Daal: "పప్పులు",
 };
 export default te;

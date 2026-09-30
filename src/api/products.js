@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import { getLanguageFromQuery } from "@/i18n";
 import { apiFetch } from "./client";
 
 export function useProductApi() {
@@ -39,7 +40,7 @@ export function useProductApi() {
     block = "",
     qc_status = "approved",
     seller_mobile = "",
-    lang = "",
+    lang = getLanguageFromQuery(),
   } = {}) {
     const params = new URLSearchParams({
       qc_status,
@@ -72,7 +73,7 @@ export function useProductApi() {
     }
 
     if (block?.trim()) {
-      params.set("delivery_block", blockCode.trim());
+      params.set("delivery_block", block.trim());
     }
     if (lang?.trim()) {
       params.set("lang", lang.trim());

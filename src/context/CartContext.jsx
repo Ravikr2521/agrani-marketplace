@@ -18,6 +18,7 @@ import {
   updateCartItem,
 } from "@/api/cart";
 import { useAuth } from "@/context/AuthContext";
+import { getLanguageFromQuery } from "@/i18n";
 
 const CartContext = createContext(null);
 const BOUND_CART_TOKEN_STORAGE_KEY = "farmers_marketplace_cart_bound_token";
@@ -45,6 +46,7 @@ function toUiItem(item) {
 export function CartProvider({ children }) {
   const { AgraniToken } = useAuth();
   const token = localStorage.getItem("agrani_auth_token") || AgraniToken;
+  const language = getLanguageFromQuery();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(
     Boolean(localStorage.getItem(CART_ID_STORAGE_KEY)),
@@ -100,14 +102,16 @@ export function CartProvider({ children }) {
       }
 
       setLoading(true);
-      const boundCartId = saveCart(await bindCart(guestCartId, token));
-      applyCart(await getCart(boundCartId, token));
+      const boundCartId = saveCart(
+        await bindCart(guestCartId, token, language),
+      );
+      applyCart(await getCart(boundCartId, token, language));
     } catch (error) {
       console.info("No guest cart was available to bind", error);
     } finally {
       setLoading(false);
     }
-  }, [applyCart, getCartId, saveCart, token]);
+  }, [applyCart, getCartId, language, saveCart, token]);
 
   useEffect(() => {
     bindAuthenticatedCart();
@@ -121,13 +125,13 @@ export function CartProvider({ children }) {
     }
     setLoading(true);
     try {
-      applyCart(await getCart(cartId, token));
+      applyCart(await getCart(cartId, token, language));
     } catch (error) {
       console.error("Unable to refresh cart", error);
     } finally {
       setLoading(false);
     }
-  }, [applyCart, token]);
+  }, [applyCart, language, token]);
 
   useEffect(() => {
     refreshCart();
@@ -151,6 +155,7 @@ export function CartProvider({ children }) {
                 items: [{ variant: item.variantId, quantity: nextQuantity }],
               },
               token,
+              language,
             )
               .then(saveCart)
               .finally(() => {
@@ -167,6 +172,7 @@ export function CartProvider({ children }) {
               existing.id,
               { quantity: nextQuantity },
               token,
+              language,
             )
           : await addCartItem(
               cartId,
@@ -176,6 +182,7 @@ export function CartProvider({ children }) {
               },
 
               token,
+              language,
             );
         applyCart(response);
         return true;
@@ -184,7 +191,7 @@ export function CartProvider({ children }) {
         return false;
       }
     },
-    [applyCart, getCartId, items, saveCart, token],
+    [applyCart, getCartId, items, language, saveCart, token],
   );
 
   const changeQuantity = useCallback(
@@ -198,20 +205,26 @@ export function CartProvider({ children }) {
       try {
         const cartId = getCartId();
         if (quantity <= 0) {
-          await deleteCartItem(cartId, item.id, token);
+          await deleteCartItem(cartId, item.id, token, language);
           setItems((current) =>
             current.filter((entry) => entry.id !== item.id),
           );
           return;
         }
         applyCart(
-          await updateCartItem(cartId, item.id, { quantity: quantity }, token),
+          await updateCartItem(
+            cartId,
+            item.id,
+            { quantity: quantity },
+            token,
+            language,
+          ),
         );
       } catch (error) {
         console.error("Unable to update cart item", error);
       }
     },
-    [applyCart, getCartId, items, token],
+    [applyCart, getCartId, items, language, token],
   );
 
   const value = useMemo(
@@ -259,7 +272,7 @@ export function CartProvider({ children }) {
         }
 
         try {
-          await clearCartItems(cartId, token);
+          await clearCartItems(cartId, token, language);
           localStorage.removeItem(CART_ID_STORAGE_KEY);
           setItems([]);
           return true;
@@ -280,7 +293,7 @@ export function CartProvider({ children }) {
         items.reduce((sum, item) => sum + item.quantity, 0),
       refreshCart,
     }),
-    [addToCart, changeQuantity, items, loading, refreshCart, token],
+    [addToCart, changeQuantity, items, language, loading, refreshCart, token],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

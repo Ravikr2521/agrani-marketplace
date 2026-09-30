@@ -1,6 +1,7 @@
 import { Heart, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 
 export default function WishlistButton({
   variant,
@@ -11,9 +12,12 @@ export default function WishlistButton({
   size = "default",
   className = "",
 }) {
+  const { t } = useTranslation();
   const handleClick = (event) => onToggle(variant, event);
 
-  const label = isWishlisted ? "Remove from wishlist" : "Add to wishlist";
+  const label = isWishlisted
+    ? t("Remove from wishlist")
+    : t("Add to wishlist");
 
   if (size === "icon-sm") {
     return (

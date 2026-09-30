@@ -103,7 +103,7 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { isInCart } = useCart();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const isInCartAlready = isInCart(product?.id, variant?.id);
 
@@ -135,7 +135,7 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
             {variantImages.length > 0 ? (
               <img
                 src={variantImages[0]}
-                alt={`${product?.name || "Product"} ${variant?.name || ""}`}
+                alt={`${product?.name || t("Product")} ${variant?.name || ""}`}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
@@ -156,18 +156,18 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
                 </h3>
 
                 <p className="text-sm text-primary">
-                  ({variant?.name || "Standard"})
+                  ({variant?.name || t("Standard")})
                 </p>
               </div>
 
               <div className="mt-2 flex items-center gap-2">
                 <span className="rounded-lg bg-orange-100 px-2 py-1 text-xs font-medium text-orange-700">
-                  {variant?.pack_quantity || 1} {variant?.pack_unit || "unit"}
+                  {variant?.pack_quantity || 1} {variant?.pack_unit || t("unit")}
                 </span>
 
                 {variant?.no_of_units !== undefined && (
                   <span className="rounded-lg bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
-                    {variant.no_of_units} available
+                    {variant.no_of_units} {t("available")}
                   </span>
                 )}
               </div>
@@ -176,7 +176,7 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
             <button
               onClick={handleRemove}
               className="shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
-              aria-label="Remove from wishlist"
+              aria-label={t("Remove from wishlist")}
             >
               <Heart className="h-5 w-5 fill-red-500 text-red-500" />
             </button>
@@ -189,7 +189,8 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
               </p>
 
               <p className="text-xs text-muted">
-                Added on {new Date(item.created_at).toLocaleDateString("en-IN")}
+                {t("Added on")}{" "}
+                {new Date(item.created_at).toLocaleDateString(i18n.language)}
               </p>
             </div>
 
@@ -201,7 +202,7 @@ function WishlistItem({ item, onMoveToCart, onRemove }) {
                   size="sm"
                 >
                   <ShoppingCart className="mr-2 h-4 w-4" />
-                  In Cart
+                  {t("In Cart")}
                 </Button>
               ) : (
                 <Button
@@ -232,6 +233,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { isInCart } = useCart();
+  const { t } = useTranslation();
 
   const isInCartAlready = isInCart(product?.id, variant?.id);
 
@@ -265,7 +267,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
                 {variantImages.length > 0 ? (
                   <img
                     src={variantImages[0]}
-                    alt={`${product?.name || "Product"} ${variant?.name || ""}`}
+                    alt={`${product?.name || t("Product")} ${variant?.name || ""}`}
                     className="h-full w-full object-cover"
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
@@ -279,16 +281,16 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
 
             <div className="min-w-0">
               <h3 className="truncate text-sm font-semibold leading-tight text-body-dark">
-                {product?.name || "Product"}
+                {product?.name || t("Product")}
               </h3>
 
               <p className="mt-0.5 text-xs text-muted">
-                {variant?.name || "Standard"}
+                {variant?.name || t("Standard")}
               </p>
 
               <div className="mt-1">
                 <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
-                  {variant?.pack_quantity || 1} {variant?.pack_unit || "unit"}
+                  {variant?.pack_quantity || 1} {variant?.pack_unit || t("unit")}
                 </span>
               </div>
             </div>
@@ -297,7 +299,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
           <button
             onClick={handleRemove}
             className="shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
-            aria-label="Remove from wishlist"
+            aria-label={t("Remove from wishlist")}
           >
             <Heart className="h-4 w-4 fill-red-500 text-red-500" />
           </button>
@@ -311,7 +313,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
 
             {variant?.no_of_units !== undefined && (
               <p className="mt-0.5 text-xs text-green-600">
-                {variant.no_of_units} available
+                {variant.no_of_units} {t("available")}
               </p>
             )}
           </div>
@@ -324,7 +326,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
                 size="sm"
               >
                 <ShoppingCart className="mr-1 h-3 w-3" />
-                In Cart
+                {t("In Cart")}
               </Button>
             ) : (
               <Button
@@ -338,7 +340,7 @@ function MobileWishlistItem({ item, onMoveToCart, onRemove }) {
                 ) : (
                   <ShoppingCart className="h-3 w-3 mb-1" />
                 )}
-                Move to Cart
+                {t("Move to Cart")}
               </Button>
             )}
           </div>
@@ -364,7 +366,7 @@ export default function Wishlist() {
 
   const fetchWishlist = async (buyerMobile) => {
     if (!buyerMobile) {
-      setError("Please login to view your wishlist");
+      setError(t("Please login to view your wishlist"));
       setIsLoading(false);
       return;
     }
@@ -378,10 +380,10 @@ export default function Wishlist() {
       if (response.status === 200) {
         setWishlistItems(response.data || []);
       } else {
-        setError(response.message || "Failed to fetch wishlist");
+        setError(response.message || t("Failed to fetch wishlist"));
       }
     } catch (err) {
-      setError(err.message || "Failed to fetch wishlist");
+      setError(err.message || t("Failed to fetch wishlist"));
     } finally {
       setIsLoading(false);
     }
@@ -405,7 +407,7 @@ export default function Wishlist() {
     const buyerMobile = getCurrentMobile();
 
     if (!buyerMobile) {
-      setError("Please login to view your wishlist");
+      setError(t("Please login to view your wishlist"));
       return;
     }
 
@@ -417,7 +419,7 @@ export default function Wishlist() {
     const product = variant?.product_detail;
 
     if (!variant || !product) {
-      toast.error("Product information not available");
+      toast.error(t("Product information not available"));
       return;
     }
 
@@ -432,10 +434,10 @@ export default function Wishlist() {
         variantId: variant.id,
         variantName: variant.name,
         packQuantity: variant.pack_quantity || 1,
-        packUnit: variant.pack_unit || "unit",
+        packUnit: variant.pack_unit || t("unit"),
         price: Number(variant.price) || 0,
         availableUnits: Number(variant.no_of_units) || 10,
-        seller: item.seller || "Farmer",
+        seller: item.seller || t("Farmer"),
         image: variantImages[0] || "",
         category: product.category || "",
       };
@@ -443,14 +445,14 @@ export default function Wishlist() {
       const added = await addToCart(cartPayload);
 
       if (!added) {
-        throw new Error("Unable to add item to cart");
+        throw new Error(t("Unable to add item to cart"));
       }
 
-      toast.success("Added to cart", {
-        description: `${product.name} · ${variant.name || "Standard"}`,
+      toast.success(t("Added to cart"), {
+        description: `${product.name} · ${variant.name || t("Standard")}`,
       });
     } catch (err) {
-      toast.error("Failed to add to cart");
+      toast.error(t("Failed to add to cart"));
     }
   };
 
@@ -467,9 +469,9 @@ export default function Wishlist() {
 
       setWishlistItems((prev) => prev.filter((i) => i.id !== item.id));
 
-      toast.success("Removed from wishlist");
+      toast.success(t("Removed from wishlist"));
     } catch (err) {
-      toast.error("Failed to remove from wishlist");
+      toast.error(t("Failed to remove from wishlist"));
     }
   };
 
@@ -482,9 +484,11 @@ export default function Wishlist() {
       return (
         <EmptyState
           icon={<Heart className="h-12 w-12 text-gray-300" />}
-          title="Mobile verification required"
-          description="Please verify your mobile number to view and manage your wishlist."
-          actionText="Verify Mobile"
+          title={t("Mobile verification required")}
+          description={t(
+            "Please verify your mobile number to view and manage your wishlist.",
+          )}
+          actionText={t("Verify Mobile")}
           onAction={() => {
             setMobileVerificationCancelled(false);
             setIsLoading(true);
@@ -497,8 +501,8 @@ export default function Wishlist() {
       return (
         <ErrorState
           message={error}
-          actionText="Try Again"
-          onAction={fetchWishlist}
+          actionText={t("Try Again")}
+          onAction={handleRefresh}
         />
       );
     }
@@ -507,9 +511,11 @@ export default function Wishlist() {
       return (
         <EmptyState
           icon={<Heart className="h-12 w-12 text-gray-300" />}
-          title="Your wishlist is empty"
-          description="Add products you love to your wishlist to save them for later"
-          actionText="Browse Products"
+          title={t("Your wishlist is empty")}
+          description={t(
+            "Add products you love to your wishlist to save them for later",
+          )}
+          actionText={t("Browse Products")}
           actionLink="/"
         />
       );
@@ -565,7 +571,7 @@ export default function Wishlist() {
 
                 <p className="text-sm text-muted">
                   {wishlistItems.length}{" "}
-                  {wishlistItems.length === 1 ? "item" : "items"}
+                  {wishlistItems.length === 1 ? t("item") : t("items")}
                 </p>
               </div>
             </div>
@@ -577,7 +583,7 @@ export default function Wishlist() {
                 size="sm"
                 className="text-primary"
               >
-                Refresh
+                {t("Refresh")}
               </Button>
             )}
           </div>
@@ -605,11 +611,11 @@ export default function Wishlist() {
         <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-border bg-white p-4 md:hidden">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted">Total items</p>
+              <p className="text-sm text-muted">{t("Total items")}</p>
 
               <p className="text-lg font-bold text-body-dark">
                 {wishlistItems.length}{" "}
-                {wishlistItems.length === 1 ? "item" : "items"}
+                {wishlistItems.length === 1 ? t("item") : t("items")}
               </p>
             </div>
 
@@ -620,7 +626,7 @@ export default function Wishlist() {
               className="bg-primary hover:bg-primary/90"
             >
               <ShoppingCart className="mr-2 h-4 w-4" />
-              Move All to Cart
+              {t("Move All to Cart")}
             </Button>
           </div>
         </div>

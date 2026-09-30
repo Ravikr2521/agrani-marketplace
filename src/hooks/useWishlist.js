@@ -3,8 +3,10 @@ import { toast } from "sonner";
 
 import { useProductApi } from "@/api/products";
 import { MobileNumberContext } from "@/context/MobileNumberContext";
+import { useTranslation } from "@/i18n";
 
 export function useWishlist(variants = []) {
+  const { t } = useTranslation();
   const { requireMobileNumber } = useContext(MobileNumberContext);
   const { addtoWishlist } = useProductApi();
 
@@ -56,16 +58,18 @@ export function useWishlist(variants = []) {
           });
 
           toast.success(
-            alreadyWishlisted ? "Removed from wishlist" : "Added to wishlist",
+            alreadyWishlisted
+              ? t("Removed from wishlist")
+              : t("Added to wishlist"),
           );
         } catch (error) {
-          toast.error(error?.message || "Failed to update wishlist");
+          toast.error(error?.message || t("Failed to update wishlist"));
         } finally {
           setWishlistLoading(null);
         }
       });
     },
-    [addtoWishlist, requireMobileNumber, isWishlisted, wishlistLoading],
+    [addtoWishlist, requireMobileNumber, isWishlisted, wishlistLoading, t],
   );
 
   return { wishlistLoading, isWishlisted, toggleWishlist };

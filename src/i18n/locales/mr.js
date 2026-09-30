@@ -413,5 +413,51 @@ const mr = {
   "Better for you": "तुमच्यासाठी अधिक चांगले",
   "Quality products, trusted sellers": "दर्जेदार उत्पादने, विश्वासू विक्रेते",
   ESSENTIALS: "आवश्यक वस्तू",
+  "Change number": "नंबर बदला",
+  "10-digit mobile number": "10 अंकी मोबाइल क्रमांक",
+  "Enter your registered mobile number to view your marketplace orders":
+    "मार्केटप्लेसवरील तुमच्या ऑर्डर पाहण्यासाठी नोंदणीकृत मोबाइल क्रमांक टाका",
+  "We've sent a 4-digit OTP to {{phone}}. Enter it below to continue.":
+    "आम्ही {{phone}} या क्रमांकावर 4 अंकी OTP पाठवला आहे. पुढे जाण्यासाठी तो खाली टाका.",
+  "Failed to send OTP. Please try again.":
+    "OTP पाठवता आला नाही. कृपया पुन्हा प्रयत्न करा.",
+  "Seller information is not available.": "विक्रेत्याची माहिती उपलब्ध नाही.",
+  "Unable to load seller products.": "विक्रेत्याची उत्पादने लोड होऊ शकली नाहीत.",
+  Seller: "विक्रेता",
+  Farmer: "शेतकरी",
+  product: "उत्पादन",
+  products: "उत्पादने",
+  available: "उपलब्ध",
+  Contact: "संपर्क",
+  "Products by": "उत्पादने",
+  "Browse products currently available from this seller.":
+    "या विक्रेत्याकडून सध्या उपलब्ध असलेली उत्पादने पाहा.",
+  "No products available": "कोणतीही उत्पादने उपलब्ध नाहीत",
+  "This seller doesn't have any products available in the marketplace right now.":
+    "सध्या या विक्रेत्याकडे मार्केटप्लेसमध्ये कोणतीही उत्पादने उपलब्ध नाहीत.",
+  "Browse marketplace": "मार्केटप्लेस पाहा",
+  "Added on": "जोडल्याची तारीख",
+  "In Cart": "कार्टमध्ये आहे",
+  "Unable to add item to cart": "वस्तू कार्टमध्ये जोडता आली नाही",
+  "Mobile verification required": "मोबाइल सत्यापन आवश्यक आहे",
+  "Please verify your mobile number to view and manage your wishlist.":
+    "तुमची विशलिस्ट पाहण्यासाठी आणि व्यवस्थापित करण्यासाठी मोबाइल क्रमांक सत्यापित करा.",
+  "Verify Mobile": "मोबाइल सत्यापित करा",
+  "Your wishlist is empty": "तुमची विशलिस्ट रिकामी आहे",
+  "Add products you love to your wishlist to save them for later":
+    "तुम्हाला आवडणारी उत्पादने नंतरसाठी जतन करण्यासाठी विशलिस्टमध्ये जोडा.",
+  "Total items": "एकूण वस्तू",
+  "Move All to Cart": "सर्व कार्टमध्ये हलवा",
+  "Add to wishlist": "विशलिस्टमध्ये जोडा",
+  "Failed to update wishlist": "विशलिस्ट अद्ययावत करता आली नाही",
+  "All Products": "सर्व उत्पादने",
+  "Clear Filters": "फिल्टर साफ करा",
+  "active filters": "सक्रिय फिल्टर",
+  Fruit: "फळ",
+  Fruits: "फळे",
+  Vegetable: "भाजी",
+  Vegetables: "भाज्या",
+  Grains: "धान्ये",
+  Daal: "डाळी",
 };
 export default mr;

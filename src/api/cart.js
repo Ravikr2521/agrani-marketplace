@@ -1,4 +1,5 @@
 import { apiFetch } from "./client";
+import { getLanguageFromQuery } from "@/i18n";
 
 export const CART_ID_STORAGE_KEY = "farmers_marketplace_cart_id";
 const CART_API_BASE_URL = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
@@ -7,8 +8,13 @@ function authHeaders(token) {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export function createCart(payload, token) {
-  return apiFetch("/marketplace/api/carts/", {
+function withLanguage(path, language = getLanguageFromQuery()) {
+  const params = new URLSearchParams({ lang: language });
+  return `${path}?${params.toString()}`;
+}
+
+export function createCart(payload, token, language) {
+  return apiFetch(withLanguage("/marketplace/api/carts/", language), {
     baseUrl: CART_API_BASE_URL,
     method: "POST",
     body: payload,
@@ -16,15 +22,21 @@ export function createCart(payload, token) {
   });
 }
 
-export function getCart(cartId, token) {
-  return apiFetch(`/marketplace/api/carts/${encodeURIComponent(cartId)}/`, {
-    baseUrl: CART_API_BASE_URL,
-    headers: authHeaders(token),
-  });
+export function getCart(cartId, token, language) {
+  return apiFetch(
+    withLanguage(
+      `/marketplace/api/carts/${encodeURIComponent(cartId)}/`,
+      language,
+    ),
+    {
+      baseUrl: CART_API_BASE_URL,
+      headers: authHeaders(token),
+    },
+  );
 }
 
-export function bindCart(cartId, token) {
-  return apiFetch("/marketplace/api/carts/bind/", {
+export function bindCart(cartId, token, language) {
+  return apiFetch(withLanguage("/marketplace/api/carts/bind/", language), {
     baseUrl: CART_API_BASE_URL,
     method: "POST",
     body: cartId ? { cart_id: cartId } : {},
@@ -32,9 +44,12 @@ export function bindCart(cartId, token) {
   });
 }
 
-export function addCartItem(cartId, payload, token) {
+export function addCartItem(cartId, payload, token, language) {
   return apiFetch(
-    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/`,
+    withLanguage(
+      `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/`,
+      language,
+    ),
     {
       baseUrl: CART_API_BASE_URL,
       method: "POST",
@@ -44,9 +59,12 @@ export function addCartItem(cartId, payload, token) {
   );
 }
 
-export function updateCartItem(cartId, itemId, payload, token) {
+export function updateCartItem(cartId, itemId, payload, token, language) {
   return apiFetch(
-    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(itemId)}/`,
+    withLanguage(
+      `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(itemId)}/`,
+      language,
+    ),
     {
       baseUrl: CART_API_BASE_URL,
       method: "PATCH",
@@ -56,9 +74,12 @@ export function updateCartItem(cartId, itemId, payload, token) {
   );
 }
 
-export function deleteCartItem(cartId, itemId, token) {
+export function deleteCartItem(cartId, itemId, token, language) {
   return apiFetch(
-    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(itemId)}/`,
+    withLanguage(
+      `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(itemId)}/`,
+      language,
+    ),
     {
       baseUrl: CART_API_BASE_URL,
       method: "DELETE",
@@ -67,9 +88,12 @@ export function deleteCartItem(cartId, itemId, token) {
   );
 }
 
-export function clearCartItems(cartId, token) {
+export function clearCartItems(cartId, token, language) {
   return apiFetch(
-    `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/`,
+    withLanguage(
+      `/marketplace/api/carts/${encodeURIComponent(cartId)}/items/`,
+      language,
+    ),
     {
       baseUrl: CART_API_BASE_URL,
       method: "DELETE",
