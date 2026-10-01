@@ -24,11 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ReactSelect from "react-select";
 
 import { useAuth } from "@/context/AuthContext";
 import DeliveryAddressList from "../SellerDashboard/DeliveryAddressList";
-
-const TAG_OPTIONS = ["Fruits", "Vegetables", "Pulses", "Oil", "Dry Fruits"];
 
 const emptyVariant = () => ({
   id: crypto.randomUUID(),
@@ -52,6 +51,7 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
   const { SellerMobile } = useAuth();
   const {
     getMasterUnits,
+    getMasterTags,
     createProduct,
     uploadVariantMedia,
     submitStockForApproval,
@@ -60,6 +60,7 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
   const navigate = useNavigate();
 
   const [units, setUnits] = useState([]);
+
   const [loadingUnits, setLoadingUnits] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -71,17 +72,14 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
   const [specifications, setSpecifications] = useState([emptySpec()]);
 
   const [variants, setVariants] = useState([emptyVariant()]);
-
   const [step, setStep] = useState(1);
-
-  const [deliveryLocation, setDeliveryLocation] = useState(null);
-
-  const [deliveryLocationId, setDeliveryLocationId] = useState(null);
+  const [tagOptions, setTagOptions] = useState([]);
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     loadUnits();
+    loadTags();
   }, []);
 
   const loadUnits = async () => {
@@ -99,6 +97,20 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
       console.error(error);
     } finally {
       setLoadingUnits(false);
+    }
+  };
+
+  const loadTags = async () => {
+    try {
+      const response = await getMasterTags();
+      const list = response?.data || [];
+      setTagOptions(
+        Array.isArray(list)
+          ? list.map((item) => item?.name).filter(Boolean)
+          : [],
+      );
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -202,12 +214,8 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
     );
   };
 
-  const handleTagSelect = (option) => {
-    setTags((current) =>
-      current.includes(option)
-        ? current.filter((tag) => tag !== option)
-        : [...current, option],
-    );
+  const handleTagSelect = (selected) => {
+    setTags((selected || []).map((option) => option.value));
 
     setErrors((current) => ({
       ...current,
@@ -298,9 +306,6 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
     if (!locationId) {
       return;
     }
-
-    setDeliveryLocationId(locationId);
-    setDeliveryLocation(location);
 
     handleSubmit(locationId);
   };
@@ -585,14 +590,14 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
                       />
                     </div>
 
-                    <div>
+                    <div className="-mt-2">
                       <label className="mb-1.5 block text-[11px] md:text-[13px] font-semibold text-body-light">
                         Tags
                         <span className="ml-0.5 text-red-500">*</span>
                       </label>
 
-                      <div className="flex flex-wrap gap-2">
-                        {TAG_OPTIONS.map((option) => {
+                      {/* <div className="flex flex-wrap gap-2">
+                        {tags.map((option) => {
                           const isSelected = tags.includes(option);
 
                           return (
@@ -614,7 +619,66 @@ export default function AddProduct({ embedded = false, onClose, onCompleted }) {
                             </button>
                           );
                         })}
-                      </div>
+                      </div> */}
+                      <ReactSelect
+                        isMulti
+                        options={tagOptions.map((option) => ({
+                          value: option,
+                          label: option,
+                        }))}
+                        value={tags.map((option) => ({
+                          value: option,
+                          label: option,
+                        }))}
+                        onChange={handleTagSelect}
+                        placeholder="Select tags"
+                        closeMenuOnSelect={false}
+                        styles={{
+                          control: (base, state) => ({
+                            ...base,
+                            minHeight: 40,
+                            borderRadius: 12,
+                            backgroundColor: "#f5f4f3",
+                            boxShadow: "none",
+                            borderColor: errors.tags
+                              ? "#f87171"
+                              : base.borderColor,
+                            fontSize: "13.5px",
+                          }),
+
+                          option: (provided, state) => ({
+                            ...provided,
+                            fontSize: "13.5px",
+                            backgroundColor: state.isFocused
+                              ? "#FFF3E0"
+                              : state.isSelected
+                                ? "#FFE0B2"
+                                : "white",
+                          }),
+
+                          multiValue: (base) => ({
+                            ...base,
+                            backgroundColor: "#ffffff",
+                            borderRadius: 6,
+                          }),
+
+                          multiValueLabel: (base) => ({
+                            ...base,
+                            color: "#333",
+                            fontSize: "13px",
+                          }),
+
+                          multiValueRemove: (base) => ({
+                            ...base,
+                            borderRadius: 6,
+                            color: "#888",
+                            ":hover": {
+                              backgroundColor: "#FFE0B2",
+                              color: "#333",
+                            },
+                          }),
+                        }}
+                      />
 
                       {errors.tags && (
                         <p className="mt-1.5 text-xs text-red-500">

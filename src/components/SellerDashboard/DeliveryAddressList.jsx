@@ -17,6 +17,25 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import DeliveryLocation from "./DeliveryLocation";
 
+function AddressCardSkeleton() {
+  return (
+    <div className="w-full rounded-2xl border border-border bg-white p-4">
+      <div className="mb-2 flex items-center gap-2">
+        <Skeleton className="h-9 w-9 shrink-0 rounded-xl" />
+        <Skeleton className="h-4 flex-1 max-w-30" />
+        <div className="flex-1" />
+        <Skeleton className="h-8 w-8 shrink-0 rounded-lg" />
+        <Skeleton className="h-5 w-5 shrink-0 rounded-full" />
+      </div>
+      <div className="flex flex-wrap items-center gap-1">
+        <Skeleton className="h-5 w-16 rounded-full" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+        <Skeleton className="h-4 w-14" />
+      </div>
+    </div>
+  );
+}
+
 const extractList = (data) => {
   if (!data) return [];
   if (Array.isArray(data)) return data;
@@ -346,10 +365,18 @@ export default function DeliveryAddressList({
       )}
 
       {loading ? (
-        <div className="space-y-3">
-          <Skeleton className="h-24 w-full rounded-2xl" />
-          <Skeleton className="h-24 w-full rounded-2xl" />
-        </div>
+        <>
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-muted">
+              Saved addresses
+            </p>
+            <Skeleton className="h-8 w-9 rounded-md" />
+          </div>
+          <div className="space-y-3">
+            <AddressCardSkeleton />
+            <AddressCardSkeleton />
+          </div>
+        </>
       ) : addresses.length > 0 ? (
         <>
           <div className="flex items-center justify-between">

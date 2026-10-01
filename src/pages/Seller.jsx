@@ -122,8 +122,6 @@ const Seller = () => {
     fetchAnalytics();
   }, []);
 
-  console.log(analytics, "check");
-
   const search = useDebouncedValue(input, 400);
 
   const { products, loading, error, retry } = useProducts({

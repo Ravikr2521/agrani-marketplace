@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 
 import ErrorState from "@/components/common/ErrorState";
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
-import ProductGrid from "@/components/products/ProductGrid";
 import ProductCard from "@/components/products/ProductCard";
 import { getLanguageFromQuery, useTranslation } from "@/i18n";
 

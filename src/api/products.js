@@ -114,6 +114,10 @@ export function useProductApi() {
     return agraniFetch(`/marketplace/api/master/units/?is_enabled=true`);
   }
 
+  function getMasterTags() {
+    return agraniFetch(`/marketplace/api/master/tags/?is_active=true`);
+  }
+
   function createProduct(payload) {
     return agraniFetch("/marketplace/api/product/", {
       method: "POST",
@@ -202,6 +206,7 @@ export function useProductApi() {
     requestProductEdit,
     toggleProduct,
     getMasterUnits,
+    getMasterTags,
     createProduct,
     uploadVariantMedia,
     submitStockForApproval,

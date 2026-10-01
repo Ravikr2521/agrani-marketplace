@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { memo, useMemo, useState, useEffect } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,16 +16,15 @@ import { formatINR } from "@/lib/utils";
 import ProductCarousel from "../products/ProductCarousel";
 
 import { useProductApi } from "@/api/products";
-import { useAuth } from "@/context/AuthContext";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { MoreVertical, Pencil, Power, Edit } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { MoreVertical, Pencil, Power } from "lucide-react";
 import { toast } from "sonner";
 import SellerProductPreview from "./SellerProductPreview";
-import EditProductModal from "./EditProductModal";
 
 const toTitleCase = (str = "") =>
   str.replace(

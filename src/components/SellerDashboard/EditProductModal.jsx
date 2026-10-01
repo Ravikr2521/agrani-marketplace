@@ -14,6 +14,7 @@ import {
   Camera,
   Check,
   CheckCircle,
+  FileEdit,
   Loader2,
   Lock,
   Plus,
@@ -22,8 +23,9 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import { memo, useCallback, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import ReactSelect from "react-select";
 
 const SaveStatus = ({ status }) => {
   if (!status) return null;
@@ -140,7 +142,25 @@ const ProductDetailsSection = ({ commodity, seller, isApproved }) => {
     Array.isArray(commodity.tags) ? commodity.tags : [],
   );
   const [saveStatus, setSaveStatus] = useState(null);
-  const { updateProduct } = useProductApi();
+  const [tagOptions, setTagOptions] = useState([]);
+  const { updateProduct, getMasterTags } = useProductApi();
+
+  useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const response = await getMasterTags();
+        const list = response?.data || [];
+        setTagOptions(
+          Array.isArray(list)
+            ? list.map((item) => item?.name).filter(Boolean)
+            : [],
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    loadTags();
+  }, []);
 
   const handleSave = useCallback(async () => {
     if (!name.trim()) {
@@ -173,7 +193,7 @@ const ProductDetailsSection = ({ commodity, seller, isApproved }) => {
         action={
           isApproved ? (
             <span className="flex items-center gap-1 text-[12px] text-amber-600 dark:text-amber-400 font-medium">
-              <Lock size={10} /> Locked after approval
+              <Lock size={10} /> Locked
             </span>
           ) : null
         }
@@ -224,7 +244,91 @@ const ProductDetailsSection = ({ commodity, seller, isApproved }) => {
         <label className="text-xs font-semibold text-muted mb-1 block">
           Tags
         </label>
-        <TagsCheckbox tags={tags} onChange={setTags} disabled={isApproved} />
+        {/* <TagsCheckbox tags={tags} onChange={setTags} disabled={isApproved} /> */}
+        <ReactSelect
+          isMulti
+          isDisabled={isApproved}
+          options={tagOptions.map((option) => ({
+            value: option,
+            label: option,
+          }))}
+          value={tags.map((option) => ({ value: option, label: option }))}
+          onChange={(selected) => setTags((selected || []).map((o) => o.value))}
+          placeholder="Select tags"
+          className={tags.length > 2 ? "w-auto" : "w-70"}
+          closeMenuOnSelect={false}
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              minHeight: 40,
+              borderRadius: 12,
+              backgroundColor: state.isDisabled ? "#fafafa" : "white",
+              borderColor: state.isDisabled ? "#e8e8e8" : "#d9d9d9",
+              boxShadow: "none",
+              fontSize: "13.5px",
+              cursor: state.isDisabled ? "not-allowed" : "default",
+
+              opacity: state.isDisabled ? 0.7 : 1,
+
+              "&:hover": {
+                borderColor: state.isDisabled ? "#e8e8e8" : "#d9d9d9",
+              },
+            }),
+
+            valueContainer: (base) => ({
+              ...base,
+              padding: "2px 16px",
+            }),
+
+            option: (provided, state) => ({
+              ...provided,
+              fontSize: "13.5px",
+              backgroundColor: state.isFocused
+                ? "#FFF3E0"
+                : state.isSelected
+                  ? "#FFE0B2"
+                  : "white",
+            }),
+
+            multiValue: (base) => ({
+              ...base,
+              backgroundColor: isApproved ? "#f1f1f1" : "#f5f4f3",
+              borderRadius: 6,
+            }),
+
+            multiValueLabel: (base) => ({
+              ...base,
+              color: isApproved ? "#aaa" : "#333",
+              fontSize: "13px",
+            }),
+
+            multiValueRemove: (base) => ({
+              ...base,
+              color: isApproved ? "#ccc" : "#888",
+              borderRadius: 6,
+
+              ":hover": {
+                backgroundColor: isApproved ? "#f1f1f1" : "#FFE0B2",
+                color: isApproved ? "#ccc" : "#333",
+              },
+            }),
+
+            placeholder: (base) => ({
+              ...base,
+              color: isApproved ? "#c5c5c5" : "#999",
+            }),
+
+            input: (base) => ({
+              ...base,
+              color: isApproved ? "#aaa" : "#333",
+            }),
+
+            indicatorsContainer: (base) => ({
+              ...base,
+              opacity: isApproved ? 0.45 : 1,
+            }),
+          }}
+        />
       </div>
       {!isApproved && (
         <div className="flex items-center justify-end gap-2 mt-2">
@@ -841,9 +945,13 @@ const EditProductModal = ({ commodity, seller, onClose, onBack }) => {
   if (!commodity) return null;
 
   const { SellerMobile } = useAuth();
-  const isApproved = !!commodity.is_approved;
+  // const isApproved = !!commodity.is_approved;
+
+  const isApproved = commodity?.qc_status !== "Draft";
+
   const isRejected =
     commodity.qc_status === "Rejected" || commodity.status === "rejected";
+  const isDraft = commodity.qc_status === "Draft";
   const [approvalSubmitted, setApprovalSubmitted] = useState(false);
   const { submitStockForApproval, getMasterUnits } = useProductApi();
   const [unitOptions, setUnitOptions] = useState([]);
@@ -904,7 +1012,7 @@ const EditProductModal = ({ commodity, seller, onClose, onBack }) => {
                 </button>
               )} */}
               {/* <ShoppingBasket size={16} className="text-primary shrink-0" /> */}
-              <div className="min-w-0">
+              <div className="min-w-0 ">
                 <p className="text-md font-bold text-foreground leading-tight">
                   {isApproved ? "Update Price & Quantity" : "Edit Product"}
                 </p>
@@ -975,6 +1083,75 @@ const EditProductModal = ({ commodity, seller, onClose, onBack }) => {
                       </Button>
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+            {isDraft && (
+              <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 overflow-hidden">
+                <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center justify-center h-7 w-7 rounded-full bg-blue-100 dark:bg-blue-900/40">
+                      <FileEdit
+                        size={14}
+                        className="text-blue-600 dark:text-blue-400"
+                      />
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-blue-700 dark:text-blue-400">
+                        Draft
+                      </p>
+
+                      <p className="text-[11px] text-blue-600/70 dark:text-blue-400/60 mt-0.5">
+                        Once you request approval, you won’t be able to edit
+                        this product until it is reviewed.
+                      </p>
+                    </div>
+                  </div>
+
+                  {approvalSubmitted ? (
+                    <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium shrink-0">
+                      <CheckCircle size={12} />
+                      Submitted
+                    </div>
+                  ) : (
+                    <Button
+                      size="sm"
+                      disabled={loadingUnits}
+                      onClick={handleRequestApproval}
+                      className="shrink-0 gap-1.5 text-xs font-semibold h-7 px-3"
+                    >
+                      {loadingUnits ? (
+                        <>
+                          <Loader2 size={11} className="animate-spin" />
+                          Submitting…
+                        </>
+                      ) : (
+                        <>
+                          <SendHorizonal size={11} />
+                          Request Approval
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {isApproved && !isRejected && (
+              <div className="rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-2.5 px-3 py-2.5">
+                <Lock size={14} className="text-amber-600 shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-amber-700">
+                    {commodity?.qc_status === "Pending"
+                      ? "Pending admin approval"
+                      : "Editing locked"}
+                  </p>
+                  <p className="text-[11px] text-amber-600/80 mt-0.5">
+                    {commodity?.qc_status === "Pending"
+                      ? "Your product is waiting for admin approval. You can't edit it until the review is complete."
+                      : `This product is ${commodity?.qc_status}, so it can't be edited.`}
+                  </p>
                 </div>
               </div>
             )}

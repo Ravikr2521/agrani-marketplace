@@ -25,7 +25,6 @@ import { Button } from "@/components/ui/button";
 import { formatINR } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import EditProductModal from "./EditProductModal";
-import { useTranslation } from "react-i18next";
 
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(
@@ -243,29 +242,6 @@ function PreviewBody({ product, variantId, setVariantId }) {
           )}
         </div>
 
-        {/* {images.length > 1 && (
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-            {images.map((image, index) => (
-              <button
-                key={`${image}-${index}`}
-                type="button"
-                onClick={() => setSelectedImage(index)}
-                className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white p-0.5 transition-all ${
-                  index === selectedImage
-                    ? "ring-2 ring-primary ring-offset-1"
-                    : "border border-stone-200 hover:border-stone-300"
-                }`}
-              >
-                <img
-                  src={image}
-                  alt=""
-                  className="h-full w-full rounded-md object-cover"
-                />
-              </button>
-            ))}
-          </div>
-        )} */}
-
         {variants.length > 1 && (
           <div className="mt-4">
             <div className="mb-2 flex items-center justify-between">
@@ -447,7 +423,7 @@ function PreviewBody({ product, variantId, setVariantId }) {
 
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-bold text-body-dark">
-                    {t("Delivery available in")}
+                    Delivery available in
                   </h3>
 
                   {deliveryCoverage.allStates ? (
@@ -507,7 +483,6 @@ export default function SellerProductPreview({
   product,
   variantId,
 }) {
-  const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const { SellerMobile } = useAuth();
   const [activeVariantId, setActiveVariantId] = useState(variantId);
@@ -545,7 +520,7 @@ export default function SellerProductPreview({
                   }}
                   className="gap-1.5 mr-8"
                 >
-                  <Edit className="h-3.5 w-3.5" />
+                  <Edit className="h-3.5 w-3.5 mb-0.5" />
                   Edit
                 </Button>
               </div>
@@ -596,7 +571,7 @@ export default function SellerProductPreview({
               }}
               className="gap-1.5 mr-8"
             >
-              <Edit className="h-3.5 w-3.5" />
+              <Edit className="h-3.5 w-3.5 mb-1" />
               Edit
             </Button>
           </SheetHeader>

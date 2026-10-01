@@ -127,5 +127,3 @@ export default function CategorySidePanel({
     </aside>
   );
 }
-import { useTranslation } from "@/i18n";
-
